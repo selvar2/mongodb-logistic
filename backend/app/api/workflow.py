@@ -144,7 +144,7 @@ async def stream(thread_id: str, request: Request):
                 yield {"event": "done", "data": json.dumps(final)}
                 break
             waited += 0.5
-            if waited > 60:  # safety timeout
+            if waited > 240:  # safety timeout — generous for Bedrock cold starts
                 yield {"event": "done", "data": json.dumps({"timeout": True})}
                 break
             await asyncio.sleep(0.5)

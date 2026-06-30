@@ -37,6 +37,28 @@ app.include_router(evaluation.router)
 app.include_router(charts.router)
 
 
+@app.on_event("startup")
+def _warmup_bedrock() -> None:
+    """Fire a tiny Bedrock call in the background so the first real workflow does
+    not pay the model cold-start latency (~60s observed), which otherwise blows
+    past the SSE stream timeout and shows an empty brief."""
+    from app.config import settings
+    if settings.llm_mode == "mock":
+        return
+    import threading
+
+    def _go() -> None:
+        try:
+            from app.llm import bedrock
+            bedrock.complete_text("You are a warmup probe.", "Reply with: ok",
+                                  max_tokens=5)
+            print("[warmup] Bedrock warmed up.")
+        except Exception as exc:  # never block startup on warmup
+            print(f"[warmup] Bedrock warmup skipped: {exc}")
+
+    threading.Thread(target=_go, daemon=True).start()
+
+
 @app.exception_handler(Exception)
 async def unhandled(request: Request, exc: Exception):
     return JSONResponse(

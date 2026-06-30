@@ -91,6 +91,8 @@ export function DisruptionChat() {
   // Stream whenever a thread is active.
   useEffect(() => {
     if (!threadId) return;
+    const tid = threadId;
+    let cancelled = false;
     setSteps([]);
     setFinal(null);
     setDone(false);
@@ -99,17 +101,56 @@ export function DisruptionChat() {
     setShowReject(false);
     setReviewComment("");
     setReviewErr(null);
+
+    // A real terminal state has a brief or a terminal status — NOT the SSE
+    // {timeout:true} sentinel emitted when a (cold-start) run outlives the stream.
+    const isComplete = (x: any) =>
+      !!x && !x.timeout &&
+      (x.mitigation_brief || x.status === "complete" || x.status === "escalated_hitl" || x.recommended_action);
+
+    const showBrief = (f: any) => {
+      if (cancelled) return;
+      setFinal(f);
+      setDone(true);
+      setMessages((m) => [...m, { role: "assistant", text: "✓ Mitigation brief ready — see the result below." }]);
+    };
+
+    // Pull the full audit trail so the timeline is complete even if the SSE
+    // stream closed early (cold start / proxy buffering).
+    const refreshSteps = async () => {
+      try {
+        const r = await api.auditLogs(tid);
+        if (cancelled) return;
+        const items = (r.items || []).map((l: any) => ({
+          agent: l.agent, action: l.action, summary: l.output_summary,
+          level: l.level || "info", ts: l.ts,
+        }));
+        if (items.length) setSteps(items as StepEvent[]);
+      } catch {}
+    };
+
+    // If the SSE 'done' is a timeout/incomplete sentinel, poll the authoritative
+    // result endpoint until the real brief is ready (handles slow Bedrock starts).
+    const finalize = async (f: any) => {
+      if (isComplete(f)) { showBrief(f); return; }
+      for (let i = 0; i < 120 && !cancelled; i++) {
+        await new Promise((res) => setTimeout(res, 2500));
+        if (cancelled) return;
+        try {
+          const r = await api.result(tid);
+          if (isComplete(r)) { await refreshSteps(); showBrief(r); return; }
+        } catch { /* 404 until ready — keep polling */ }
+      }
+    };
+
     const unsub = streamWorkflow(
-      threadId,
-      (s) => setSteps((prev) => [...prev, s]),
-      (f) => {
-        setFinal(f);
-        setDone(true);
-        setMessages((m) => [...m, { role: "assistant", text: "✓ Mitigation brief ready — see the result below." }]);
-      },
+      tid,
+      (s) => { if (!cancelled) setSteps((prev) => [...prev, s]); },
+      (f) => { finalize(f); },
     );
     unsubRef.current = unsub;
     return () => {
+      cancelled = true;
       unsub();
       unsubRef.current = null;
     };
@@ -188,75 +229,71 @@ export function DisruptionChat() {
         sub="A chat front-end to the autonomous mitigation workflow. Type naturally or pick a scenario."
       />
 
-      {/* Chat interface — transcript, suggestion chips, and composer all inside one surface */}
-      <div className="rounded-2xl border border-border/60 bg-surface2/30 p-5 space-y-6">
-        {/* Transcript */}
-        <div className="space-y-4">
-          {messages.map((m, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  m.role === "user"
-                    ? "bg-accent/15 border border-accent/30 text-fg"
-                    : "bg-surface/70 border border-border/60 text-fg/90"
-                }`}
+      {/* Chat interface — conversation (left) + scenario keywords (right) */}
+      <div className="rounded-2xl border border-border/60 bg-surface2/30 p-5">
+        <div className="grid lg:grid-cols-2 gap-5">
+          {/* Left: conversation + composer */}
+          <div className="flex flex-col">
+            <div className="space-y-4 flex-1 min-h-[160px] max-h-[460px] overflow-y-auto pr-1">
+              {messages.map((m, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                      m.role === "user"
+                        ? "bg-accent/15 border border-accent/30 text-fg"
+                        : "bg-surface/70 border border-border/60 text-fg/90"
+                    }`}
+                  >
+                    {m.text}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <div className="flex items-end gap-3 pt-4">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={onInputKeyDown}
+                disabled={busy}
+                rows={1}
+                placeholder="Describe a disruption… e.g. “A typhoon closed Port Klang, Malaysia — SUP-001 can't ship 20 orders.”"
+                className="input min-h-[48px] max-h-[140px] resize-y flex-1 disabled:opacity-50"
+              />
+              <button
+                onClick={() => runAlert(input)}
+                disabled={busy || !input.trim()}
+                aria-label="Send"
+                className="shrink-0 h-[48px] w-[48px] grid place-items-center rounded-xl bg-accent text-bg hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {m.text}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                {busy ? (
+                  <span className="block h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 19V5M5 12l7-7 7 7" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
 
-        {/* Suggestion chips — split by verified outcome: Human Review | Auto-Execute */}
-        <div className="space-y-3">
-          <div className="label">Example scenarios — tap to run</div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {/* Left column (Human Review) */}
-            <div className="space-y-2">
+          {/* Right: scenario keywords */}
+          <div className="flex flex-col">
+            <div className="label mb-2">Example scenarios — tap to run</div>
+            <div className="space-y-2 max-h-[540px] overflow-y-auto pr-1">
               {REVIEW_SCENARIOS.map((text) => (
                 <ScenarioChip key={text} text={text} onRun={runAlert} busy={busy} tone="warn" />
               ))}
-            </div>
-            {/* Right column (Auto-Execute) */}
-            <div className="space-y-2">
               {AUTO_SCENARIOS.map((text) => (
                 <ScenarioChip key={text} text={text} onRun={runAlert} busy={busy} tone="accent" />
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Composer pinned at the bottom of the chat surface */}
-        <div className="flex items-end gap-3 pt-1">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onInputKeyDown}
-            disabled={busy}
-            rows={1}
-            placeholder="Describe a disruption… e.g. “A typhoon closed Port Klang, Malaysia — SUP-001 can't ship 20 orders.”"
-            className="input min-h-[48px] max-h-[140px] resize-y flex-1 disabled:opacity-50"
-          />
-          <button
-            onClick={() => runAlert(input)}
-            disabled={busy || !input.trim()}
-            aria-label="Send"
-            className="shrink-0 h-[48px] w-[48px] grid place-items-center rounded-xl bg-accent text-bg hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {busy ? (
-              <span className="block h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 19V5M5 12l7-7 7 7" />
-              </svg>
-            )}
-          </button>
         </div>
       </div>
 
