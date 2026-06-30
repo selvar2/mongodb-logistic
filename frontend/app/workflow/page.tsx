@@ -130,34 +130,30 @@ function WorkflowInner() {
         <div className="card p-4 border-danger/50 bg-danger/10 text-danger text-sm mb-6">{err}</div>
       )}
 
-      <div className="grid lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3">
-          <Card>
-            <SectionTitle
-              kicker="Orchestration"
-              title="Agent Graph"
-              sub="Supervisor routes through impact → sourcing → compliance → planner."
-            />
-            <AgentGraph statuses={statuses} />
-          </Card>
-        </div>
+      <div className="space-y-4">
+        <Card>
+          <SectionTitle
+            kicker="Orchestration"
+            title="Agent Graph"
+            sub="Supervisor routes through impact → sourcing → compliance → planner."
+          />
+          <AgentGraph statuses={statuses} />
+        </Card>
 
-        <div className="lg:col-span-2">
-          <Card className="h-full">
-            <SectionTitle kicker="Stream" title="Live Timeline" />
-            {steps.length === 0 ? (
-              <div className="text-mutedfg text-sm">
-                {threadId
-                  ? "Waiting for agent steps…"
-                  : "Run the demo workflow to watch the agents work."}
-              </div>
-            ) : (
-              <div className="max-h-[420px] overflow-y-auto pr-1">
-                <Timeline steps={steps} />
-              </div>
-            )}
-          </Card>
-        </div>
+        <Card>
+          <SectionTitle kicker="Stream" title="Live Timeline" />
+          {steps.length === 0 ? (
+            <div className="text-mutedfg text-sm">
+              {threadId
+                ? "Waiting for agent steps…"
+                : "Run the demo workflow to watch the agents work."}
+            </div>
+          ) : (
+            <div className="max-h-[420px] overflow-y-auto pr-1">
+              <Timeline steps={steps} />
+            </div>
+          )}
+        </Card>
       </div>
 
       {done && final && (

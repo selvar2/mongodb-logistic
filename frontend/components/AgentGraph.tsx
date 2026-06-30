@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 export type AgentStatus = "idle" | "active" | "done" | "fail";
 
 type Node = { id: string; label: string; tool: string; desc: string; x: number };
-const W = 170, H = 88, Y = 92, STEP = 198, X0 = 14;
+const W = 178, H = 80, Y = 86, STEP = 198, X0 = 14;
 const NODES: Node[] = [
-  { id: "supervisor", label: "Supervisor", tool: "classify · route · HITL",
+  { id: "supervisor", label: "Supervisor", tool: "classify · route",
     desc: "Classifies severity & routes the squad; makes the final HITL decision.", x: X0 + 0 * STEP },
   { id: "impact_assessor", label: "Impact Assessor", tool: "$graphLookup",
     desc: "Computes the blast radius via $graphLookup over the order→supplier graph.", x: X0 + 1 * STEP },
@@ -72,7 +72,7 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
             "radial-gradient(600px 200px at 30% 0%, rgba(34,197,94,.07), transparent 60%)," +
             "radial-gradient(500px 200px at 90% 100%, rgba(20,184,166,.06), transparent 60%)",
         }} />
-      <svg viewBox="0 0 1000 248" className="relative w-full" style={{ maxHeight: 440 }}>
+      <svg viewBox="0 0 1000 230" className="relative w-full" style={{ maxHeight: 460 }}>
         <defs>
           <linearGradient id="ag-node" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#141C30" /><stop offset="1" stopColor="#0A1020" />
@@ -150,9 +150,9 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
               {/* icon */}
               <g transform={`translate(${n.x + 26}, ${Y + H / 2})`}><Icon id={n.id} color={col} /></g>
               {/* text */}
-              <text x={n.x + 46} y={Y + 38} fill="#F4F8FF" fontSize="15" fontWeight={600}
+              <text x={n.x + 46} y={Y + 34} fill="#F4F8FF" fontSize="15" fontWeight={600}
                 fontFamily="var(--font-sans)">{n.label}</text>
-              <text x={n.x + 46} y={Y + 58} fill="#8A97B2" fontSize="12"
+              <text x={n.x + 46} y={Y + 54} fill="#8A97B2" fontSize="12"
                 fontFamily="ui-monospace, monospace">{n.tool}</text>
               {/* status dot */}
               <circle cx={n.x + W - 14} cy={Y + 18} r="4.5" fill={col}>
