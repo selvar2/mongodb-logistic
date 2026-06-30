@@ -1,0 +1,590 @@
+[
+  {
+    "order_number": "ORD-1044",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-IMU9"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3400,
+    "quantity_remaining": 2800,
+    "route": {
+      "origin": "Penang",
+      "destination": "Hamburg",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-AEC-32X",
+      "spec": "32-bit automotive-grade MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.5,
+    "created_at": "2026-04-05"
+  },
+  {
+    "order_number": "ORD-1045",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-TEMP2"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3100,
+    "quantity_remaining": 2500,
+    "route": {
+      "origin": "Penang",
+      "destination": "Rotterdam",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "SEN-TEMP-A2",
+      "spec": "automotive temperature sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 11.9,
+    "created_at": "2026-04-08"
+  },
+  {
+    "order_number": "ORD-1046",
+    "status": "active",
+    "sku_ids": ["SEN-IMU9", "MCU-32X"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3600,
+    "quantity_remaining": 3000,
+    "route": {
+      "origin": "Johor",
+      "destination": "Munich",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "IMU-9AX-AUTO",
+      "spec": "9-axis automotive IMU sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 13.1,
+    "created_at": "2026-04-11"
+  },
+  {
+    "order_number": "ORD-1047",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "CAP-470UF"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 2800,
+    "quantity_remaining": 2200,
+    "route": {
+      "origin": "Penang",
+      "destination": "Stuttgart",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-CTRL-32",
+      "spec": "engine control microcontroller",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.8,
+    "created_at": "2026-04-13"
+  },
+  {
+    "order_number": "ORD-1048",
+    "status": "active",
+    "sku_ids": ["SEN-PRESS1", "MCU-32X"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3300,
+    "quantity_remaining": 2700,
+    "route": {
+      "origin": "Johor",
+      "destination": "Antwerp",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "PRS-AUTO-01",
+      "spec": "automotive pressure sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.2,
+    "created_at": "2026-04-15"
+  },
+  {
+    "order_number": "ORD-1049",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-IMU9", "CAP-470UF"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 2900,
+    "quantity_remaining": 2400,
+    "route": {
+      "origin": "Penang",
+      "destination": "Frankfurt",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-BODY-32",
+      "spec": "body control module MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.6,
+    "created_at": "2026-04-18"
+  },
+  {
+    "order_number": "ORD-1050",
+    "status": "active",
+    "sku_ids": ["SEN-IMU9", "SEN-TEMP2"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3500,
+    "quantity_remaining": 2900,
+    "route": {
+      "origin": "Johor",
+      "destination": "Hamburg",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "SENSOR-FUSION-A9",
+      "spec": "automotive sensor fusion module",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 13.4,
+    "created_at": "2026-04-20"
+  },
+  {
+    "order_number": "ORD-1051",
+    "status": "active",
+    "sku_ids": ["MCU-32X"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 2700,
+    "quantity_remaining": 2100,
+    "route": {
+      "origin": "Penang",
+      "destination": "Rotterdam",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-SAFETY-32",
+      "spec": "safety control microcontroller",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.7,
+    "created_at": "2026-04-22"
+  },
+  {
+    "order_number": "ORD-1052",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-PRESS1"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3200,
+    "quantity_remaining": 2600,
+    "route": {
+      "origin": "Johor",
+      "destination": "Munich",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-POWERTRAIN-32",
+      "spec": "powertrain controller MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.9,
+    "created_at": "2026-04-25"
+  },
+  {
+    "order_number": "ORD-1053",
+    "status": "active",
+    "sku_ids": ["SEN-IMU9", "CAP-470UF"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3000,
+    "quantity_remaining": 2500,
+    "route": {
+      "origin": "Penang",
+      "destination": "Stuttgart",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "IMU-STABILITY-A9",
+      "spec": "vehicle stability IMU sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 13.0,
+    "created_at": "2026-04-27"
+  },
+  {
+    "order_number": "ORD-1054",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-TEMP2"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3900,
+    "quantity_remaining": 3200,
+    "route": {
+      "origin": "Johor",
+      "destination": "Antwerp",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-THERMAL-32",
+      "spec": "thermal management MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.4,
+    "created_at": "2026-04-29"
+  },
+  {
+    "order_number": "ORD-1055",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-IMU9"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 2600,
+    "quantity_remaining": 2000,
+    "route": {
+      "origin": "Penang",
+      "destination": "Frankfurt",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-ADAS-32",
+      "spec": "ADAS controller microcontroller",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 13.2,
+    "created_at": "2026-05-01"
+  },
+  {
+    "order_number": "ORD-1056",
+    "status": "active",
+    "sku_ids": ["SEN-PRESS1", "SEN-TEMP2"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3400,
+    "quantity_remaining": 2800,
+    "route": {
+      "origin": "Johor",
+      "destination": "Hamburg",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "SEN-ENGINE-PACK",
+      "spec": "engine sensor component pack",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.1,
+    "created_at": "2026-05-04"
+  },
+  {
+    "order_number": "ORD-1057",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "CAP-470UF"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3100,
+    "quantity_remaining": 2500,
+    "route": {
+      "origin": "Penang",
+      "destination": "Rotterdam",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-INFOTAIN-32",
+      "spec": "automotive infotainment MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.6,
+    "created_at": "2026-05-07"
+  },
+  {
+    "order_number": "ORD-1058",
+    "status": "active",
+    "sku_ids": ["SEN-IMU9", "MCU-32X"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3700,
+    "quantity_remaining": 3100,
+    "route": {
+      "origin": "Johor",
+      "destination": "Munich",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-CHASSIS-32",
+      "spec": "chassis control MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 13.3,
+    "created_at": "2026-05-10"
+  },
+  {
+    "order_number": "ORD-1059",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-PRESS1"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3000,
+    "quantity_remaining": 2400,
+    "route": {
+      "origin": "Penang",
+      "destination": "Stuttgart",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-BRAKE-32",
+      "spec": "brake control microcontroller",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.8,
+    "created_at": "2026-05-12"
+  },
+  {
+    "order_number": "ORD-1060",
+    "status": "active",
+    "sku_ids": ["SEN-TEMP2", "CAP-470UF"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3300,
+    "quantity_remaining": 2700,
+    "route": {
+      "origin": "Johor",
+      "destination": "Antwerp",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "TEMP-BATTERY-A2",
+      "spec": "EV battery temperature sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 12.0,
+    "created_at": "2026-05-15"
+  },
+  {
+    "order_number": "ORD-1061",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-IMU9"],
+    "supplier_id": "SUP-001",
+    "quantity_ordered": 3100,
+    "quantity_remaining": 2500,
+    "route": {
+      "origin": "Penang",
+      "destination": "Frankfurt",
+      "via_port": "Port of Tanjung Pelepas"
+    },
+    "bom": {
+      "part_number": "MCU-GATEWAY-32",
+      "spec": "vehicle gateway MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-001"],
+    "unit_price": 13.0,
+    "created_at": "2026-05-18"
+  },
+  {
+    "order_number": "ORD-1062",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-IMU9"],
+    "supplier_id": "SUP-002",
+    "quantity_ordered": 4200,
+    "quantity_remaining": 3600,
+    "route": {
+      "origin": "Jakarta",
+      "destination": "Hamburg",
+      "via_port": "Port of Jakarta"
+    },
+    "bom": {
+      "part_number": "MCU-AEC-32X",
+      "spec": "32-bit automotive-grade MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-002"],
+    "unit_price": 13.8,
+    "created_at": "2026-05-20"
+  },
+  {
+    "order_number": "ORD-1063",
+    "status": "active",
+    "sku_ids": ["SEN-TEMP2", "CAP-470UF"],
+    "supplier_id": "SUP-003",
+    "quantity_ordered": 3900,
+    "quantity_remaining": 3300,
+    "route": {
+      "origin": "Busan",
+      "destination": "Rotterdam",
+      "via_port": "Port of Busan"
+    },
+    "bom": {
+      "part_number": "SEN-TEMP-A2",
+      "spec": "automotive temperature sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-003"],
+    "unit_price": 13.5,
+    "created_at": "2026-05-22"
+  },
+  {
+    "order_number": "ORD-1064",
+    "status": "active",
+    "sku_ids": ["MCU-32X"],
+    "supplier_id": "SUP-004",
+    "quantity_ordered": 5000,
+    "quantity_remaining": 4200,
+    "route": {
+      "origin": "Taipei",
+      "destination": "Munich",
+      "via_port": "Port of Kaohsiung"
+    },
+    "bom": {
+      "part_number": "MCU-SAFETY-32",
+      "spec": "safety control microcontroller",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-004"],
+    "unit_price": 14.1,
+    "created_at": "2026-05-24"
+  },
+  {
+    "order_number": "ORD-1065",
+    "status": "active",
+    "sku_ids": ["SEN-IMU9", "SEN-PRESS1"],
+    "supplier_id": "SUP-005",
+    "quantity_ordered": 4100,
+    "quantity_remaining": 3500,
+    "route": {
+      "origin": "Seoul",
+      "destination": "Stuttgart",
+      "via_port": "Port of Incheon"
+    },
+    "bom": {
+      "part_number": "IMU-9AX-AUTO",
+      "spec": "9-axis automotive IMU sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-005"],
+    "unit_price": 13.2,
+    "created_at": "2026-05-26"
+  },
+  {
+    "order_number": "ORD-1066",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "CAP-470UF"],
+    "supplier_id": "SUP-006",
+    "quantity_ordered": 3700,
+    "quantity_remaining": 3100,
+    "route": {
+      "origin": "Tokyo",
+      "destination": "Antwerp",
+      "via_port": "Port of Yokohama"
+    },
+    "bom": {
+      "part_number": "MCU-POWERTRAIN-32",
+      "spec": "powertrain controller MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-006"],
+    "unit_price": 14.4,
+    "created_at": "2026-05-28"
+  },
+  {
+    "order_number": "ORD-1067",
+    "status": "active",
+    "sku_ids": ["SEN-PRESS1", "MCU-32X"],
+    "supplier_id": "SUP-007",
+    "quantity_ordered": 4600,
+    "quantity_remaining": 3900,
+    "route": {
+      "origin": "Chennai",
+      "destination": "Frankfurt",
+      "via_port": "Port of Chennai"
+    },
+    "bom": {
+      "part_number": "PRS-AUTO-01",
+      "spec": "automotive pressure sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-007"],
+    "unit_price": 13.1,
+    "created_at": "2026-05-30"
+  },
+  {
+    "order_number": "ORD-1068",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-TEMP2"],
+    "supplier_id": "SUP-008",
+    "quantity_ordered": 4300,
+    "quantity_remaining": 3600,
+    "route": {
+      "origin": "Shenzhen",
+      "destination": "Hamburg",
+      "via_port": "Port of Shenzhen"
+    },
+    "bom": {
+      "part_number": "MCU-THERMAL-32",
+      "spec": "thermal management MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-008"],
+    "unit_price": 13.9,
+    "created_at": "2026-06-01"
+  },
+  {
+    "order_number": "ORD-1069",
+    "status": "active",
+    "sku_ids": ["SEN-IMU9", "CAP-470UF"],
+    "supplier_id": "SUP-009",
+    "quantity_ordered": 4000,
+    "quantity_remaining": 3400,
+    "route": {
+      "origin": "Bangkok",
+      "destination": "Rotterdam",
+      "via_port": "Port of Laem Chabang"
+    },
+    "bom": {
+      "part_number": "IMU-STABILITY-A9",
+      "spec": "vehicle stability IMU sensor",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-009"],
+    "unit_price": 13.3,
+    "created_at": "2026-06-03"
+  },
+  {
+    "order_number": "ORD-1070",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-PRESS1"],
+    "supplier_id": "SUP-010",
+    "quantity_ordered": 4800,
+    "quantity_remaining": 4100,
+    "route": {
+      "origin": "Manila",
+      "destination": "Munich",
+      "via_port": "Port of Manila"
+    },
+    "bom": {
+      "part_number": "MCU-BRAKE-32",
+      "spec": "brake control microcontroller",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-010"],
+    "unit_price": 13.7,
+    "created_at": "2026-06-05"
+  },
+  {
+    "order_number": "ORD-1071",
+    "status": "active",
+    "sku_ids": ["MCU-32X", "SEN-IMU9", "SEN-TEMP2"],
+    "supplier_id": "SUP-011",
+    "quantity_ordered": 4500,
+    "quantity_remaining": 3800,
+    "route": {
+      "origin": "Osaka",
+      "destination": "Stuttgart",
+      "via_port": "Port of Osaka"
+    },
+    "bom": {
+      "part_number": "MCU-GATEWAY-32",
+      "spec": "vehicle gateway MCU",
+      "grade": "AEC-Q100"
+    },
+    "depends_on": ["SUP-011"],
+    "unit_price": 14.5,
+    "created_at": "2026-06-07"
+  }
+]

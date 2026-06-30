@@ -1,0 +1,340 @@
+[
+  {
+    "_id": "SUP-001",
+    "name": "Chang Electronics Malaysia",
+    "capabilities": [
+      "automotive-grade microcontrollers",
+      "32-bit MCU",
+      "AEC-Q100 certified",
+      "automotive sensor components"
+    ],
+    "capacity_units_month": 30000,
+    "geo_region": "Malaysia",
+    "lead_time_days": 20,
+    "esg_score": 70,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 12.5,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-002",
+    "name": "PT Maju Jaya Electronics",
+    "capabilities": [
+      "automotive-grade microcontrollers",
+      "32-bit MCU",
+      "AEC-Q100 certified",
+      "sensor components",
+      "automotive electronics assembly"
+    ],
+    "capacity_units_month": 80000,
+    "geo_region": "Indonesia",
+    "lead_time_days": 18,
+    "esg_score": 88,
+    "certifications": ["ISO-14001", "IATF-16949", "carbon-neutral-2024"],
+    "unit_price": 13.8,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-003",
+    "name": "Korea Micro Devices",
+    "capabilities": [
+      "automotive-grade microcontrollers",
+      "32-bit MCU",
+      "AEC-Q100 certified",
+      "IMU sensors",
+      "vehicle control components"
+    ],
+    "capacity_units_month": 62000,
+    "geo_region": "South Korea",
+    "lead_time_days": 22,
+    "esg_score": 84,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 13.5,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-004",
+    "name": "Taiwan AutoSemi Foundry",
+    "capabilities": [
+      "32-bit MCU",
+      "automotive semiconductor packaging",
+      "AEC-Q100 certified",
+      "powertrain controller MCU"
+    ],
+    "capacity_units_month": 55000,
+    "geo_region": "Taiwan",
+    "lead_time_days": 25,
+    "esg_score": 79,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 14.1,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-005",
+    "name": "Seoul Sensor Systems",
+    "capabilities": [
+      "IMU sensors",
+      "temperature sensors",
+      "automotive sensor modules",
+      "sensor fusion components"
+    ],
+    "capacity_units_month": 43000,
+    "geo_region": "South Korea",
+    "lead_time_days": 21,
+    "esg_score": 82,
+    "certifications": ["ISO-14001"],
+    "unit_price": 13.2,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-006",
+    "name": "Nippon Control Components",
+    "capabilities": [
+      "powertrain MCU",
+      "brake control MCU",
+      "AEC-Q100 certified",
+      "automotive embedded controllers"
+    ],
+    "capacity_units_month": 47000,
+    "geo_region": "Japan",
+    "lead_time_days": 28,
+    "esg_score": 86,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 14.4,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-007",
+    "name": "Chennai AutoTech Components",
+    "capabilities": [
+      "pressure sensors",
+      "automotive electronics",
+      "sensor assembly",
+      "engine sensor components"
+    ],
+    "capacity_units_month": 36000,
+    "geo_region": "India",
+    "lead_time_days": 26,
+    "esg_score": 76,
+    "certifications": ["ISO-14001"],
+    "unit_price": 13.1,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-008",
+    "name": "Shenzhen Mobility Electronics",
+    "capabilities": [
+      "thermal MCU",
+      "vehicle gateway MCU",
+      "sensor modules",
+      "automotive electronics assembly"
+    ],
+    "capacity_units_month": 41000,
+    "geo_region": "China",
+    "lead_time_days": 29,
+    "esg_score": 69,
+    "certifications": ["ISO-14001"],
+    "unit_price": 13.9,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-009",
+    "name": "Bangkok Precision Sensors",
+    "capabilities": [
+      "IMU sensors",
+      "pressure sensors",
+      "automotive sensor components",
+      "vehicle stability sensors"
+    ],
+    "capacity_units_month": 34000,
+    "geo_region": "Thailand",
+    "lead_time_days": 23,
+    "esg_score": 72,
+    "certifications": ["ISO-14001"],
+    "unit_price": 13.3,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-010",
+    "name": "Manila Embedded Systems",
+    "capabilities": [
+      "brake control MCU",
+      "body control MCU",
+      "embedded automotive controllers",
+      "vehicle electronics"
+    ],
+    "capacity_units_month": 38000,
+    "geo_region": "Philippines",
+    "lead_time_days": 27,
+    "esg_score": 74,
+    "certifications": ["ISO-14001"],
+    "unit_price": 13.7,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-011",
+    "name": "Osaka Vehicle Electronics",
+    "capabilities": [
+      "vehicle gateway MCU",
+      "ADAS controller MCU",
+      "AEC-Q100 certified",
+      "automotive control units"
+    ],
+    "capacity_units_month": 51000,
+    "geo_region": "Japan",
+    "lead_time_days": 30,
+    "esg_score": 87,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 14.5,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-012",
+    "name": "Jakarta Green Semiconductors",
+    "capabilities": [
+      "automotive-grade microcontrollers",
+      "32-bit MCU",
+      "AEC-Q100 certified",
+      "low-carbon semiconductor manufacturing"
+    ],
+    "capacity_units_month": 70000,
+    "geo_region": "Indonesia",
+    "lead_time_days": 19,
+    "esg_score": 91,
+    "certifications": ["ISO-14001", "IATF-16949", "carbon-neutral-2024"],
+    "unit_price": 14.0,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-013",
+    "name": "Busan Advanced Components",
+    "capabilities": [
+      "MCU packaging",
+      "automotive sensors",
+      "AEC-Q100 certified",
+      "semiconductor component testing"
+    ],
+    "capacity_units_month": 58000,
+    "geo_region": "South Korea",
+    "lead_time_days": 20,
+    "esg_score": 89,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 13.9,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-014",
+    "name": "Hanoi LowCost Electronics",
+    "capabilities": [
+      "sensor components",
+      "basic MCU assembly",
+      "consumer electronics components"
+    ],
+    "capacity_units_month": 49000,
+    "geo_region": "Vietnam",
+    "lead_time_days": 23,
+    "esg_score": 45,
+    "certifications": ["ISO-9001"],
+    "unit_price": 11.9,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-015",
+    "name": "Pune Automotive Silicon",
+    "capabilities": [
+      "automotive-grade microcontrollers",
+      "engine control MCU",
+      "sensor interface modules"
+    ],
+    "capacity_units_month": 44000,
+    "geo_region": "India",
+    "lead_time_days": 24,
+    "esg_score": 78,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 13.6,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-016",
+    "name": "Singapore Precision Microelectronics",
+    "capabilities": [
+      "AEC-Q100 certified",
+      "automotive MCU testing",
+      "sensor calibration",
+      "semiconductor quality validation"
+    ],
+    "capacity_units_month": 39000,
+    "geo_region": "Singapore",
+    "lead_time_days": 17,
+    "esg_score": 85,
+    "certifications": ["ISO-14001", "IATF-16949"],
+    "unit_price": 14.3,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-017",
+    "name": "Ho Chi Minh Sensor Works",
+    "capabilities": [
+      "temperature sensors",
+      "pressure sensors",
+      "basic automotive sensor assembly"
+    ],
+    "capacity_units_month": 37000,
+    "geo_region": "Vietnam",
+    "lead_time_days": 22,
+    "esg_score": 58,
+    "certifications": ["ISO-9001"],
+    "unit_price": 12.4,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-018",
+    "name": "Daejeon Automotive Chips",
+    "capabilities": [
+      "32-bit MCU",
+      "AEC-Q100 certified",
+      "ADAS controller MCU",
+      "vehicle gateway MCU"
+    ],
+    "capacity_units_month": 53000,
+    "geo_region": "South Korea",
+    "lead_time_days": 21,
+    "esg_score": 90,
+    "certifications": ["ISO-14001", "IATF-16949", "carbon-neutral-2024"],
+    "unit_price": 14.2,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-019",
+    "name": "Surabaya Electronic Mobility Parts",
+    "capabilities": [
+      "automotive sensor components",
+      "MCU support modules",
+      "vehicle electronics assembly"
+    ],
+    "capacity_units_month": 46000,
+    "geo_region": "Indonesia",
+    "lead_time_days": 20,
+    "esg_score": 80,
+    "certifications": ["ISO-14001"],
+    "unit_price": 13.4,
+    "last_updated": "2026-06-29"
+  },
+  {
+    "_id": "SUP-FAIL",
+    "name": "Vietnam Components",
+    "capabilities": [
+      "automotive microcontrollers",
+      "sensor components",
+      "PCB assembly",
+      "low-cost electronics manufacturing"
+    ],
+    "capacity_units_month": 52000,
+    "geo_region": "Vietnam",
+    "lead_time_days": 24,
+    "esg_score": 22,
+    "certifications": [],
+    "unit_price": 11.8,
+    "last_updated": "2026-06-29"
+  }
+]

@@ -129,6 +129,37 @@ NEXT_PUBLIC_API_BASE=http://localhost:8010 npm run dev   # http://localhost:3000
 - Optional **MCP server** (protocol-accurate tools; app falls back to Python if absent):
   `cd backend && ../.agentcore-venv/bin/python -m app.mcp_server`
 
+### MongoDB MCP server in Claude Code (`mongodb-rw`)
+`.mcp.json` declares the official `mongodb-mcp-server` so an agent (e.g. Claude Code) can read/write
+Atlas directly. Being *declared* is not enough — Claude Code only launches it after **two** gates,
+and both bite hardest in Codespaces (env vars and approvals reset on rebuild):
+
+**1. Export `MONGODB_URI` into the shell environment.** `.mcp.json` expands `${MONGODB_URI}` from the
+**environment**, *not* from `.env`. If it's unset, the server starts with an empty connection string
+and never connects. Pick one:
+```bash
+# Per-container (this repo already adds this to ~/.bashrc, sourcing the gitignored .env):
+export MONGODB_URI="$(grep -E '^MONGODB_URI=' /workspaces/mongodb-logistic/.env | head -1 | cut -d= -f2- | tr -d '"')"
+# Or load the whole .env into the env for the current shell:
+set -a; source .env; set +a
+```
+> **Permanent Codespaces fix:** add a **Codespaces secret** named `MONGODB_URI`
+> (GitHub → Settings → Codespaces → Secrets) — it's injected into every rebuild automatically, so you
+> never hit this again.
+
+**2. Approve the project server.** Project-scoped `.mcp.json` servers are untrusted until you enable
+them. Launch Claude Code **interactively** in this repo, then either accept the trust prompt on
+startup or run `/mcp` → enable `mongodb-rw`. Verify with `/mcp` (expect `mongodb-rw: connected`);
+tools like `mcp__mongodb-rw__find` / `insert-many` then become available.
+
+> ⚠️ Never put the real connection string in `.mcp.json` or this README — both are git-tracked.
+> The secret belongs only in the gitignored `.env` (or a Codespaces secret).
+
+**Full runbook:** [docs/mongodb-mcp-guide.md](docs/mongodb-mcp-guide.md) (or the styled
+[docs/mongodb-mcp-guide.html](docs/mongodb-mcp-guide.html)) — per-environment setup (Codespaces /
+VS Code / Claude Desktop / CLI) plus copy-paste **fetch** and **insert** tool-call examples an agent
+can run directly. Smoke-test the server with `backend/.venv/bin/python backend/scripts/mcp_smoke_test.py`.
+
 ### Tests
 ```bash
 cd backend && source .venv/bin/activate && LLM_MODE=mock pytest -q   # 23 passed
