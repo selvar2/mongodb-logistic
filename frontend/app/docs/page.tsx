@@ -1,7 +1,9 @@
 "use client";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, SectionTitle } from "@/components/ui";
 import { CodeBlock } from "@/components/CopyButton";
+import { API_BASE } from "@/lib/api";
 
 const AGENTS: { name: string; tag: string; tone: string; desc: string }[] = [
   {
@@ -36,12 +38,19 @@ const AGENTS: { name: string; tag: string; tone: string; desc: string }[] = [
   },
 ];
 
-const CURL_HEALTH = `curl http://localhost:8010/health`;
-const CURL_RUN = `curl -X POST http://localhost:8010/workflow/run \\
+export default function Docs() {
+  // Resolve the backend base URL on the client. Initialise to the SSR fallback
+  // so server-rendered HTML and first client render match (no hydration warning),
+  // then swap in the real (forwarded, in Codespaces) URL after mount.
+  const [base, setBase] = useState("http://localhost:8010");
+  useEffect(() => setBase(API_BASE), []);
+  const apiHost = base.replace(/^https?:\/\//, "");
+
+  const CURL_HEALTH = `curl ${base}/health`;
+  const CURL_RUN = `curl -X POST ${base}/workflow/run \\
   -H 'Content-Type: application/json' \\
   -d '{"alert_text":"Typhoon forces 7-day closure of the Port of Chengdu; SUP-CHENGDU-01 cannot ship."}'`;
 
-export default function Docs() {
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
@@ -114,7 +123,7 @@ export default function Docs() {
           <SectionTitle
             kicker="Get Going"
             title="Quick Start"
-            sub="The API runs on http://localhost:8010. Try the health check, then kick off a full workflow."
+            sub={`The API runs on ${base}. Try the health check, then kick off a full workflow.`}
           />
           <div className="space-y-4">
             <div>
@@ -132,14 +141,14 @@ export default function Docs() {
           <SectionTitle kicker="Reference" title="More Documentation" />
           <div className="grid sm:grid-cols-3 gap-3">
             <a
-              href="http://localhost:8010/docs"
+              href={`${base}/docs`}
               target="_blank"
               rel="noreferrer"
               className="card p-4 hover:border-accent/50 transition-colors block"
             >
               <div className="text-2xl mb-2">⚡</div>
               <div className="font-semibold mb-1">Interactive API Docs</div>
-              <div className="text-xs text-mutedfg">Swagger UI · localhost:8010/docs</div>
+              <div className="text-xs text-mutedfg">Swagger UI · {apiHost}/docs</div>
             </a>
             <div className="card p-4">
               <div className="text-2xl mb-2">🛠</div>
