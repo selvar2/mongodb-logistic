@@ -31,6 +31,10 @@ SKU_POOL = [
     "SEN-TEMP4", "REG-3V3", "DIODE-SCH", "XTAL-16M",
 ]
 DISRUPTED_SUPPLIER = "SUP-001"
+# Suppliers referenced by the Disruption-Intake demo scenarios that are NOT
+# SUP-001. Each is guaranteed a few active orders so its scenario produces a
+# real mitigation brief instead of a 'no impacted orders' halt.
+SCENARIO_SUPPLIERS = ["SUP-008", "SUP-010", "SUP-014", "SUP-FAIL", "SUP-013"]
 ORIGINAL_UNIT_PRICE = 2.50
 ROUTE = {"origin": "Shanghai", "destination": "Hamburg", "via_port": "Singapore"}
 
@@ -105,10 +109,11 @@ def build_suppliers() -> list[dict]:
 # M1 — orders
 # ---------------------------------------------------------------------------
 def build_orders(other_supplier_ids: list[str]) -> list[dict]:
-    """30 orders ORD-1044..ORD-1073.
+    """40 orders starting at ORD-1044.
 
     23 depend on SUP-001 with quantity_remaining summing to exactly 48,200.
-    The other 7 depend on unrelated suppliers (selective blast radius).
+    7 depend on unrelated suppliers (selective blast radius), and 10 more (2 each)
+    guarantee the non-SUP-001 demo-scenario suppliers have impacted orders.
     """
     orders: list[dict] = []
     n_impacted = 23
@@ -137,6 +142,17 @@ def build_orders(other_supplier_ids: list[str]) -> list[dict]:
         skus = RNG.sample(SKU_POOL, RNG.choice([3, 4]))
         orders.append(_order(num, "active", skus, sup, ordered, remaining))
         num += 1
+
+    # Guarantee each demo-scenario supplier has active impacted orders so every
+    # Disruption-Intake chip produces a real mitigation brief (not a halt).
+    # SUP-001's 23 orders / 48,200 units and the SUP-002 winner logic are untouched.
+    for sup in SCENARIO_SUPPLIERS:
+        for _ in range(2):
+            ordered = RNG.randint(6000, 18000)
+            remaining = round(ordered * RNG.uniform(0.80, 0.95))
+            skus = RNG.sample(SKU_POOL, RNG.choice([3, 4]))
+            orders.append(_order(num, "active", skus, sup, ordered, remaining))
+            num += 1
 
     return orders
 
