@@ -15,19 +15,23 @@ import { Card, SectionTitle, SeverityChip, ActionChip } from "@/components/ui";
 // Split by their VERIFIED, deterministic outcome (captured by running each
 // against the live workflow): left = Human Review (confidence < 85), right =
 // Auto-Execute (confidence >= 85 and winner ESG >= 60).
+// Left — large-impact disruptions: required capacity strains the best backup,
+// so confidence lands below 85 and the plan needs human sign-off.
 const REVIEW_SCENARIOS: string[] = [
   "A typhoon in Tanjung Pelepas, Malaysia is blocking shipments of automotive-grade MCUs from SUP-001 — the port is closed for 72 hours and 23 orders (48,200 units) can't ship.",
+  "An earthquake near Bandung, Indonesia has halted production of MEMS sensors at SUP-004 — the line is down 5 days and 14 orders (51,800 units) are at risk.",
+  "New trade sanctions on Hanoi, Vietnam are blocking exports of 32-bit microcontrollers from SUP-008 — customs is holding all shipments and 18 orders (52,400 units) are stranded.",
+  "A port closure at Singapore transshipment hub is delaying automotive sensor components from SUP-013 — nothing is transshipping for 36 hours and 16 orders (52,000 units) miss ETA.",
+  "A raw-material shortage affecting Medan, Indonesia has slowed output of AEC-Q100 MCUs and sensors from SUP-013 — output is at 40% capacity and 16 orders (52,000 units) slip 2 weeks.",
 ];
+// Right — smaller disruptions: a compliant backup has ample headroom, so
+// confidence clears the auto-execute threshold (>= 85, ESG >= 60).
 const AUTO_SCENARIOS: string[] = [
-  "An earthquake near Bandung, Indonesia has halted production of MEMS sensors at SUP-004 — the line is down 5 days and 12 orders (18,400 units) are at risk.",
-  "New trade sanctions on Hanoi, Vietnam are blocking exports of 32-bit microcontrollers from SUP-008 — customs is holding all shipments and 9 orders (15,000 units) are stranded.",
   "A port workers' strike in Busan, South Korea is delaying outbound AEC-Q100 MCUs from SUP-005 — no vessels are loading and 7 orders (11,200 units) miss this week's window.",
   "A ransomware attack on Jakarta, Indonesia has frozen MES systems for 32-bit MCUs at SUP-010 — production is paused 48 hours and 6 orders (9,800 units) are at risk.",
   "A monsoon flood in Penang, Malaysia has stopped fab output of 16-bit MCUs at SUP-006 — cleanrooms lost power and 11 orders (22,500 units) slip 10 days.",
   "A wildfire around Ulsan, South Korea has cut road access for IMU sensor modules from SUP-014 — trucks can't reach the warehouse and 4 orders (6,500 units) are stranded.",
   "An ESG compliance breach in Ho Chi Minh City, Vietnam has forced an audit of automotive MCUs from SUP-FAIL — supplier is suspended and 8 orders (13,200 units) must be re-sourced.",
-  "A port closure at Singapore transshipment hub is delaying automotive sensor components from SUP-013 — nothing is transshipping for 36 hours and 5 orders (8,400 units) miss ETA.",
-  "A raw-material shortage affecting Medan, Indonesia has slowed output of AEC-Q100 MCUs and sensors from SUP-013 — output is at 40% capacity and 14 orders (28,000 units) slip 2 weeks.",
 ];
 
 // --- workflow status helpers (mirrors /workflow page) ---

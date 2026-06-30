@@ -31,10 +31,14 @@ SKU_POOL = [
     "SEN-TEMP4", "REG-3V3", "DIODE-SCH", "XTAL-16M",
 ]
 DISRUPTED_SUPPLIER = "SUP-001"
-# Suppliers referenced by the Disruption-Intake demo scenarios that are NOT
-# SUP-001. Each is guaranteed a few active orders so its scenario produces a
-# real mitigation brief instead of a 'no impacted orders' halt.
-SCENARIO_SUPPLIERS = ["SUP-008", "SUP-010", "SUP-014", "SUP-FAIL", "SUP-013"]
+# Demo-scenario suppliers (besides SUP-001), split by intended workflow outcome.
+#   REVIEW_ORDER_SPECS: (supplier, n_orders, total_remaining) — HIGH required
+#     capacity drives confidence below the auto-threshold -> HUMAN_REVIEW.
+#   AUTO_SUPPLIERS: small volumes -> high confidence -> AUTO_EXECUTE.
+# (SUP-001 above is already HUMAN_REVIEW at 48,200 units across 23 orders.)
+# SUP-013 powers two scenarios (port closure + raw-material), so both inherit it.
+REVIEW_ORDER_SPECS = [("SUP-004", 14, 51800), ("SUP-008", 18, 52400), ("SUP-013", 16, 52000)]
+AUTO_SUPPLIERS = ["SUP-005", "SUP-010", "SUP-006", "SUP-014", "SUP-FAIL"]
 ORIGINAL_UNIT_PRICE = 2.50
 ROUTE = {"origin": "Shanghai", "destination": "Hamburg", "via_port": "Singapore"}
 
@@ -109,11 +113,11 @@ def build_suppliers() -> list[dict]:
 # M1 — orders
 # ---------------------------------------------------------------------------
 def build_orders(other_supplier_ids: list[str]) -> list[dict]:
-    """40 orders starting at ORD-1044.
+    """Orders starting at ORD-1044.
 
     23 depend on SUP-001 with quantity_remaining summing to exactly 48,200.
-    7 depend on unrelated suppliers (selective blast radius), and 10 more (2 each)
-    guarantee the non-SUP-001 demo-scenario suppliers have impacted orders.
+    REVIEW_ORDER_SPECS suppliers get high-volume orders (~52k each) so their
+    confidence falls below the auto-threshold; AUTO_SUPPLIERS get small volumes.
     """
     orders: list[dict] = []
     n_impacted = 23
@@ -135,20 +139,25 @@ def build_orders(other_supplier_ids: list[str]) -> list[dict]:
         orders.append(_order(num, "active", skus, DISRUPTED_SUPPLIER, ordered, remaining))
         num += 1
 
-    for i in range(7):
-        sup = other_supplier_ids[i % len(other_supplier_ids)]
-        ordered = RNG.randint(5000, 20000)
-        remaining = round(ordered * RNG.uniform(0.80, 0.95))
-        skus = RNG.sample(SKU_POOL, RNG.choice([3, 4]))
-        orders.append(_order(num, "active", skus, sup, ordered, remaining))
-        num += 1
+    # REVIEW suppliers: high required capacity (~52k) so confidence < 85 ->
+    # HUMAN_REVIEW, with a real winner brief (winner capacity still exceeds it).
+    for sup, n, total in REVIEW_ORDER_SPECS:
+        base = total // n
+        rema = [base] * n
+        for k in range(total - base * n):
+            rema[k] += 1
+        RNG.shuffle(rema)
+        for r in rema:
+            ordered = round(r / RNG.uniform(0.80, 0.95))
+            skus = RNG.sample(SKU_POOL, RNG.choice([3, 4]))
+            orders.append(_order(num, "active", skus, sup, ordered, r))
+            num += 1
 
-    # Guarantee each demo-scenario supplier has active impacted orders so every
-    # Disruption-Intake chip produces a real mitigation brief (not a halt).
-    # SUP-001's 23 orders / 48,200 units and the SUP-002 winner logic are untouched.
-    for sup in SCENARIO_SUPPLIERS:
+    # AUTO suppliers: small volumes -> ample backup headroom -> high confidence
+    # -> AUTO_EXECUTE. Two active orders each.
+    for sup in AUTO_SUPPLIERS:
         for _ in range(2):
-            ordered = RNG.randint(6000, 18000)
+            ordered = RNG.randint(3000, 5000)
             remaining = round(ordered * RNG.uniform(0.80, 0.95))
             skus = RNG.sample(SKU_POOL, RNG.choice([3, 4]))
             orders.append(_order(num, "active", skus, sup, ordered, remaining))
