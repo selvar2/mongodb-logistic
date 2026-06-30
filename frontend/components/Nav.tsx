@@ -18,6 +18,14 @@ const LINKS = [
   { href: "/docs", label: "Documentation", icon: "❖" },
 ];
 
+// Hidden from the sidebar for the focused demo (the pages still work by URL).
+// To restore a link, remove its href from this set.
+const HIDDEN = new Set<string>([
+  "/intake", "/classification", "/sourcing", "/workflow", "/brief",
+  "/data-explorer", "/audit", "/observability", "/graphrag", "/evaluation", "/docs",
+]);
+const VISIBLE_LINKS = LINKS.filter((l) => !HIDDEN.has(l.href));
+
 export function Nav() {
   const path = usePathname();
   return (
@@ -32,7 +40,7 @@ export function Nav() {
         </div>
       </div>
       <nav className="flex-1 overflow-y-auto py-3">
-        {LINKS.map((l) => {
+        {VISIBLE_LINKS.map((l) => {
           const active = path === l.href;
           return (
             <Link

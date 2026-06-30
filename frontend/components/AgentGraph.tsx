@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export type AgentStatus = "idle" | "active" | "done" | "fail";
 
 type Node = { id: string; label: string; tool: string; desc: string; x: number };
-const W = 168, H = 80, Y = 76, STEP = 202, X0 = 16;
+const W = 184, H = 80, Y = 76, STEP = 200, X0 = 8;
 const NODES: Node[] = [
   { id: "supervisor", label: "Supervisor", tool: "classify · route",
     desc: "Classifies severity & routes the squad; makes the final HITL decision.", x: X0 + 0 * STEP },
@@ -123,11 +123,11 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
               {/* left accent */}
               <rect x={n.x} y={Y} width={4} height={H} rx={2} fill={col} opacity={0.9} />
               {/* icon */}
-              <g transform={`translate(${n.x + 26}, ${Y + H / 2})`}><Icon id={n.id} color={col} /></g>
+              <g transform={`translate(${n.x + 24}, ${Y + H / 2})`}><Icon id={n.id} color={col} /></g>
               {/* text */}
-              <text x={n.x + 46} y={Y + 34} fill="#F4F8FF" fontSize="15" fontWeight={600}
+              <text x={n.x + 42} y={Y + 34} fill="#F4F8FF" fontSize="13" fontWeight={600}
                 fontFamily="var(--font-sans)">{n.label}</text>
-              <text x={n.x + 46} y={Y + 54} fill="#8A97B2" fontSize="12"
+              <text x={n.x + 42} y={Y + 54} fill="#8A97B2" fontSize="11.5"
                 fontFamily="ui-monospace, monospace">{n.tool}</text>
               {/* status dot */}
               <circle cx={n.x + W - 14} cy={Y + 18} r="4.5" fill={col}>

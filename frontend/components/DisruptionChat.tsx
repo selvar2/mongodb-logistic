@@ -34,6 +34,25 @@ const AUTO_SCENARIOS: string[] = [
   "An ESG compliance breach in Ho Chi Minh City, Vietnam has forced an audit of automotive MCUs from SUP-FAIL — supplier is suspended and 8 orders (13,200 units) must be re-sourced.",
 ];
 
+// Estimated time a human analyst needs to do this end-to-end manually: pull
+// impacted orders, shortlist alternative suppliers, vet ESG/sanctions, compare
+// cost & lead time, and write the brief. Conservative ~4 hours.
+const MANUAL_BASELINE_SECONDS = 4 * 60 * 60;
+const MANUAL_BASELINE_LABEL = "~4 hours";
+
+function fmtClock(ms: number | null): string {
+  if (!ms) return "—";
+  const d = new Date(ms);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function fmtElapsed(ms: number): string {
+  const s = ms / 1000;
+  if (s < 60) return `${s.toFixed(1)}s`;
+  const m = Math.floor(s / 60);
+  return `${m}m ${String(Math.round(s % 60)).padStart(2, "0")}s`;
+}
+
 // --- workflow status helpers (mirrors /workflow page) ---
 const AGENT_ORDER = ["supervisor", "impact_assessor", "sourcing", "compliance", "planner"];
 function nodeIdFor(agent: string): string | null {
@@ -86,7 +105,18 @@ export function DisruptionChat() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewErr, setReviewErr] = useState<string | null>(null);
+  // Response-time tracking (automated run vs a manual analyst baseline)
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [finishedAt, setFinishedAt] = useState<number | null>(null);
+  const [, setTick] = useState(0); // forces the live timer to re-render
   const unsubRef = useRef<(() => void) | null>(null);
+
+  // tick the live timer while a run is in flight
+  useEffect(() => {
+    if (!startedAt || finishedAt) return;
+    const id = setInterval(() => setTick((t) => t + 1), 100);
+    return () => clearInterval(id);
+  }, [startedAt, finishedAt]);
 
   // Stream whenever a thread is active.
   useEffect(() => {
@@ -112,6 +142,7 @@ export function DisruptionChat() {
       if (cancelled) return;
       setFinal(f);
       setDone(true);
+      setFinishedAt(Date.now());
       setMessages((m) => [...m, { role: "assistant", text: "✓ Mitigation brief ready — see the result below." }]);
     };
 
@@ -166,6 +197,8 @@ export function DisruptionChat() {
     if (!text || busy) return;
     setErr(null);
     setStarting(true);
+    setStartedAt(Date.now());
+    setFinishedAt(null);
     setInput("");
     setMessages((m) => [
       ...m,
@@ -220,6 +253,11 @@ export function DisruptionChat() {
   const action = final?.recommended_action ?? brief?.recommended_action;
   const isAutoExecute = action === "AUTO_EXECUTE";
   const isHumanReview = action === "HUMAN_REVIEW";
+
+  // Response-time comparison: measured automated run vs a manual analyst baseline.
+  const elapsedMs = startedAt ? (finishedAt ?? Date.now()) - startedAt : 0;
+  const elapsedSec = elapsedMs / 1000;
+  const speedup = finishedAt && elapsedSec > 0 ? Math.round(MANUAL_BASELINE_SECONDS / elapsedSec) : null;
 
   return (
     <Card className="mt-4">
@@ -316,6 +354,41 @@ export function DisruptionChat() {
                 <StatusLegend />
               </div>
               <AgentGraph statuses={statuses} />
+            </div>
+
+            {/* Response time — measured automated run vs a manual analyst baseline */}
+            <div className="rounded-xl border border-border/60 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="label">Response Time</div>
+                {finishedAt
+                  ? <span className="text-xs text-accent font-semibold">✓ Done</span>
+                  : <span className="text-xs text-info font-semibold animate-pulse">● Running…</span>}
+              </div>
+              <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+                <div>
+                  <div className="label">Started</div>
+                  <div className="text-sm font-mono">{fmtClock(startedAt)}</div>
+                </div>
+                <div>
+                  <div className="label">{finishedAt ? "Completed" : "Elapsed"}</div>
+                  <div className="text-sm font-mono">{finishedAt ? fmtClock(finishedAt) : "running"}</div>
+                </div>
+                <div>
+                  <div className="label">ResilioChain (automated)</div>
+                  <div className="text-2xl font-bold text-accent tabular-nums">{fmtElapsed(elapsedMs)}</div>
+                </div>
+                <div className="text-mutedfg text-xl font-light">vs</div>
+                <div>
+                  <div className="label">Manual analyst (est.)</div>
+                  <div className="text-2xl font-bold text-mutedfg">{MANUAL_BASELINE_LABEL}</div>
+                </div>
+                {speedup && (
+                  <div className="ml-auto text-right">
+                    <div className="label">Speed-up</div>
+                    <div className="text-2xl font-bold text-accent">≈{speedup.toLocaleString()}× faster</div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Mitigation Brief (left) + Live Timeline (right), side by side */}
