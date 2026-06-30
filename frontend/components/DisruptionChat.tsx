@@ -34,12 +34,6 @@ const AUTO_SCENARIOS: string[] = [
   "An ESG compliance breach in Ho Chi Minh City, Vietnam has forced an audit of automotive MCUs from SUP-FAIL — supplier is suspended and 8 orders (13,200 units) must be re-sourced.",
 ];
 
-// Estimated time a human analyst needs to do this end-to-end manually: pull
-// impacted orders, shortlist alternative suppliers, vet ESG/sanctions, compare
-// cost & lead time, and write the brief. Conservative ~4 hours.
-const MANUAL_BASELINE_SECONDS = 4 * 60 * 60;
-const MANUAL_BASELINE_LABEL = "~4 hours";
-
 function fmtClock(ms: number | null): string {
   if (!ms) return "—";
   const d = new Date(ms);
@@ -254,10 +248,8 @@ export function DisruptionChat() {
   const isAutoExecute = action === "AUTO_EXECUTE";
   const isHumanReview = action === "HUMAN_REVIEW";
 
-  // Response-time comparison: measured automated run vs a manual analyst baseline.
+  // Measured automated response time.
   const elapsedMs = startedAt ? (finishedAt ?? Date.now()) - startedAt : 0;
-  const elapsedSec = elapsedMs / 1000;
-  const speedup = finishedAt && elapsedSec > 0 ? Math.round(MANUAL_BASELINE_SECONDS / elapsedSec) : null;
 
   return (
     <Card className="mt-4">
@@ -364,7 +356,7 @@ export function DisruptionChat() {
                   ? <span className="text-xs text-accent font-semibold">✓ Done</span>
                   : <span className="text-xs text-info font-semibold animate-pulse">● Running…</span>}
               </div>
-              <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+              <div className="flex flex-wrap items-start gap-x-10 gap-y-3">
                 <div>
                   <div className="label">Started</div>
                   <div className="text-sm font-mono">{fmtClock(startedAt)}</div>
@@ -375,19 +367,8 @@ export function DisruptionChat() {
                 </div>
                 <div>
                   <div className="label">ResilioChain (automated)</div>
-                  <div className="text-2xl font-bold text-accent tabular-nums">{fmtElapsed(elapsedMs)}</div>
+                  <div className="text-sm font-mono font-bold text-accent">{fmtElapsed(elapsedMs)}</div>
                 </div>
-                <div className="text-mutedfg text-xl font-light">vs</div>
-                <div>
-                  <div className="label">Manual analyst (est.)</div>
-                  <div className="text-2xl font-bold text-mutedfg">{MANUAL_BASELINE_LABEL}</div>
-                </div>
-                {speedup && (
-                  <div className="ml-auto text-right">
-                    <div className="label">Speed-up</div>
-                    <div className="text-2xl font-bold text-accent">≈{speedup.toLocaleString()}× faster</div>
-                  </div>
-                )}
               </div>
             </div>
 
