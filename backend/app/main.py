@@ -19,6 +19,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    # Allow GitHub Codespaces forwarded frontend origins, e.g.
+    # https://<name>-3000.app.github.dev (and other *.github.dev preview hosts).
+    allow_origin_regex=r"https://.*\.(app\.github\.dev|githubpreview\.dev)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

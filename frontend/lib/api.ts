@@ -1,8 +1,24 @@
 // Typed client for the ResilioChain FastAPI backend (+ SSE helper).
 import type { StepEvent, WorkflowState } from "./types";
 
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8010";
+// Resolve the backend base URL.
+//  1. An explicit NEXT_PUBLIC_API_BASE always wins (set it to pin a host).
+//  2. In a browser on a GitHub Codespaces forwarded host
+//     (<name>-3000.app.github.dev) derive the sibling backend port host
+//     (<name>-8010.app.github.dev) — no hardcoded Codespace name needed.
+//  3. Otherwise fall back to localhost:8010 (local dev + in-Codespace SSR).
+function resolveApiBase(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_BASE;
+  if (explicit) return explicit;
+  if (typeof window !== "undefined") {
+    const { hostname, protocol } = window.location;
+    const m = hostname.match(/^(.*)-3000\.(.+)$/);
+    if (m) return `${protocol}//${m[1]}-8010.${m[2]}`;
+  }
+  return "http://localhost:8010";
+}
+
+export const API_BASE = resolveApiBase();
 
 async function jget<T>(path: string): Promise<T> {
   const r = await fetch(`${API_BASE}${path}`, { cache: "no-store" });

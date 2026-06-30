@@ -9,7 +9,9 @@ BACKEND="$REPO_ROOT/backend"
 FRONTEND="$REPO_ROOT/frontend"
 BACKEND_PORT="${BACKEND_PORT:-8010}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
-API_BASE="${NEXT_PUBLIC_API_BASE:-http://localhost:${BACKEND_PORT}}"
+# Leave NEXT_PUBLIC_API_BASE unset by default so the frontend auto-detects the
+# forwarded backend host in Codespaces (lib/api.ts). Export it only to pin a host.
+API_BASE="${NEXT_PUBLIC_API_BASE:-}"
 
 log() { printf '\033[1;35m[dev]\033[0m %s\n' "$*"; }
 
@@ -30,7 +32,7 @@ log "Starting backend on :${BACKEND_PORT}"
   > /tmp/resiliochain-backend.log 2>&1 &
 BE_PID=$!
 
-log "Starting frontend on :${FRONTEND_PORT} (API_BASE=${API_BASE})"
+log "Starting frontend on :${FRONTEND_PORT} (API_BASE=${API_BASE:-auto-detect})"
 ( cd "$FRONTEND" && NEXT_PUBLIC_API_BASE="$API_BASE" exec npm run dev -- --port "$FRONTEND_PORT" ) \
   > /tmp/resiliochain-frontend.log 2>&1 &
 FE_PID=$!

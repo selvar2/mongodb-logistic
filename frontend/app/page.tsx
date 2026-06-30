@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { api } from "@/lib/api";
+import { api, API_BASE } from "@/lib/api";
 import { Card, SectionTitle, Stat, SeverityChip } from "@/components/ui";
 
 export default function Dashboard() {
@@ -19,7 +19,7 @@ export default function Dashboard() {
         ]);
         setHealth(h); setSuppliers(s.items); setDisruptions(d.items);
       } catch (e: any) {
-        setErr(`Cannot reach API at ${process.env.NEXT_PUBLIC_API_BASE}. Is the backend running? (${e.message})`);
+        setErr(`Cannot reach API at ${API_BASE}. Is the backend running? (${e.message})`);
       }
     })();
   }, []);
