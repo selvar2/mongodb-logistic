@@ -139,7 +139,7 @@ export default function Docs() {
 
         <Card>
           <SectionTitle kicker="Reference" title="More Documentation" />
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <a
               href={`${base}/docs`}
               target="_blank"
@@ -150,20 +150,21 @@ export default function Docs() {
               <div className="font-semibold mb-1">Interactive API Docs</div>
               <div className="text-xs text-mutedfg">Swagger UI · {apiHost}/docs</div>
             </a>
-            <div className="card p-4">
-              <div className="text-2xl mb-2">🛠</div>
-              <div className="font-semibold mb-1">Technical Guide</div>
-              <div className="text-xs text-mutedfg font-mono">docs/technical.html</div>
-            </div>
-            <div className="card p-4">
-              <div className="text-2xl mb-2">📘</div>
-              <div className="font-semibold mb-1">Non-Technical Overview</div>
-              <div className="text-xs text-mutedfg font-mono">docs/non-technical.html</div>
-            </div>
+            <a
+              href="/hands-on-guide.html"
+              target="_blank"
+              rel="noreferrer"
+              className="card p-4 hover:border-accent/50 transition-colors block"
+            >
+              <div className="text-2xl mb-2">📖</div>
+              <div className="font-semibold mb-1">Hands-On Guide</div>
+              <div className="text-xs text-mutedfg">Intake &amp; sourcing · simulate scenarios</div>
+            </a>
           </div>
           <p className="text-xs text-mutedfg mt-3">
-            The full technical and non-technical guides live in the repo under{" "}
-            <span className="font-mono">docs/</span>.
+            The hands-on guide walks new users through the Disruption Intake and Alternative
+            Sourcing screens with copy-paste positive/negative scenarios. Source lives in the
+            repo under <span className="font-mono">docs/hands-on-guide.html</span>.
           </p>
         </Card>
       </motion.div>
