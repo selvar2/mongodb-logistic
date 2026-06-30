@@ -39,22 +39,32 @@ app.include_router(charts.router)
 
 @app.on_event("startup")
 def _warmup_bedrock() -> None:
-    """Fire a tiny Bedrock call in the background so the first real workflow does
-    not pay the model cold-start latency (~60s observed), which otherwise blows
-    past the SSE stream timeout and shows an empty brief."""
+    """Keep Bedrock warm so no real workflow pays the model cold-start/throttle
+    latency (~60s observed) that otherwise outlives the SSE stream and shows an
+    empty brief. Warms up once on startup, then pings every few minutes."""
     from app.config import settings
     if settings.llm_mode == "mock":
         return
+    import os
     import threading
+    import time
+
+    interval = float(os.environ.get("BEDROCK_KEEPALIVE_SECONDS", "180"))
 
     def _go() -> None:
-        try:
-            from app.llm import bedrock
-            bedrock.complete_text("You are a warmup probe.", "Reply with: ok",
-                                  max_tokens=5)
-            print("[warmup] Bedrock warmed up.")
-        except Exception as exc:  # never block startup on warmup
-            print(f"[warmup] Bedrock warmup skipped: {exc}")
+        from app.llm import bedrock
+        first = True
+        while True:
+            try:
+                bedrock.complete_text("You are a warmup probe.", "Reply with: ok",
+                                      max_tokens=5)
+                if first:
+                    print("[warmup] Bedrock warmed up; keep-alive every "
+                          f"{int(interval)}s.")
+                    first = False
+            except Exception as exc:  # never let keep-alive crash anything
+                print(f"[warmup] Bedrock keep-alive skipped: {exc}")
+            time.sleep(interval)
 
     threading.Thread(target=_go, daemon=True).start()
 

@@ -24,11 +24,21 @@ class LLMError(Exception):
 @lru_cache
 def _client():
     import boto3
+    from botocore.config import Config
+    # Bound latency so a cold/throttled Bedrock call can't hang for ~60s+ (which
+    # otherwise outlives the SSE stream and looks "stuck"). Adaptive retries
+    # smooth over transient throttling without unbounded backoff.
+    cfg = Config(
+        connect_timeout=10,
+        read_timeout=40,
+        retries={"max_attempts": 3, "mode": "adaptive"},
+    )
     return boto3.client(
         "bedrock-runtime",
         region_name=settings.aws_region,
         aws_access_key_id=settings.aws_access_key_id or None,
         aws_secret_access_key=settings.aws_secret_access_key or None,
+        config=cfg,
     )
 
 

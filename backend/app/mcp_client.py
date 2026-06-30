@@ -7,6 +7,10 @@ works, whether or not the MCP server is running.
 
 Config (env):
   MCP_ENABLED   = "true" | "false"  (default true — attempt MCP, fall back on failure)
+  MCP_ENABLED   = "true" | "false"  (default FALSE — use the reliable in-process
+                  Python tools directly. Set true only when the MCP server is
+                  actually running, e.g. for the MCP-transport demo. This avoids
+                  attempting a dead 127.0.0.1:8765 on every fresh process.)
   MCP_URL       = base MCP endpoint (default http://127.0.0.1:8765/mcp)
 
 This module exposes the same function names the agents already use, so wiring is a
@@ -27,7 +31,7 @@ from app.mcp_tools.plans import update_plan_status as _update_plan
 from app.mcp_tools.plans import write_plan as _write_plan
 from app.mcp_tools.supplier_vector_search import supplier_vector_search as _vsearch
 
-MCP_ENABLED = os.environ.get("MCP_ENABLED", "true").lower() == "true"
+MCP_ENABLED = os.environ.get("MCP_ENABLED", "false").lower() == "true"
 MCP_URL = os.environ.get("MCP_URL", "http://127.0.0.1:8765/mcp")
 _TIMEOUT = float(os.environ.get("MCP_TIMEOUT", "8"))
 
