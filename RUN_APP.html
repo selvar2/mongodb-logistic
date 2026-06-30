@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RUN_APP — ResilioChain</title>
+<style>
+  :root{
+    --bg:#0a0d18; --panel:#121626; --panel2:#171c2f; --border:#262d45;
+    --text:#e6e9f2; --muted:#9aa3bd; --accent:#7c6cff; --accent2:#36d1c4;
+    --green:#39d98a; --red:#ff6b7d; --amber:#ffcf6b; --code:#0e1322;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:radial-gradient(1200px 600px at 80% -10%,#1a1240 0%,transparent 60%),var(--bg);
+    color:var(--text);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+    padding:0 0 80px;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+  header{padding:54px 22px 30px;max-width:920px;margin:0 auto}
+  .eyebrow{letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-size:12px;font-weight:700}
+  h1{font-size:40px;line-height:1.1;margin:.25em 0 .15em;
+     background:linear-gradient(90deg,#fff,#b9b3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);font-size:17px;max-width:680px}
+  h2{font-size:24px;margin:42px 0 14px;padding-top:10px;border-top:1px solid var(--border)}
+  h3{font-size:18px;margin:26px 0 8px;color:#cfd4ea}
+  p{margin:10px 0}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{background:var(--code);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font:13.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#d6dcff}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:12px;padding:16px 18px;overflow:auto;margin:14px 0;position:relative}
+  pre code{background:none;border:0;padding:0;color:#cdd6ff;font-size:13.5px}
+  .panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin:18px 0}
+  .tldr{border-color:#3a3470;box-shadow:0 0 0 1px #2a2550 inset,0 18px 40px -24px #6c5cff}
+  .callout{border-left:4px solid var(--amber);background:#1c1830;border-radius:0 12px 12px 0;padding:16px 18px;margin:18px 0}
+  .callout.bad{border-left-color:var(--red)}
+  .callout.good{border-left-color:var(--green)}
+  .callout h3{margin-top:0}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+  tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;margin-right:6px}
+  .tag.ok{background:rgba(57,217,138,.14);color:var(--green);border:1px solid rgba(57,217,138,.35)}
+  .tag.no{background:rgba(255,107,125,.13);color:var(--red);border:1px solid rgba(255,107,125,.35)}
+  .pill{font-family:ui-monospace,monospace;font-size:13px;background:var(--code);border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:#9fe7df}
+  .copy{position:absolute;top:9px;right:9px;background:#222a44;color:#cdd6ff;border:1px solid var(--border);border-radius:7px;font-size:12px;padding:4px 10px;cursor:pointer}
+  .copy:hover{background:#2c3656}
+  .copy.done{color:var(--green);border-color:var(--green)}
+  footer{color:var(--muted);font-size:13px;text-align:center;margin-top:50px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}h1{font-size:32px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Operational Guide</div>
+  <h1>Run ResilioChain</h1>
+  <p class="sub">How to start the app, what's already installed, which scripts run
+  automatically — and the one mistake that triggers the <em>"Cannot reach API"</em>
+  error in Codespaces.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="panel tldr">
+    <h3 style="margin-top:0">TL;DR — the only command you need</h3>
+    <pre><code>bash scripts/dev.sh</code></pre>
+    <p style="margin-bottom:0">Starts the FastAPI backend on <span class="pill">:8010</span> and the
+    Next.js frontend on <span class="pill">:3000</span> together, streams both logs, stops both on
+    <code>Ctrl-C</code>. Dependencies are already installed — no setup step needed. Then open the
+    <strong>forwarded :3000 URL</strong> from the VS Code <strong>PORTS</strong> tab. Do <strong>not</strong>
+    type <code>localhost:3000</code> into a browser on your own machine.</p>
+  </div>
+
+  <h2 id="gotcha">⚠️ The #1 gotcha: never pin <code>NEXT_PUBLIC_API_BASE</code> to localhost</h2>
+  <div class="callout bad">
+    <h3>The error</h3>
+    <p style="margin-bottom:0">Cannot reach API at <code>http://localhost:8010</code>. Is the backend
+    running? (Failed to fetch)</p>
+  </div>
+  <p>This is almost always caused by starting the frontend like this:</p>
+  <pre><code># ❌ WRONG in Codespaces — pins the API to a host the BROWSER can't reach
+NEXT_PUBLIC_API_BASE=http://localhost:8010 npm run dev</code></pre>
+
+  <h3>Why it breaks</h3>
+  <p>The fetch runs <strong>in your browser</strong>, on your machine — not in the container.
+  <code>localhost:8010</code> from the browser points at <em>your laptop</em>, where nothing is listening.
+  The backend is reachable only via its <strong>forwarded</strong> Codespaces host
+  <code>https://&lt;codespace&gt;-8010.app.github.dev</code>.</p>
+
+  <p>The frontend already figures this out on its own —
+  <a href="frontend/lib/api.ts">frontend/lib/api.ts</a>:</p>
+  <pre><code>function resolveApiBase(): string {
+  const explicit = process.env.NEXT_PUBLIC_API_BASE;
+  if (explicit) return explicit;                 // an explicit value ALWAYS wins
+  if (typeof window !== "undefined") {
+    const { hostname, protocol } = window.location;
+    const m = hostname.match(/^(.*)-3000\.(.+)$/); // &lt;name&gt;-3000.app.github.dev
+    if (m) return `${protocol}//${m[1]}-8010.${m[2]}`; // -&gt; &lt;name&gt;-8010.app.github.dev
+  }
+  return "http://localhost:8010";                // local dev + in-container SSR
+}</code></pre>
+
+  <div class="callout good">
+    <h3>The rule</h3>
+    <p style="margin-bottom:0"><strong>Leave <code>NEXT_PUBLIC_API_BASE</code> unset in Codespaces.</strong>
+    The browser then derives <code>…-8010.app.github.dev</code> automatically. Set it explicitly <em>only</em>
+    to deliberately pin the backend to a fixed host (e.g. a deployed API).</p>
+  </div>
+
+  <h3>Correct ways to run the frontend</h3>
+  <pre><code>bash scripts/dev.sh          # ✅ recommended — leaves the var unset for you
+cd frontend &amp;&amp; npm run dev   # ✅ also fine — var unset, browser auto-detects</code></pre>
+  <p style="color:var(--muted);font-size:14px">CORS is already configured: the backend allows
+  <code>https://*.app.github.dev</code> (see <a href="backend/app/main.py">backend/app/main.py</a>), and
+  port <strong>8010</strong> is forwarded by the devcontainer.</p>
+
+  <h2 id="installed">What's already installed (don't reinstall)</h2>
+  <table>
+    <tr><th>Component</th><th>Where</th><th>Installed by</th></tr>
+    <tr><td>Backend Python venv + deps (FastAPI, LangGraph, PyMongo, boto3…)</td><td><code>backend/.venv/</code></td><td><code>.devcontainer/setup.sh</code></td></tr>
+    <tr><td>Frontend npm deps (Next.js 14, React, Tailwind, Framer Motion…)</td><td><code>frontend/node_modules/</code></td><td><code>.devcontainer/setup.sh</code></td></tr>
+  </table>
+  <p>Dependencies live on the persistent <code>/workspaces</code> volume, so a relaunched Codespace
+  <strong>does not</strong> reinstall from scratch. Runtimes: Python 3.11+ and Node 20, pinned in
+  <a href=".devcontainer/devcontainer.json">.devcontainer/devcontainer.json</a>. If something is genuinely
+  missing, the runner and poststart hook reinstall it for you.</p>
+
+  <h2 id="scripts">The lifecycle scripts (run automatically)</h2>
+  <p>Wired up in <a href=".devcontainer/devcontainer.json">.devcontainer/devcontainer.json</a>:</p>
+
+  <h3>1 · Prebuild / first create — <code>onCreateCommand</code></h3>
+  <p><a href=".devcontainer/setup.sh">.devcontainer/setup.sh</a> runs once on container creation (and during
+  Codespaces <strong>prebuilds</strong>). Idempotent:</p>
+  <ul>
+    <li>Creates <code>backend/.venv</code> and <code>pip install -r requirements.txt</code> — skipped if
+      <code>requirements.txt</code> unchanged (sha256 stamp at <code>.venv/.deps-installed</code>).</li>
+    <li>Runs <code>npm ci</code> in <code>frontend/</code> (falls back to <code>npm install</code>) — skipped if
+      <code>package-lock.json</code> unchanged (stamp at <code>node_modules/.lock-hash</code>).</li>
+    <li>Warns if the repo-root <code>.env</code> is missing.</li>
+  </ul>
+
+  <h3>2 · Every start — <code>postStartCommand</code></h3>
+  <p><a href=".devcontainer/poststart.sh">.devcontainer/poststart.sh</a> runs on <strong>every</strong> Codespace
+  start. Near-instant when deps are present; only re-invokes <code>setup.sh</code> if the venv or
+  <code>node_modules</code> is missing. Ends by printing
+  <code>Ready. Start the stack with:  bash scripts/dev.sh</code>.</p>
+
+  <h3>3 · Run the app — <code>scripts/dev.sh</code></h3>
+  <p><a href="scripts/dev.sh">scripts/dev.sh</a> — the one-command dev runner. It:</p>
+  <ul>
+    <li>runs <code>setup.sh</code> first <strong>only if</strong> <code>backend/.venv/bin/uvicorn</code> is missing;</li>
+    <li>starts backend: <code>uvicorn app.main:app --host 0.0.0.0 --port 8010</code>;</li>
+    <li>starts frontend: <code>npm run dev -- --port 3000</code> with <strong><code>NEXT_PUBLIC_API_BASE</code> left unset</strong>;</li>
+    <li>logs to <code>/tmp/resiliochain-backend.log</code> and <code>/tmp/resiliochain-frontend.log</code>;</li>
+    <li>traps <code>Ctrl-C</code> to stop both.</li>
+  </ul>
+  <pre><code>BACKEND_PORT=8010 FRONTEND_PORT=3000 bash scripts/dev.sh
+NEXT_PUBLIC_API_BASE=https://api.example.com bash scripts/dev.sh   # pin on purpose</code></pre>
+
+  <h2 id="env">First-time prerequisite: <code>.env</code></h2>
+  <p>Secrets are <strong>not</strong> committed. Create the repo-root <code>.env</code> once:</p>
+  <pre><code>cp .env.example .env
+# then fill: MONGODB_URI, MONGODB_DB, AWS creds + AWS_REGION, LLM_MODE</code></pre>
+  <div class="grid">
+    <div class="panel"><span class="tag ok">LLM_MODE=bedrock</span><p style="margin:8px 0 0;font-size:14px">Real AWS Bedrock (Claude Haiku 4.5). Needs AWS creds.</p></div>
+    <div class="panel"><span class="tag ok">LLM_MODE=mock</span><p style="margin:8px 0 0;font-size:14px">Runs the whole graph offline — no credentials needed.</p></div>
+  </div>
+  <p style="color:var(--muted);font-size:14px">The backend loads <code>.env</code> from the repo root automatically
+  (<a href="backend/app/config.py">backend/app/config.py</a>).</p>
+
+  <h2 id="verify">Verify it's actually up</h2>
+  <pre><code># Backend (inside the container)
+curl -s http://localhost:8010/health
+
+# Backend via the forwarded host (what the BROWSER uses)
+curl -s "https://${CODESPACE_NAME}-8010.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/health"
+
+# Frontend
+curl -s http://localhost:3000/ | grep -o '&lt;title&gt;[^&lt;]*&lt;/title&gt;'</code></pre>
+  <p>Then open the dashboard, go to <strong>/workflow</strong> → "Run Demo Workflow" for the live agent SSE
+  stream, or <strong>/brief</strong> to generate a mitigation brief.</p>
+
+  <h2 id="trouble">Quick troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+    <tr><td>"Cannot reach API at http://localhost:8010" in the browser</td><td>Frontend started with <code>NEXT_PUBLIC_API_BASE=http://localhost:8010</code></td><td>Restart with <code>bash scripts/dev.sh</code>, then hard-refresh (Cmd/Ctrl+Shift+R)</td></tr>
+    <tr><td>Port 8010 not reachable from browser</td><td>Port not forwarded / set to Private</td><td>Forward <strong>8010</strong> in the PORTS tab</td></tr>
+    <tr><td>Backend won't start, Mongo errors</td><td><code>.env</code> missing or wrong <code>MONGODB_URI</code></td><td><code>cp .env.example .env</code> &amp; fill; or <code>LLM_MODE=mock</code></td></tr>
+    <tr><td>Stale API host after fixing</td><td>Browser cached old JS bundle</td><td>Hard-refresh (Cmd/Ctrl+Shift+R)</td></tr>
+    <tr><td><code>uvicorn: command not found</code></td><td>venv not installed</td><td><code>bash .devcontainer/setup.sh</code></td></tr>
+  </table>
+
+  <footer>ResilioChain — companion to <strong>RUN_APP.md</strong>. MongoDB Agentic AI Hackathon.</footer>
+</div>
+
+<script>
+  // Add copy buttons to every code block
+  document.querySelectorAll('pre').forEach(function(pre){
+    var btn=document.createElement('button');
+    btn.className='copy';btn.textContent='Copy';
+    btn.addEventListener('click',function(){
+      navigator.clipboard.writeText(pre.querySelector('code').innerText).then(function(){
+        btn.textContent='Copied';btn.classList.add('done');
+        setTimeout(function(){btn.textContent='Copy';btn.classList.remove('done');},1500);
+      });
+    });
+    pre.appendChild(btn);
+  });
+</script>
+</body>
+</html>
