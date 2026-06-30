@@ -70,6 +70,12 @@ export function DisruptionChat() {
   const [done, setDone] = useState(false);
   const [starting, setStarting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  // Human-in-the-loop review state (only for HUMAN_REVIEW briefs)
+  const [decision, setDecision] = useState<null | "approved" | "rejected">(null);
+  const [showReject, setShowReject] = useState(false);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewErr, setReviewErr] = useState<string | null>(null);
   const unsubRef = useRef<(() => void) | null>(null);
 
   // Stream whenever a thread is active.
@@ -78,6 +84,11 @@ export function DisruptionChat() {
     setSteps([]);
     setFinal(null);
     setDone(false);
+    // reset review state for the new run
+    setDecision(null);
+    setShowReject(false);
+    setReviewComment("");
+    setReviewErr(null);
     const unsub = streamWorkflow(
       threadId,
       (s) => setSteps((prev) => [...prev, s]),
@@ -128,10 +139,36 @@ export function DisruptionChat() {
     }
   }
 
+  async function submitDecision(kind: "approved" | "rejected", comment?: string) {
+    if (!threadId || reviewBusy) return;
+    setReviewBusy(true);
+    setReviewErr(null);
+    try {
+      await api.decision({ thread_id: threadId, decision: kind, comment });
+      setDecision(kind);
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          text: kind === "approved"
+            ? "✓ Plan approved — dispatching the reroute for execution."
+            : "✕ Plan rejected — your feedback was recorded for the planner.",
+        },
+      ]);
+    } catch (e: any) {
+      setReviewErr(`Failed to record decision: ${e.message}`);
+    } finally {
+      setReviewBusy(false);
+    }
+  }
+
   const statuses = deriveStatuses(steps, done);
   const brief = final?.mitigation_brief;
   const rawConf = final?.confidence_score ?? brief?.confidence_score;
   const confidence = rawConf == null ? null : rawConf <= 1 ? Math.round(rawConf * 100) : Math.round(rawConf);
+  const action = final?.recommended_action ?? brief?.recommended_action;
+  const isAutoExecute = action === "AUTO_EXECUTE";
+  const isHumanReview = action === "HUMAN_REVIEW";
 
   return (
     <Card className="mt-4">
@@ -274,6 +311,78 @@ export function DisruptionChat() {
                     )}
                   </div>
                 </div>
+
+                {/* HUMAN_REVIEW → approve / reject. AUTO_EXECUTE → no action. */}
+                {isHumanReview && (
+                  <div className="mt-5 border-t border-border/50 pt-4">
+                    {decision ? (
+                      <div className={`flex items-center gap-2 text-sm font-medium ${
+                        decision === "approved" ? "text-accent" : "text-danger"
+                      }`}>
+                        {decision === "approved" ? "✓ Plan approved" : "✕ Plan rejected"}
+                        {decision === "rejected" && reviewComment.trim() && (
+                          <span className="text-mutedfg font-normal">— “{reviewComment.trim()}”</span>
+                        )}
+                      </div>
+                    ) : (
+                      <>
+                        <div className="label mb-2">Human Review Required — approve or reject this plan</div>
+                        {!showReject ? (
+                          <div className="flex flex-wrap gap-3">
+                            <button
+                              onClick={() => submitDecision("approved")}
+                              disabled={reviewBusy}
+                              className="btn-primary disabled:opacity-50"
+                            >
+                              {reviewBusy ? "Submitting…" : "✓ Approve"}
+                            </button>
+                            <button
+                              onClick={() => setShowReject(true)}
+                              disabled={reviewBusy}
+                              className="rounded-xl border border-danger/50 bg-danger/10 text-danger px-4 py-2 text-sm font-medium hover:bg-danger/20 transition-colors disabled:opacity-50"
+                            >
+                              ✕ Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <textarea
+                              value={reviewComment}
+                              onChange={(e) => setReviewComment(e.target.value)}
+                              rows={3}
+                              autoFocus
+                              placeholder="Why are you rejecting this plan? Add feedback for the planner…"
+                              className="input min-h-[80px] resize-y w-full"
+                            />
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                onClick={() => submitDecision("rejected", reviewComment)}
+                                disabled={reviewBusy || !reviewComment.trim()}
+                                className="rounded-xl border border-danger/50 bg-danger/10 text-danger px-4 py-2 text-sm font-medium hover:bg-danger/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                              >
+                                {reviewBusy ? "Submitting…" : "Submit rejection"}
+                              </button>
+                              <button
+                                onClick={() => { setShowReject(false); setReviewComment(""); }}
+                                disabled={reviewBusy}
+                                className="rounded-xl border border-border/70 px-4 py-2 text-sm text-mutedfg hover:text-fg hover:border-border transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {reviewErr && <div className="text-danger text-sm mt-2">{reviewErr}</div>}
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {isAutoExecute && (
+                  <div className="mt-5 border-t border-border/50 pt-4 text-xs text-mutedfg">
+                    ✓ Auto-executed — no action required.
+                  </div>
+                )}
               </motion.div>
             )}
           </motion.div>

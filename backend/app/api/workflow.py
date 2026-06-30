@@ -15,7 +15,7 @@ from sse_starlette.sse import EventSourceResponse
 from app.agents.graph import run_workflow
 from app.config import settings
 from app.db.mongo import col
-from app.mcp_tools import checkpoints, plans
+from app.mcp_tools import audit, checkpoints, plans
 
 router = APIRouter(tags=["workflow"])
 
@@ -68,6 +68,40 @@ def start_async(body: RunIn) -> dict:
 
     threading.Thread(target=_worker, daemon=True).start()
     return {"thread_id": thread_id, "status": "running"}
+
+
+class DecisionIn(BaseModel):
+    thread_id: str
+    decision: str  # approved | rejected
+    comment: Optional[str] = None
+
+
+@router.post("/workflow/decision")
+def decision(body: DecisionIn) -> dict:
+    """Record a human-in-the-loop decision for a HUMAN_REVIEW plan.
+
+    Approval needs no comment; rejection requires feedback. The decision is
+    written to audit_logs and the mitigation plan's status is updated.
+    """
+    if body.decision not in ("approved", "rejected"):
+        raise HTTPException(422, "decision must be 'approved' or 'rejected'")
+    comment = (body.comment or "").strip()
+    if body.decision == "rejected" and not comment:
+        raise HTTPException(422, "rejection requires a comment")
+
+    audit.log(
+        body.thread_id, agent="human_reviewer", action="hitl_decision",
+        input_summary=comment,
+        output_summary=f"decision={body.decision}",
+        level="warn" if body.decision == "rejected" else "info",
+    )
+    updated = col(settings.COL_PLANS).update_one(
+        {"thread_id": body.thread_id},
+        {"$set": {"status": body.decision, "review_comment": comment,
+                  "reviewed_at": datetime.now(timezone.utc)}},
+    ).modified_count
+    return {"ok": True, "thread_id": body.thread_id,
+            "decision": body.decision, "plan_updated": bool(updated)}
 
 
 @router.get("/workflow/result/{thread_id}")

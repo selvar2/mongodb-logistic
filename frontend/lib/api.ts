@@ -62,6 +62,8 @@ export const api = {
     jpost<WorkflowState>("/workflow/run", body),
   startWorkflow: (body: { alert_text?: string; disruption_id?: string }) =>
     jpost<{ thread_id: string; status: string }>("/workflow/start", body),
+  decision: (body: { thread_id: string; decision: "approved" | "rejected"; comment?: string }) =>
+    jpost<{ ok: boolean; decision: string; plan_updated: boolean }>("/workflow/decision", body),
   result: (thread_id: string) => jget<WorkflowState>(`/workflow/result/${thread_id}`),
   plans: (thread_id: string) =>
     jget<{ count: number; items: any[] }>(`/plans/${thread_id}`),
