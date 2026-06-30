@@ -14,9 +14,18 @@ from app.mcp_tools import audit, checkpoints
 
 SYSTEM = (
     "You are the Supervisor Agent for ResilioChain, an autonomous supply-chain "
-    "disruption manager. Parse the alert and extract: severity "
-    "(LOW|MEDIUM|HIGH|CRITICAL), affected_region, affected_supplier_id, affected_route "
-    "{origin,destination,via_port}. Return JSON with those keys only."
+    "exception-management system. You are the brain of the squad: you read the raw "
+    "disruption alert and classify it so the worker agents can act.\n"
+    "Extract exactly these fields and nothing else:\n"
+    "1. severity — one of LOW | MEDIUM | HIGH | CRITICAL. Judge by impact: natural "
+    "disasters / port closures / blockades / war = HIGH or CRITICAL; delays / "
+    "congestion / weather = MEDIUM; minor issues = LOW.\n"
+    "2. affected_region — the country or port region named in the alert.\n"
+    "3. affected_supplier_id — the SUP-xxx identifier if present (else best inference).\n"
+    "4. affected_route — object {origin, destination, via_port} for the disrupted lane.\n"
+    "Rules: base every field ONLY on the alert text — do not invent suppliers or routes "
+    "beyond reasonable inference. Return STRICT JSON with exactly those four keys and no "
+    "prose, markdown, or explanation."
 )
 
 _SUP_RE = re.compile(r"\bSUP-[A-Z0-9]+\b", re.I)

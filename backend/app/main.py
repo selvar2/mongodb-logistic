@@ -51,19 +51,32 @@ def _warmup_bedrock() -> None:
 
     interval = float(os.environ.get("BEDROCK_KEEPALIVE_SECONDS", "180"))
 
+    # Warm every distinct model in use (Haiku workers + Sonnet supervisor/planner)
+    # so no agent pays a cold-start on the first real run.
+    models = sorted({
+        settings.bedrock_model_id,
+        settings.bedrock_model_supervisor,
+        settings.bedrock_model_planner,
+        settings.bedrock_model_impact,
+        settings.bedrock_model_sourcing,
+        settings.bedrock_model_compliance,
+    } - {""})
+
     def _go() -> None:
         from app.llm import bedrock
         first = True
         while True:
-            try:
-                bedrock.complete_text("You are a warmup probe.", "Reply with: ok",
-                                      max_tokens=5)
-                if first:
-                    print("[warmup] Bedrock warmed up; keep-alive every "
-                          f"{int(interval)}s.")
-                    first = False
-            except Exception as exc:  # never let keep-alive crash anything
-                print(f"[warmup] Bedrock keep-alive skipped: {exc}")
+            for mid in models:
+                try:
+                    bedrock.complete_text("You are a warmup probe.", "Reply with: ok",
+                                          model=mid, max_tokens=5)
+                except Exception as exc:  # never let keep-alive crash anything
+                    print(f"[warmup] keep-alive skipped for {mid}: {exc}")
+            if first:
+                print(f"[warmup] Bedrock warmed up ({len(models)} model(s): "
+                      f"{', '.join(m.split('.')[-1] for m in models)}); "
+                      f"keep-alive every {int(interval)}s.")
+                first = False
             time.sleep(interval)
 
     threading.Thread(target=_go, daemon=True).start()

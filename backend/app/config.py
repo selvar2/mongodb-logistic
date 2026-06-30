@@ -29,9 +29,16 @@ class Settings:
     aws_access_key_id: str = _get("AWS_ACCESS_KEY_ID")
     aws_secret_access_key: str = _get("AWS_SECRET_ACCESS_KEY")
     aws_region: str = _get("AWS_REGION", "us-east-1")
+    # bedrock_model_id is the default/worker model (Haiku). The Supervisor and
+    # Mitigation Planner do complex multi-step reasoning and use a stronger Sonnet
+    # model; the three worker agents (impact/sourcing/compliance) use the Haiku
+    # default. See ai-agent-req-event.pdf for the per-agent model assignment.
     bedrock_model_id: str = _get("BEDROCK_MODEL_ID")
     bedrock_model_supervisor: str = _get("BEDROCK_MODEL_SUPERVISOR") or _get("BEDROCK_MODEL_ID")
     bedrock_model_planner: str = _get("BEDROCK_MODEL_PLANNER") or _get("BEDROCK_MODEL_ID")
+    bedrock_model_impact: str = _get("BEDROCK_MODEL_IMPACT") or _get("BEDROCK_MODEL_ID")
+    bedrock_model_sourcing: str = _get("BEDROCK_MODEL_SOURCING") or _get("BEDROCK_MODEL_ID")
+    bedrock_model_compliance: str = _get("BEDROCK_MODEL_COMPLIANCE") or _get("BEDROCK_MODEL_ID")
 
     # LLM behavior
     llm_mode: str = _get("LLM_MODE", "bedrock").lower()  # bedrock | mock
