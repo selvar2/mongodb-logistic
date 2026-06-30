@@ -216,20 +216,14 @@ export function DisruptionChat() {
         <div className="space-y-3">
           <div className="label">Example scenarios — tap to run</div>
           <div className="grid sm:grid-cols-2 gap-4">
-            {/* Left: Human Review */}
+            {/* Left column (Human Review) */}
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-warn">
-                <span>⚠</span> Needs Human Review
-              </div>
               {REVIEW_SCENARIOS.map((text) => (
                 <ScenarioChip key={text} text={text} onRun={runAlert} busy={busy} tone="warn" />
               ))}
             </div>
-            {/* Right: Auto-Execute */}
+            {/* Right column (Auto-Execute) */}
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent">
-                <span>⚡</span> Auto-Execute
-              </div>
               {AUTO_SCENARIOS.map((text) => (
                 <ScenarioChip key={text} text={text} onRun={runAlert} busy={busy} tone="accent" />
               ))}
@@ -279,8 +273,6 @@ export function DisruptionChat() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 space-y-6"
           >
-            <div className="text-xs text-mutedfg font-mono">thread {threadId}</div>
-
             <div className="rounded-xl border border-border/60 p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="label">Agent Graph</div>
@@ -289,26 +281,17 @@ export function DisruptionChat() {
               <AgentGraph statuses={statuses} />
             </div>
 
-            <div className="rounded-xl border border-border/60 p-5">
-              <div className="label mb-3">Live Timeline</div>
-              {steps.length === 0 ? (
-                <div className="text-mutedfg text-sm">Waiting for agent steps…</div>
-              ) : (
-                <div className="max-h-[360px] overflow-y-auto pr-1">
-                  <Timeline steps={steps} />
-                </div>
-              )}
-            </div>
-
-            {done && final && (
-              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                className="rounded-xl border border-accent/30 bg-accent/5 p-4">
+            {/* Mitigation Brief (left) + Live Timeline (right), side by side */}
+            <div className="grid lg:grid-cols-2 gap-4 items-start">
+              {/* Left: Mitigation Brief */}
+              <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
                 <div className="label mb-3">Mitigation Brief</div>
-                <div className="grid md:grid-cols-4 gap-6 items-center">
+                {done && final ? (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
                   <div className="flex justify-center">
                     <ConfidenceGauge value={confidence ?? 0} />
                   </div>
-                  <div className="md:col-span-3 grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <Field label="Severity"><SeverityChip severity={final.severity} /></Field>
                     <Field label="Recommended Action">
                       <ActionChip action={final.recommended_action ?? brief?.recommended_action} />
@@ -328,7 +311,6 @@ export function DisruptionChat() {
                       </div>
                     )}
                   </div>
-                </div>
 
                 {/* HUMAN_REVIEW → approve / reject. AUTO_EXECUTE → no action. */}
                 {isHumanReview && (
@@ -401,8 +383,26 @@ export function DisruptionChat() {
                     ✓ Auto-executed — no action required.
                   </div>
                 )}
-              </motion.div>
-            )}
+                </motion.div>
+                ) : (
+                  <div className="text-mutedfg text-sm">
+                    The mitigation brief will appear here once the agents finish.
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Live Timeline */}
+              <div className="rounded-xl border border-border/60 p-4">
+                <div className="label mb-3">Live Timeline</div>
+                {steps.length === 0 ? (
+                  <div className="text-mutedfg text-sm">Waiting for agent steps…</div>
+                ) : (
+                  <div className="max-h-[460px] overflow-y-auto pr-1">
+                    <Timeline steps={steps} />
+                  </div>
+                )}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
