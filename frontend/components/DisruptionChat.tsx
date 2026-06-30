@@ -11,8 +11,14 @@ import { Card, SectionTitle, SeverityChip, ActionChip } from "@/components/ui";
 // Natural-language disruption scenarios. Each string is the exact alert_text
 // sent to POST /workflow/start — the Supervisor LLM parses it directly, the
 // same path a free-typed message takes.
-const SCENARIOS: string[] = [
+//
+// Split by their VERIFIED, deterministic outcome (captured by running each
+// against the live workflow): left = Human Review (confidence < 85), right =
+// Auto-Execute (confidence >= 85 and winner ESG >= 60).
+const REVIEW_SCENARIOS: string[] = [
   "A typhoon in Tanjung Pelepas, Malaysia is blocking shipments of automotive-grade MCUs from SUP-001 — the port is closed for 72 hours and 23 orders (48,200 units) can't ship.",
+];
+const AUTO_SCENARIOS: string[] = [
   "An earthquake near Bandung, Indonesia has halted production of MEMS sensors at SUP-004 — the line is down 5 days and 12 orders (18,400 units) are at risk.",
   "New trade sanctions on Hanoi, Vietnam are blocking exports of 32-bit microcontrollers from SUP-008 — customs is holding all shipments and 9 orders (15,000 units) are stranded.",
   "A port workers' strike in Busan, South Korea is delaying outbound AEC-Q100 MCUs from SUP-005 — no vessels are loading and 7 orders (11,200 units) miss this week's window.",
@@ -202,20 +208,28 @@ export function DisruptionChat() {
           ))}
         </div>
 
-        {/* Suggestion chips — inside the chat, above the composer */}
+        {/* Suggestion chips — split by verified outcome: Human Review | Auto-Execute */}
         <div className="space-y-3">
           <div className="label">Example scenarios — tap to run</div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {SCENARIOS.map((text) => (
-              <button
-                key={text}
-                onClick={() => runAlert(text)}
-                disabled={busy}
-                className="text-left rounded-xl border border-border/70 bg-surface/50 px-4 py-3 text-sm leading-relaxed text-fg/90 hover:border-accent/60 hover:bg-accent/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {text}
-              </button>
-            ))}
+          <div className="grid sm:grid-cols-2 gap-4">
+            {/* Left: Human Review */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-warn">
+                <span>⚠</span> Needs Human Review
+              </div>
+              {REVIEW_SCENARIOS.map((text) => (
+                <ScenarioChip key={text} text={text} onRun={runAlert} busy={busy} tone="warn" />
+              ))}
+            </div>
+            {/* Right: Auto-Execute */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent">
+                <span>⚡</span> Auto-Execute
+              </div>
+              {AUTO_SCENARIOS.map((text) => (
+                <ScenarioChip key={text} text={text} onRun={runAlert} busy={busy} tone="accent" />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -410,6 +424,23 @@ function StatusLegend() {
         </span>
       ))}
     </div>
+  );
+}
+
+function ScenarioChip({ text, onRun, busy, tone }: {
+  text: string; onRun: (t: string) => void; busy: boolean; tone: "warn" | "accent";
+}) {
+  const hover = tone === "warn"
+    ? "hover:border-warn/60 hover:bg-warn/5"
+    : "hover:border-accent/60 hover:bg-accent/5";
+  return (
+    <button
+      onClick={() => onRun(text)}
+      disabled={busy}
+      className={`w-full text-left rounded-xl border border-border/70 bg-surface/50 px-4 py-3 text-sm leading-relaxed text-fg/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${hover}`}
+    >
+      {text}
+    </button>
   );
 }
 
