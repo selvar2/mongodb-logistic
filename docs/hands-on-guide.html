@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResilioChain — Hands-On Guide</title>
+<style>
+  :root{
+    --bg:#020617; --text:#F8FAFC; --accent:#22C55E; --card:#0E1223;
+    --border:#334155; --muted:#94A3B8; --code-bg:#0B1020;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:48px 24px 96px}
+  header.hero{
+    border:1px solid var(--border); border-radius:16px; padding:36px;
+    background:linear-gradient(160deg,#0E1223,#070B17); margin-bottom:40px;
+  }
+  header.hero h1{margin:0 0 8px; font-size:2.4rem; letter-spacing:-.5px}
+  header.hero h1 .shield{color:var(--accent)}
+  header.hero p{color:var(--muted); margin:0; font-size:1.05rem}
+  .badges{margin-top:18px; display:flex; flex-wrap:wrap; gap:8px}
+  .badge{
+    font-size:.78rem; padding:4px 11px; border-radius:999px;
+    border:1px solid var(--border); color:var(--accent); background:rgba(34,197,94,.07);
+  }
+  nav.toc{
+    border:1px solid var(--border); border-radius:12px; background:var(--card);
+    padding:20px 24px; margin-bottom:44px;
+  }
+  nav.toc h2{margin:0 0 12px; font-size:.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted)}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:32px}
+  nav.toc a{color:var(--text); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  section{margin-bottom:52px}
+  h2.sec{
+    font-size:1.6rem; border-left:4px solid var(--accent); padding-left:14px;
+    margin:0 0 20px; scroll-margin-top:24px;
+  }
+  h3{font-size:1.2rem; color:#E2E8F0; margin:28px 0 12px}
+  p,li{color:#CBD5E1}
+  strong{color:var(--text)}
+  a{color:var(--accent)}
+  code{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:5px;
+    padding:1px 6px; font-size:.86em; font-family:"SF Mono",Menlo,Consolas,monospace;
+    color:#A7F3D0;
+  }
+  .card{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:20px 24px; margin:18px 0}
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:.9rem; display:block; overflow-x:auto}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top}
+  th{background:#11182B; color:var(--accent); font-weight:600}
+  td code{white-space:nowrap}
+  tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+  .codeblock{position:relative; margin:18px 0}
+  .codeblock pre{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:10px;
+    padding:18px 18px 18px; overflow-x:auto; margin:0;
+    font-family:"SF Mono",Menlo,Consolas,monospace; font-size:.83rem; line-height:1.5;
+    color:#D9E2EC;
+  }
+  .copy-btn{
+    position:absolute; top:10px; right:10px; cursor:pointer;
+    background:#11182B; color:var(--accent); border:1px solid var(--border);
+    border-radius:7px; padding:5px 12px; font-size:.74rem; font-weight:600;
+    letter-spacing:.4px; transition:all .15s;
+  }
+  .copy-btn:hover{background:var(--accent); color:#020617; border-color:var(--accent)}
+  .copy-btn.copied{background:var(--accent); color:#020617}
+  .formula{background:var(--code-bg); border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; color:#A7F3D0; font-family:"SF Mono",Menlo,monospace; font-size:.85rem; white-space:pre-wrap}
+  .note{border-left:3px solid var(--accent); background:rgba(34,197,94,.06); padding:10px 16px; border-radius:0 8px 8px 0; margin:14px 0; color:#CBD5E1}
+  .warn{border-left:3px solid #F59E0B; background:rgba(245,158,11,.07); padding:10px 16px; border-radius:0 8px 8px 0; margin:14px 0; color:#CBD5E1}
+  .pos{color:#4ADE80; font-weight:700}
+  .neg{color:#F87171; font-weight:700}
+  .mid{color:#FBBF24; font-weight:700}
+  footer{border-top:1px solid var(--border); padding-top:24px; color:var(--muted); font-size:.85rem}
+  @media(max-width:680px){nav.toc ol{columns:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1><span class="shield">&#128737;</span> ResilioChain — Hands-On Guide</h1>
+  <p>A first-time user's guide to the <strong>Disruption Intake</strong> and <strong>Alternative Supplier Search</strong> screens — and to simulating positive &amp; negative scenarios on purpose.</p>
+  <div class="badges">
+    <span class="badge">For new users</span>
+    <span class="badge">$graphLookup</span>
+    <span class="badge">$vectorSearch</span>
+    <span class="badge">Vector RAG</span>
+    <span class="badge">Scenario cookbook</span>
+    <span class="badge">Copy-paste recipes</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#world">The world you simulate</a></li>
+    <li><a href="#pipeline">The 5-agent pipeline</a></li>
+    <li><a href="#intake">Feature A — Disruption Intake</a></li>
+    <li><a href="#sourcing">Feature B — Alternative Supplier Search</a></li>
+    <li><a href="#rules">The rules that decide outcomes</a></li>
+    <li><a href="#cookbook">Scenario cookbook</a></li>
+    <li><a href="#recipes">Copyable API recipes</a></li>
+    <li><a href="#audit">Following the audit trail</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+  </ol>
+</nav>
+
+<section id="world">
+  <h2 class="sec">1. The world you are simulating</h2>
+  <p>ResilioChain ships with a small, deterministic demo dataset (15 suppliers, 30 orders, a
+  compliance policy library) seeded into MongoDB Atlas. Everything in this guide refers to that
+  seed data, so your results will match exactly.</p>
+  <p>The story: a <strong>typhoon closes the Port of Tanjung Pelepas (Malaysia)</strong>. Primary
+  supplier <strong>SUP-001 (Chang Electronics)</strong> has stock but cannot ship —
+  <strong>23 active orders / 48,200 units</strong> are stuck. ResilioChain must find a compliant
+  backup supplier and produce a ranked, auditable mitigation brief. The "right answer" is
+  <strong>SUP-002 (PT Maju Jaya, Indonesia)</strong> wins, while
+  <strong>SUP-FAIL (Vietnam, ESG 22)</strong> is rejected on ESG. You will reproduce that, then
+  deliberately bend the inputs to get different outcomes.</p>
+</section>
+
+<section id="pipeline">
+  <h2 class="sec">2. The 5-agent pipeline in plain English</h2>
+  <p>When you trigger a disruption, a LangGraph state machine runs five agents in order. Each
+  writes to an immutable <code>audit_logs</code> trail.</p>
+  <table>
+    <tr><th>#</th><th>Agent</th><th>What it does</th><th>MongoDB / AI feature</th></tr>
+    <tr><td>1</td><td><strong>Supervisor</strong></td><td>Reads your alert text; extracts severity, the affected <strong>supplier ID</strong>, and the affected <strong>region</strong>.</td><td>LLM (Bedrock) + regex fallback</td></tr>
+    <tr><td>2</td><td><strong>Impact Assessor</strong></td><td>Walks the order&#8594;supplier dependency graph to find every impacted order and the <strong>total units required</strong>.</td><td><code>$graphLookup</code></td></tr>
+    <tr><td>3</td><td><strong>Sourcing</strong></td><td>Semantically finds capable backup suppliers, hard-filtered by capacity &amp; geography.</td><td><code>$vectorSearch</code></td></tr>
+    <tr><td>4</td><td><strong>Compliance</strong></td><td>Vets each candidate against ESG / labour / sanctions policy.</td><td>Vector RAG</td></tr>
+    <tr><td>5</td><td><strong>Mitigation Planner</strong></td><td>Scores survivors with a <strong>deterministic confidence formula</strong> and recommends AUTO_EXECUTE or HUMAN_REVIEW.</td><td>tool-computed score</td></tr>
+  </table>
+  <div class="note"><strong>Key idea:</strong> the confidence score is <em>never</em> invented by the
+  LLM — it is computed by a fixed formula (see §5). That is what makes outcomes reproducible.</div>
+</section>
+
+<section id="intake">
+  <h2 class="sec">3. Feature A — Disruption Intake</h2>
+  <p><strong>Where:</strong> left nav &#8594; <strong>Disruption Intake</strong>. This is how you <em>start</em> a run.</p>
+
+  <h3>3.1 The form, field by field</h3>
+  <table>
+    <tr><th>Field</th><th>Example (default)</th><th>What it actually controls</th></tr>
+    <tr><td><strong>Event Type</strong></td><td><code>Typhoon</code></td><td>Sets <strong>severity</strong>. Words like <em>typhoon, earthquake, war, closed, blockade</em> &#8594; HIGH/CRITICAL; <em>delay, congestion</em> &#8594; MEDIUM.</td></tr>
+    <tr><td><strong>Region</strong></td><td><code>Tanjung Pelepas, Malaysia</code></td><td>The <strong>disrupted region</strong>. Sourcing will <strong>exclude</strong> suppliers in this region.</td></tr>
+    <tr><td><strong>Product</strong></td><td><code>Automotive-grade MCU</code></td><td>Descriptive context fed to the semantic search query.</td></tr>
+    <tr><td><strong>Supplier</strong></td><td><code>SUP-001</code></td><td><strong>The most important field.</strong> The supplier that is down. The blast radius (impacted orders + required units) is computed from <em>this</em> supplier's orders.</td></tr>
+    <tr><td><strong>Issue</strong></td><td><code>Port closed for 72h &#8230;</code></td><td>Free-text context. Numbers you type here are <em>descriptive only</em> — see the Gotcha in §6.</td></tr>
+  </table>
+  <p>Behind the scenes the form is assembled into a single alert sentence:</p>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>{Event Type} affecting {Region}. Primary supplier {Supplier} is impacted. Product: {Product}. {Issue}</pre></div>
+
+  <h3>3.2 What happens when you click "Trigger Mitigation Workflow"</h3>
+  <ol>
+    <li>A disruption record is saved (<code>POST /disruptions</code>).</li>
+    <li>A background workflow starts (<code>POST /workflow/start</code>) and returns a <code>thread_id</code>.</li>
+    <li>You are redirected to <strong>Agent Workflow</strong> (<code>/workflow?thread_id=&#8230;</code>), which streams the agents live over Server-Sent Events (<code>GET /workflow/stream/{thread_id}</code>).</li>
+  </ol>
+
+  <h3>3.3 Reading the result (Mitigation Brief)</h3>
+  <ul>
+    <li><strong>Backup Supplier (Winner)</strong> — the recommended supplier, e.g. <em>PT Maju Jaya Electronics (SUP-002)</em>.</li>
+    <li><strong>Confidence gauge</strong> — 0&#8211;100.</li>
+    <li><strong>Recommended Action</strong>:
+      <ul>
+        <li><span class="pos">AUTO_EXECUTE</span> — confidence &#8805; 85 <strong>and</strong> winner ESG &#8805; 60. Safe to execute automatically.</li>
+        <li><span class="mid">HUMAN_REVIEW</span> — anything else. A human should sign off.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<section id="sourcing">
+  <h2 class="sec">4. Feature B — Alternative Supplier Search</h2>
+  <p><strong>Where:</strong> left nav &#8594; <strong>Alternative Sourcing</strong>. This screen shows <em>how</em>
+  step 3 (Sourcing) finds candidates, and the compliance verdict per candidate.</p>
+
+  <h3>4.1 The <code>$vectorSearch</code> pipeline (this is what runs)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>// Semantic sourcing — MongoDB Atlas $vectorSearch
+// Voyage autoEmbed turns the disruption profile into a query vector
+db.suppliers.aggregate([
+  {
+    $vectorSearch: {
+      index: "suppliers_vs",
+      path: "embed_text",           // Voyage autoEmbed field
+      query: disruptionProfileText, // skus + capabilities needed
+      numCandidates: 200,
+      limit: 10,
+      filter: {
+        capacity_units_month: { $gte: requiredCapacity }, // hard filter
+        supplier_id: { $ne: disruptedSupplierId },        // exclude disrupted
+        geo_region:  { $ne: disruptedRegion }             // exclude region
+      }
+    }
+  },
+  { $set: { similarity_score: { $meta: "vectorSearchScore" } } },
+  { $project: {
+      supplier_id: 1, name: 1, geo_region: 1, esg_score: 1,
+      lead_time_days: 1, capacity_units_month: 1, unit_price: 1,
+      similarity_score: 1
+  } }
+])</pre></div>
+  <p>Two layers do the work: <strong>semantic recall</strong> (vector similarity on
+  <code>embed_text</code>) ranks suppliers by capability match, and a <strong>hard filter</strong>
+  guarantees every candidate is physically feasible (enough capacity) and not in the disrupted region.</p>
+
+  <h3>4.2 Reading the results table</h3>
+  <p>Click <strong>Run semantic sourcing</strong>. Each candidate row gets a status badge:</p>
+  <table>
+    <tr><th>Badge</th><th>Meaning</th></tr>
+    <tr><td><span class="pos">GOOD</span></td><td>Passed compliance <strong>and</strong> is the rank-1 (best semantic match) &#8594; the proposed winner.</td></tr>
+    <tr><td><span class="mid">ALTERNATIVE</span></td><td>Passed compliance but is not rank-1 &#8594; a viable fallback.</td></tr>
+    <tr><td><span class="neg">COMPLIANCE_BLOCKED</span></td><td>Failed compliance (e.g. ESG too low) &#8594; rejected, shown so you can see <em>why</em>.</td></tr>
+  </table>
+  <div class="note"><strong>Note:</strong> the Alternative Sourcing screen always runs the
+  <strong>fixed canonical demo</strong> (SUP-001 typhoon). To search with <em>your own</em> inputs,
+  use the API recipes in §7 — they accept any alert.</div>
+</section>
+
+<section id="rules">
+  <h2 class="sec">5. The rules that decide outcomes</h2>
+  <p>These thresholds are deterministic. Memorize them and you can predict every result.</p>
+  <h3>Compliance (pass/fail)</h3>
+  <table>
+    <tr><th>Rule</th><th>Value</th></tr>
+    <tr><td>ESG minimum to pass</td><td><strong>60</strong> (ESG &lt; 60 &#8594; FAIL)</td></tr>
+    <tr><td>Risk region</td><td><strong>Vietnam</strong> — fails if ESG &lt; 60 <em>or</em> missing <code>ISO-14001</code></td></tr>
+    <tr><td>Sanctions</td><td>Always PASS in this build</td></tr>
+  </table>
+  <h3>Confidence formula (0&#8211;100), computed by the Planner</h3>
+  <div class="formula">confidence = 100 * (
+    0.35 * (esg_score / 100)                       # ESG quality
+  + 0.30 * (1 - clamp(|cost_variance_pct| / 40))   # cost vs original
+  + 0.15 * clamp((capacity - required) / required) # spare capacity headroom
+  + 0.10 * (1 - clamp(lead_time_days / 60))        # speed
+  + 0.10 * (1.0 if compliance_passed else 0.0)     # compliant?
+)</div>
+  <p><strong>Action decision:</strong> <code>AUTO_EXECUTE</code> if <code>confidence &#8805; 85 AND esg &#8805; 60</code>, otherwise <code>HUMAN_REVIEW</code>.</p>
+  <div class="warn"><strong>Why the headline demo lands on HUMAN_REVIEW:</strong> for the big SUP-001
+  disruption the winner SUP-002 has only <code>(60,000 &#8722; 48,200) / 48,200 &#8776; 24%</code> spare
+  capacity, so the headroom term is small and confidence works out to <strong>75</strong>. Shrink the
+  disruption and that same supplier sails past 85 (see the SUP-004 scenario in §6).</div>
+</section>
+
+<section id="cookbook">
+  <h2 class="sec">6. Scenario cookbook</h2>
+  <p>Each scenario lists the <strong>exact inputs</strong> to enter on the <strong>Disruption Intake</strong>
+  form and the <strong>verified outcome</strong>. (All results below were confirmed against the running backend.)</p>
+
+  <h3><span class="pos">&#10003;</span> Scenario 1 — Canonical demo (a clean win, pending human sign-off)</h3>
+  <p><strong>Inputs:</strong> Event Type <code>Typhoon</code> &#183; Region <code>Tanjung Pelepas, Malaysia</code> &#183; Product <code>Automotive-grade MCU</code> &#183; Supplier <code>SUP-001</code> &#183; Issue <em>(anything)</em></p>
+  <p><strong>Outcome:</strong> required capacity <strong>48,200</strong> units (23 orders) &#183;
+  <strong>Winner: SUP-002 (PT Maju Jaya Electronics)</strong> &#183;
+  <span class="neg">Blocked on ESG: SUP-FAIL (22), SUP-008 (35)</span> &#183;
+  Confidence <strong>75</strong> &#8594; <span class="mid">HUMAN_REVIEW</span>.</p>
+  <p>The flagship run: a compliant alternative is found and an ESG offender is rejected, but thin
+  capacity headroom keeps it just under the auto-execute bar.</p>
+
+  <h3><span class="pos">&#10003;</span> Scenario 2 — Small disruption &#8594; AUTO_EXECUTE</h3>
+  <p><strong>Inputs:</strong> Event Type <code>Flood</code> &#183; Region <code>Bandung, Indonesia</code> &#183; Supplier <code>SUP-004</code> &#183; Issue <em>(anything)</em></p>
+  <p><strong>Outcome:</strong> required capacity <strong>9,625</strong> units (1 order) &#183;
+  <strong>Winner: SUP-002</strong>, confidence <strong>91</strong> &#8594; <span class="pos">AUTO_EXECUTE</span>.</p>
+  <p>Same winner as Scenario 1, but because far fewer units are needed, the capacity-headroom term is
+  maxed out and confidence clears 85. <strong>This is the cleanest "positive / auto-execute" demo.</strong></p>
+
+  <h3><span class="neg">&#10007;</span> Scenario 3 — ESG rejection (negative, by policy)</h3>
+  <p>You don't need a special run — the rejection is visible in <strong>every</strong> SUP-001 run and
+  on the Alternative Sourcing table. Look for <strong>SUP-FAIL</strong> (Vina Components, Vietnam,
+  <strong>ESG 22</strong>) and <strong>SUP-008</strong> (Hanoi Circuits, Vietnam, <strong>ESG 35</strong>):
+  both show <span class="neg">COMPLIANCE_BLOCKED</span> with a fail reason like <em>"ESG score 22 is
+  below the required minimum of 60"</em> and a Vietnam labour/ESG policy citation. The guardrail doing its job.</p>
+
+  <h3><span class="neg">&#10007;</span> Scenario 4 — No impact (edge case)</h3>
+  <p><strong>Inputs:</strong> Event Type <code>Earthquake</code> &#183; Region <code>Hanoi, Vietnam</code> &#183; Supplier <code>SUP-008</code> &#183; Issue <em>(anything)</em></p>
+  <p><strong>Outcome:</strong> required capacity <strong>0</strong>, <strong>0 impacted orders</strong>,
+  status <code>halted_no_impact</code>, no brief produced.</p>
+  <p><strong>Why:</strong> nothing in the order book depends on SUP-008, so there is no blast radius.
+  This teaches the most important mechanic: <strong>impact is derived from the dependency graph, not
+  from the words in your alert.</strong> Only these suppliers have dependent orders &#8594; only they
+  produce a real run:</p>
+  <table>
+    <tr><th>Supplier</th><th>Impacted orders</th><th>Required units</th></tr>
+    <tr><td>SUP-001</td><td>23</td><td>48,200</td></tr>
+    <tr><td>SUP-002</td><td>2</td><td>22,383</td></tr>
+    <tr><td>SUP-003</td><td>2</td><td>18,616</td></tr>
+    <tr><td>SUP-004</td><td>1</td><td>9,625</td></tr>
+    <tr><td>SUP-006</td><td>1</td><td>4,976</td></tr>
+    <tr><td>SUP-005</td><td>1</td><td>4,747</td></tr>
+    <tr><td><em>any other ID</em></td><td>0</td><td>0 &#8594; <code>halted_no_impact</code></td></tr>
+  </table>
+
+  <h3><span class="mid">&#9888;</span> Scenario 5 — The region lever (changes the winner)</h3>
+  <p><strong>Inputs:</strong> same as Scenario 1 but set <strong>Region</strong> to <code>Indonesia</code>.</p>
+  <p><strong>Effect:</strong> Sourcing excludes Indonesian suppliers, so <strong>SUP-002 (Indonesia) is
+  removed from contention</strong> and a different supplier (e.g. a South Korean one) becomes the winner.
+  Use this to show geographic diversification in action.</p>
+
+  <h3>Supplier cheat-sheet (seed data)</h3>
+  <table>
+    <tr><th>ID</th><th>Region</th><th>ESG</th><th>Capacity/mo</th><th>Note</th></tr>
+    <tr><td>SUP-001</td><td>Malaysia</td><td>70</td><td>50,000</td><td>the disrupted primary</td></tr>
+    <tr><td><strong>SUP-002</strong></td><td>Indonesia</td><td><strong>88</strong></td><td>60,000</td><td><strong>canonical winner</strong></td></tr>
+    <tr><td>SUP-003</td><td>South Korea</td><td>90</td><td>70,000</td><td>strong alternative</td></tr>
+    <tr><td>SUP-004</td><td>Indonesia</td><td>81</td><td>52,000</td><td>alternative</td></tr>
+    <tr><td>SUP-005</td><td>South Korea</td><td>84</td><td>48,500</td><td>tight capacity</td></tr>
+    <tr><td>SUP-006</td><td>Malaysia</td><td>76</td><td>30,000</td><td>below required for big runs</td></tr>
+    <tr><td>SUP-008</td><td>Vietnam</td><td><strong>35</strong></td><td>51,000</td><td><span class="neg">blocked: ESG + region</span></td></tr>
+    <tr><td>SUP-009</td><td>South Korea</td><td>86</td><td>64,000</td><td>alternative</td></tr>
+    <tr><td>SUP-011</td><td>Malaysia</td><td>72</td><td>58,000</td><td>excluded if region = Malaysia</td></tr>
+    <tr><td>SUP-013</td><td>Indonesia</td><td>83</td><td>49,000</td><td>alternative</td></tr>
+    <tr><td><strong>SUP-FAIL</strong></td><td>Vietnam</td><td><strong>22</strong></td><td>55,000</td><td><span class="neg">blocked: ESG 22</span></td></tr>
+  </table>
+
+  <div class="warn"><strong>&#128681; Gotcha — units come from orders, not from your text.</strong> If you
+  type <em>"need 200,000 units"</em> in the Issue box expecting a no-capacity failure, it will
+  <strong>not</strong> happen. The required capacity is the sum of <code>quantity_remaining</code> across
+  the orders that depend on the chosen supplier (<code>$graphLookup</code>). To change the required
+  units, change the <strong>Supplier</strong>, not the prose.</div>
+</section>
+
+<section id="recipes">
+  <h2 class="sec">7. Copyable API recipes (run any scenario)</h2>
+  <p>The backend listens on <code>http://localhost:8010</code>. In GitHub Codespaces from another
+  machine, replace it with your forwarded backend URL (<code>https://&lt;name&gt;-8010.app.github.dev</code>).</p>
+
+  <h3>Health check</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>curl http://localhost:8010/health</pre></div>
+
+  <h3>Positive run (synchronous, returns the full final state)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>curl -X POST http://localhost:8010/workflow/run \
+  -H 'Content-Type: application/json' \
+  -d '{"alert_text":"Typhoon affecting Tanjung Pelepas, Malaysia. Primary supplier SUP-001 is impacted. Product: Automotive-grade MCU. Port closed for 72h."}'</pre></div>
+
+  <h3>Auto-execute run (small disruption &#8594; confidence 91)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>curl -X POST http://localhost:8010/workflow/run \
+  -H 'Content-Type: application/json' \
+  -d '{"alert_text":"Flood affecting Bandung, Indonesia. Primary supplier SUP-004 is impacted."}'</pre></div>
+
+  <h3>No-impact run (halts with <code>halted_no_impact</code>)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>curl -X POST http://localhost:8010/workflow/run \
+  -H 'Content-Type: application/json' \
+  -d '{"alert_text":"Earthquake affecting Hanoi, Vietnam. Primary supplier SUP-008 is impacted."}'</pre></div>
+
+  <h3>Async run + live stream (what the UI does)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre># 1) start it
+curl -X POST http://localhost:8010/workflow/start \
+  -H 'Content-Type: application/json' \
+  -d '{"alert_text":"Typhoon affecting Tanjung Pelepas, Malaysia. Primary supplier SUP-001 is impacted."}'
+# -> {"thread_id":"run-xxxx","status":"running"}
+
+# 2) stream the agent steps (replace run-xxxx)
+curl -N http://localhost:8010/workflow/stream/run-xxxx</pre></div>
+
+  <h3>Blast radius <code>$graphLookup</code> (the impact query, conceptual)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>db.orders.aggregate([
+  { $match: { status: "active" } },
+  { $graphLookup: {
+      from: "suppliers",
+      startWith: "$depends_on",
+      connectFromField: "depends_on",
+      connectToField: "_id",
+      as: "dependency_chain"
+  } },
+  { $match: { "dependency_chain._id": affectedSupplierId } },
+  { $group: {
+      _id: null,
+      impacted_orders: { $sum: 1 },
+      required_capacity: { $sum: "$quantity_remaining" }
+  } }
+])</pre></div>
+</section>
+
+<section id="audit">
+  <h2 class="sec">8. Following the audit trail</h2>
+  <p>Every decision is logged. After a run, open the <strong>Audit Logs</strong> screen and filter by
+  <code>thread_id</code>, or query MongoDB directly:</p>
+  <div class="codeblock"><button class="copy-btn">Copy</button><pre>db.audit_logs.find({ thread_id: "run-xxxx" }).sort({ ts: 1 })</pre></div>
+  <p>You will see one entry per agent action — <code>supervisor.classify</code>,
+  <code>impact_assessor.blast_radius</code>, <code>sourcing.vector_search</code>,
+  <code>compliance.rag_vet</code> (PASS/FAIL with reasons), and
+  <code>mitigation_planner.compile_plan</code> (winner, confidence, action).</p>
+</section>
+
+<section id="trouble">
+  <h2 class="sec">9. Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>"Cannot reach API at http://localhost:8010"</td><td>The backend isn't running, or you're on a remote browser. Start it (<code>uvicorn app.main:app --host 0.0.0.0 --port 8010</code>) and, in Codespaces, use the forwarded <code>&#8230;-8010.app.github.dev</code> URL.</td></tr>
+    <tr><td>Sourcing returns no candidates / errors</td><td>The Atlas vector indexes may still be building. Wait until <code>supplier_vector_index</code> and <code>policy_vector_index</code> are <strong>READY/queryable</strong>, then retry.</td></tr>
+    <tr><td>Results look generic / repeated</td><td>The system may be in <code>LLM_MODE=mock</code> (deterministic stubs). For real reasoning set <code>LLM_MODE=bedrock</code> with valid AWS credentials.</td></tr>
+    <tr><td>A run halts with <code>halted_no_impact</code></td><td>Expected when the chosen Supplier has no dependent orders — pick one from the impact table in §6.</td></tr>
+  </table>
+</section>
+
+<footer>
+  Built on MongoDB Atlas (<code>$graphLookup</code>, <code>$vectorSearch</code>, Vector RAG) &#183; LangGraph &#183; AWS Bedrock.
+</footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentElement.querySelector('pre');
+      var text = pre ? pre.innerText : '';
+      function done(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+  });
+  function fallback(text, cb){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta); cb();
+  }
+</script>
+</body>
+</html>
