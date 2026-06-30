@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api, streamWorkflow } from "@/lib/api";
 import type { StepEvent, WorkflowState } from "@/lib/types";
@@ -8,59 +8,20 @@ import { Timeline } from "@/components/Timeline";
 import { ConfidenceGauge } from "@/components/ConfidenceGauge";
 import { Card, SectionTitle, SeverityChip, ActionChip } from "@/components/ui";
 
-// The five dimensions every alert_text encodes — shown as a legend chip row.
-const CATEGORIES = ["Event Type", "Region", "Product", "Supplier", "Issue"];
-
-// Canonical demo scenarios. `text` is the exact alert_text sent to
-// POST /workflow/run — the Supervisor parses it, identical to the manual path.
-type Scenario = {
-  event: string;
-  region: string;
-  supplier: string;
-  product: string;
-  text: string;
-};
-const SCENARIOS: Scenario[] = [
-  {
-    event: "Typhoon", region: "Tanjung Pelepas, Malaysia", supplier: "SUP-001", product: "automotive-grade MCUs",
-    text: "A typhoon in Tanjung Pelepas, Malaysia is blocking shipments of automotive-grade MCUs from SUP-001 — the port is closed for 72 hours and 23 orders (48,200 units) can't ship.",
-  },
-  {
-    event: "Earthquake", region: "Bandung, Indonesia", supplier: "SUP-004", product: "MEMS sensors",
-    text: "An earthquake near Bandung, Indonesia has halted production of MEMS sensors at SUP-004 — the line is down 5 days and 12 orders (18,400 units) are at risk.",
-  },
-  {
-    event: "Trade Sanctions", region: "Hanoi, Vietnam", supplier: "SUP-008", product: "32-bit microcontrollers",
-    text: "New trade sanctions on Hanoi, Vietnam are blocking exports of 32-bit microcontrollers from SUP-008 — customs is holding all shipments and 9 orders (15,000 units) are stranded.",
-  },
-  {
-    event: "Port Strike", region: "Busan, South Korea", supplier: "SUP-005", product: "AEC-Q100 MCUs",
-    text: "A port workers' strike in Busan, South Korea is delaying outbound AEC-Q100 MCUs from SUP-005 — no vessels are loading and 7 orders (11,200 units) miss this week's window.",
-  },
-  {
-    event: "Ransomware", region: "Jakarta, Indonesia", supplier: "SUP-010", product: "32-bit MCUs",
-    text: "A ransomware attack on Jakarta, Indonesia has frozen MES systems for 32-bit MCUs at SUP-010 — production is paused 48 hours and 6 orders (9,800 units) are at risk.",
-  },
-  {
-    event: "Monsoon Flood", region: "Penang, Malaysia", supplier: "SUP-006", product: "16-bit MCUs",
-    text: "A monsoon flood in Penang, Malaysia has stopped fab output of 16-bit MCUs at SUP-006 — cleanrooms lost power and 11 orders (22,500 units) slip 10 days.",
-  },
-  {
-    event: "Wildfire", region: "Ulsan, South Korea", supplier: "SUP-014", product: "IMU sensor modules",
-    text: "A wildfire around Ulsan, South Korea has cut road access for IMU sensor modules from SUP-014 — trucks can't reach the warehouse and 4 orders (6,500 units) are stranded.",
-  },
-  {
-    event: "ESG Breach", region: "Ho Chi Minh City, Vietnam", supplier: "SUP-FAIL", product: "automotive MCUs",
-    text: "An ESG compliance breach in Ho Chi Minh City, Vietnam has forced an audit of automotive MCUs from SUP-FAIL — supplier is suspended and 8 orders (13,200 units) must be re-sourced.",
-  },
-  {
-    event: "Port Closure", region: "Singapore Hub", supplier: "SUP-013", product: "automotive sensor components",
-    text: "A port closure at Singapore transshipment hub is delaying automotive sensor components from SUP-013 — nothing is transshipping for 36 hours and 5 orders (8,400 units) miss ETA.",
-  },
-  {
-    event: "Material Shortage", region: "Medan, Indonesia", supplier: "SUP-013", product: "AEC-Q100 MCUs & sensors",
-    text: "A raw-material shortage affecting Medan, Indonesia has slowed output of AEC-Q100 MCUs and sensors from SUP-013 — output is at 40% capacity and 14 orders (28,000 units) slip 2 weeks.",
-  },
+// Natural-language disruption scenarios. Each string is the exact alert_text
+// sent to POST /workflow/start — the Supervisor LLM parses it directly, the
+// same path a free-typed message takes.
+const SCENARIOS: string[] = [
+  "A typhoon in Tanjung Pelepas, Malaysia is blocking shipments of automotive-grade MCUs from SUP-001 — the port is closed for 72 hours and 23 orders (48,200 units) can't ship.",
+  "An earthquake near Bandung, Indonesia has halted production of MEMS sensors at SUP-004 — the line is down 5 days and 12 orders (18,400 units) are at risk.",
+  "New trade sanctions on Hanoi, Vietnam are blocking exports of 32-bit microcontrollers from SUP-008 — customs is holding all shipments and 9 orders (15,000 units) are stranded.",
+  "A port workers' strike in Busan, South Korea is delaying outbound AEC-Q100 MCUs from SUP-005 — no vessels are loading and 7 orders (11,200 units) miss this week's window.",
+  "A ransomware attack on Jakarta, Indonesia has frozen MES systems for 32-bit MCUs at SUP-010 — production is paused 48 hours and 6 orders (9,800 units) are at risk.",
+  "A monsoon flood in Penang, Malaysia has stopped fab output of 16-bit MCUs at SUP-006 — cleanrooms lost power and 11 orders (22,500 units) slip 10 days.",
+  "A wildfire around Ulsan, South Korea has cut road access for IMU sensor modules from SUP-014 — trucks can't reach the warehouse and 4 orders (6,500 units) are stranded.",
+  "An ESG compliance breach in Ho Chi Minh City, Vietnam has forced an audit of automotive MCUs from SUP-FAIL — supplier is suspended and 8 orders (13,200 units) must be re-sourced.",
+  "A port closure at Singapore transshipment hub is delaying automotive sensor components from SUP-013 — nothing is transshipping for 36 hours and 5 orders (8,400 units) miss ETA.",
+  "A raw-material shortage affecting Medan, Indonesia has slowed output of AEC-Q100 MCUs and sensors from SUP-013 — output is at 40% capacity and 14 orders (28,000 units) slip 2 weeks.",
 ];
 
 // --- workflow status helpers (mirrors /workflow page) ---
@@ -99,9 +60,10 @@ export function DisruptionChat() {
   const [messages, setMessages] = useState<ChatMsg[]>([
     {
       role: "assistant",
-      text: "Pick a disruption scenario below and I'll dispatch it to the 5-agent mitigation workflow. Each card is a real alert that hits POST /workflow/run — the Supervisor parses it live.",
+      text: "Describe a supply-chain disruption in plain English — or tap a scenario below. I'll parse it and run the 5-agent mitigation workflow live.",
     },
   ]);
+  const [input, setInput] = useState("");
   const [threadId, setThreadId] = useState<string | null>(null);
   const [steps, setSteps] = useState<StepEvent[]>([]);
   const [final, setFinal] = useState<WorkflowState | null>(null);
@@ -136,23 +98,33 @@ export function DisruptionChat() {
 
   const busy = starting || (!!threadId && !done);
 
-  async function dispatch(s: Scenario) {
-    if (busy) return;
+  // Single entry point — used by both free-typed input and scenario chips.
+  async function runAlert(alertText: string) {
+    const text = alertText.trim();
+    if (!text || busy) return;
     setErr(null);
     setStarting(true);
+    setInput("");
     setMessages((m) => [
       ...m,
-      { role: "user", text: s.text },
-      { role: "assistant", text: `Dispatching to the Supervisor agent — ${s.event} · ${s.region} · ${s.supplier}…` },
+      { role: "user", text },
+      { role: "assistant", text: "Parsing your alert and dispatching to the Supervisor agent…" },
     ]);
     try {
-      const { thread_id } = await api.startWorkflow({ alert_text: s.text });
+      const { thread_id } = await api.startWorkflow({ alert_text: text });
       setThreadId(thread_id);
     } catch (e: any) {
       setErr(`Failed to start workflow: ${e.message}`);
       setMessages((m) => [...m, { role: "assistant", text: "⚠ Couldn't reach the workflow API." }]);
     } finally {
       setStarting(false);
+    }
+  }
+
+  function onInputKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      runAlert(input);
     }
   }
 
@@ -166,16 +138,8 @@ export function DisruptionChat() {
       <SectionTitle
         kicker="Disruption Intake"
         title="Report a Disruption"
-        sub="A chat front-end to the autonomous mitigation workflow."
+        sub="A chat front-end to the autonomous mitigation workflow. Type naturally or pick a scenario."
       />
-
-      {/* Category legend — the five dimensions every alert encodes */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <span className="text-xs text-mutedfg mr-1">Each alert covers:</span>
-        {CATEGORIES.map((c) => (
-          <span key={c} className="chip border-accent/40 text-accent bg-accent/10">{c}</span>
-        ))}
-      </div>
 
       {/* Chat transcript */}
       <div className="space-y-2 mb-4">
@@ -199,20 +163,45 @@ export function DisruptionChat() {
         ))}
       </div>
 
-      {/* Scenario chips */}
-      <div className="mb-1 label">Scenarios</div>
+      {/* ChatGPT-style composer */}
+      <div className="flex items-end gap-2 mb-4">
+        <textarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={onInputKeyDown}
+          disabled={busy}
+          rows={1}
+          placeholder="Describe a disruption… e.g. “A typhoon closed Port Klang, Malaysia — SUP-001 can't ship 20 orders.”"
+          className="input min-h-[44px] max-h-[140px] resize-y flex-1 disabled:opacity-50"
+        />
+        <button
+          onClick={() => runAlert(input)}
+          disabled={busy || !input.trim()}
+          aria-label="Send"
+          className="shrink-0 h-[44px] w-[44px] grid place-items-center rounded-xl bg-accent text-bg hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {busy ? (
+            <span className="block h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Natural-language scenario chips */}
+      <div className="mb-1 label">Example scenarios — tap to run</div>
       <div className="grid sm:grid-cols-2 gap-2 mb-2">
-        {SCENARIOS.map((s) => (
+        {SCENARIOS.map((text) => (
           <button
-            key={s.text}
-            onClick={() => dispatch(s)}
+            key={text}
+            onClick={() => runAlert(text)}
             disabled={busy}
-            className="text-left rounded-xl border border-border/70 bg-surface2/40 px-3 py-2 hover:border-accent/60 hover:bg-accent/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="text-left rounded-xl border border-border/70 bg-surface2/40 px-3 py-2 text-sm leading-snug text-fg/90 hover:border-accent/60 hover:bg-accent/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <div className="text-sm font-medium">
-              {s.event} <span className="text-mutedfg font-normal">· {s.region}</span>
-            </div>
-            <div className="text-xs text-mutedfg mt-0.5">{s.supplier} — {s.product}</div>
+            {text}
           </button>
         ))}
       </div>
@@ -221,7 +210,7 @@ export function DisruptionChat() {
         <div className="card p-3 border-danger/50 bg-danger/10 text-danger text-sm mt-3">{err}</div>
       )}
 
-      {/* Inline workflow — appears on the same page once a scenario is dispatched */}
+      {/* Inline workflow — appears on the same page once an alert is dispatched */}
       <AnimatePresence>
         {threadId && (
           <motion.div
@@ -233,7 +222,10 @@ export function DisruptionChat() {
             <div className="text-xs text-mutedfg font-mono">thread {threadId}</div>
 
             <div className="rounded-xl border border-border/60 p-4">
-              <div className="label mb-3">Agent Graph</div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="label">Agent Graph</div>
+                <StatusLegend />
+              </div>
               <AgentGraph statuses={statuses} />
             </div>
 
@@ -283,6 +275,27 @@ export function DisruptionChat() {
         )}
       </AnimatePresence>
     </Card>
+  );
+}
+
+function StatusLegend() {
+  const items = [
+    { c: "#475569", t: "Not started" },
+    { c: "#3B82F6", t: "In progress", blink: true },
+    { c: "#22C55E", t: "Complete" },
+  ];
+  return (
+    <div className="flex items-center gap-3">
+      {items.map((it) => (
+        <span key={it.t} className="flex items-center gap-1.5 text-xs text-mutedfg">
+          <span
+            className={`h-2.5 w-2.5 rounded-full ${it.blink ? "animate-pulse" : ""}`}
+            style={{ background: it.c }}
+          />
+          {it.t}
+        </span>
+      ))}
+    </div>
   );
 }
 

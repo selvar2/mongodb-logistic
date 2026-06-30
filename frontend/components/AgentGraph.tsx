@@ -25,7 +25,10 @@ const EDGES: [string, string][] = [
 ];
 
 const C = {
-  idle: "#334155", active: "#22C55E", done: "#14B8A6", fail: "#EF4444",
+  idle: "#475569",   // grey — not yet started
+  active: "#3B82F6", // blue, blinking — in progress
+  done: "#22C55E",   // green — complete
+  fail: "#EF4444",   // red — compliance fail
 };
 const statusColor = (s: AgentStatus = "idle") => C[s];
 const flowing = (s: AgentStatus = "idle") => s === "active" || s === "done";
