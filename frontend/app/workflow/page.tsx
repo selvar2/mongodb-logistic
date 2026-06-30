@@ -112,7 +112,7 @@ function WorkflowInner() {
     rawConf == null ? null : rawConf <= 1 ? Math.round(rawConf * 100) : Math.round(rawConf);
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-7xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="label">Live LangGraph State Machine</div>
@@ -215,7 +215,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 export default function WorkflowPage() {
   return (
     <Suspense
-      fallback={<div className="max-w-6xl text-mutedfg text-sm">Loading workflow…</div>}
+      fallback={<div className="max-w-7xl text-mutedfg text-sm">Loading workflow…</div>}
     >
       <WorkflowInner />
     </Suspense>

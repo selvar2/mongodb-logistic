@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export type AgentStatus = "idle" | "active" | "done" | "fail";
 
 type Node = { id: string; label: string; tool: string; desc: string; x: number };
-const W = 170, H = 72, Y = 132, STEP = 198, X0 = 14;
+const W = 170, H = 88, Y = 92, STEP = 198, X0 = 14;
 const NODES: Node[] = [
   { id: "supervisor", label: "Supervisor", tool: "classify · route · HITL",
     desc: "Classifies severity & routes the squad; makes the final HITL decision.", x: X0 + 0 * STEP },
@@ -72,7 +72,7 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
             "radial-gradient(600px 200px at 30% 0%, rgba(34,197,94,.07), transparent 60%)," +
             "radial-gradient(500px 200px at 90% 100%, rgba(20,184,166,.06), transparent 60%)",
         }} />
-      <svg viewBox="0 0 1000 280" className="relative w-full" style={{ maxHeight: 340 }}>
+      <svg viewBox="0 0 1000 248" className="relative w-full" style={{ maxHeight: 440 }}>
         <defs>
           <linearGradient id="ag-node" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#141C30" /><stop offset="1" stopColor="#0A1020" />
@@ -150,12 +150,12 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
               {/* icon */}
               <g transform={`translate(${n.x + 26}, ${Y + H / 2})`}><Icon id={n.id} color={col} /></g>
               {/* text */}
-              <text x={n.x + 46} y={Y + 30} fill="#F4F8FF" fontSize="13.5" fontWeight={600}
+              <text x={n.x + 46} y={Y + 38} fill="#F4F8FF" fontSize="15" fontWeight={600}
                 fontFamily="var(--font-sans)">{n.label}</text>
-              <text x={n.x + 46} y={Y + 48} fill="#8A97B2" fontSize="11"
+              <text x={n.x + 46} y={Y + 58} fill="#8A97B2" fontSize="12"
                 fontFamily="ui-monospace, monospace">{n.tool}</text>
               {/* status dot */}
-              <circle cx={n.x + W - 14} cy={Y + 16} r="4" fill={col}>
+              <circle cx={n.x + W - 14} cy={Y + 18} r="4.5" fill={col}>
                 {active && !reduce && <animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite" />}
               </circle>
             </motion.g>
