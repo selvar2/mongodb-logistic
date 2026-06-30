@@ -141,69 +141,74 @@ export function DisruptionChat() {
         sub="A chat front-end to the autonomous mitigation workflow. Type naturally or pick a scenario."
       />
 
-      {/* Chat transcript */}
-      <div className="space-y-2 mb-4">
-        {messages.map((m, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-          >
-            <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-                m.role === "user"
-                  ? "bg-accent/15 border border-accent/30 text-fg"
-                  : "bg-surface2/60 border border-border/60 text-fg/90"
-              }`}
+      {/* Chat interface — transcript, suggestion chips, and composer all inside one surface */}
+      <div className="rounded-2xl border border-border/60 bg-surface2/30 p-5 space-y-6">
+        {/* Transcript */}
+        <div className="space-y-4">
+          {messages.map((m, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {m.text}
-            </div>
-          </motion.div>
-        ))}
-      </div>
+              <div
+                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  m.role === "user"
+                    ? "bg-accent/15 border border-accent/30 text-fg"
+                    : "bg-surface/70 border border-border/60 text-fg/90"
+                }`}
+              >
+                {m.text}
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
-      {/* ChatGPT-style composer */}
-      <div className="flex items-end gap-2 mb-4">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={onInputKeyDown}
-          disabled={busy}
-          rows={1}
-          placeholder="Describe a disruption… e.g. “A typhoon closed Port Klang, Malaysia — SUP-001 can't ship 20 orders.”"
-          className="input min-h-[44px] max-h-[140px] resize-y flex-1 disabled:opacity-50"
-        />
-        <button
-          onClick={() => runAlert(input)}
-          disabled={busy || !input.trim()}
-          aria-label="Send"
-          className="shrink-0 h-[44px] w-[44px] grid place-items-center rounded-xl bg-accent text-bg hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          {busy ? (
-            <span className="block h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
-          )}
-        </button>
-      </div>
+        {/* Suggestion chips — inside the chat, above the composer */}
+        <div className="space-y-3">
+          <div className="label">Example scenarios — tap to run</div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {SCENARIOS.map((text) => (
+              <button
+                key={text}
+                onClick={() => runAlert(text)}
+                disabled={busy}
+                className="text-left rounded-xl border border-border/70 bg-surface/50 px-4 py-3 text-sm leading-relaxed text-fg/90 hover:border-accent/60 hover:bg-accent/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Natural-language scenario chips */}
-      <div className="mb-1 label">Example scenarios — tap to run</div>
-      <div className="grid sm:grid-cols-2 gap-2 mb-2">
-        {SCENARIOS.map((text) => (
-          <button
-            key={text}
-            onClick={() => runAlert(text)}
+        {/* Composer pinned at the bottom of the chat surface */}
+        <div className="flex items-end gap-3 pt-1">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onInputKeyDown}
             disabled={busy}
-            className="text-left rounded-xl border border-border/70 bg-surface2/40 px-3 py-2 text-sm leading-snug text-fg/90 hover:border-accent/60 hover:bg-accent/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            rows={1}
+            placeholder="Describe a disruption… e.g. “A typhoon closed Port Klang, Malaysia — SUP-001 can't ship 20 orders.”"
+            className="input min-h-[48px] max-h-[140px] resize-y flex-1 disabled:opacity-50"
+          />
+          <button
+            onClick={() => runAlert(input)}
+            disabled={busy || !input.trim()}
+            aria-label="Send"
+            className="shrink-0 h-[48px] w-[48px] grid place-items-center rounded-xl bg-accent text-bg hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {text}
+            {busy ? (
+              <span className="block h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
+            )}
           </button>
-        ))}
+        </div>
       </div>
 
       {err && (
