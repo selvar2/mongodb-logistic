@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { api, API_BASE } from "@/lib/api";
 import { Card, SectionTitle, Stat, SeverityChip } from "@/components/ui";
 
@@ -49,32 +48,12 @@ export default function Dashboard() {
         <Stat label="At-Risk (ESG<60)" value={atRisk} tone="warn" />
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4 mb-6">
-        {[
-          { href: "/intake", t: "Report a Disruption", d: "Typhoon, port closure, sanctions — kick off the agent workflow.", i: "⚠" },
-          { href: "/workflow", t: "Watch Agents Work", d: "Live LangGraph state machine: graph → vector → RAG → plan.", i: "⟳" },
-          { href: "/data-explorer", t: "Explore MongoDB", d: "$graphLookup, $vectorSearch & Vector RAG pipelines.", i: "⛁" },
-        ].map((c, i) => (
-          <motion.div key={c.href} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}>
-            <Link href={c.href}>
-              <Card className="h-full hover:border-accent/50 transition-colors cursor-pointer">
-                <div className="text-2xl mb-2">{c.i}</div>
-                <div className="font-semibold mb-1">{c.t}</div>
-                <div className="text-sm text-mutedfg">{c.d}</div>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
-
       <div className="grid md:grid-cols-2 gap-4">
         <Card>
           <SectionTitle kicker="System" title="Platform Health" />
           {health ? (
             <div className="space-y-2 text-sm">
               <Row k="API" v={<span className="text-accent">● {health.status}</span>} />
-              <Row k="MongoDB Atlas" v={health.mongo?.connected ? <span className="text-accent">● connected</span> : <span className="text-danger">● down</span>} />
               <Row k="LLM" v={`${health.llm?.mode} · ${(health.llm?.model || "").split(".").pop()}`} />
               <Row k="Region" v={health.llm?.region} />
             </div>
