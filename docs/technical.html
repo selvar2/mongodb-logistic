@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResilioChain — Technical Documentation</title>
+<style>
+  :root{
+    --bg:#020617; --text:#F8FAFC; --accent:#22C55E; --card:#0E1223;
+    --border:#334155; --muted:#94A3B8; --code-bg:#0B1020;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; font-size:16px;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:48px 24px 96px}
+  header.hero{
+    border:1px solid var(--border); border-radius:16px; padding:36px;
+    background:linear-gradient(160deg,#0E1223,#070B17); margin-bottom:40px;
+  }
+  header.hero h1{margin:0 0 8px; font-size:2.4rem; letter-spacing:-.5px}
+  header.hero h1 .shield{color:var(--accent)}
+  header.hero p{color:var(--muted); margin:0; font-size:1.05rem}
+  .badges{margin-top:18px; display:flex; flex-wrap:wrap; gap:8px}
+  .badge{
+    font-size:.78rem; padding:4px 11px; border-radius:999px;
+    border:1px solid var(--border); color:var(--accent); background:rgba(34,197,94,.07);
+  }
+  nav.toc{
+    border:1px solid var(--border); border-radius:12px; background:var(--card);
+    padding:20px 24px; margin-bottom:44px;
+  }
+  nav.toc h2{margin:0 0 12px; font-size:.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted)}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:32px}
+  nav.toc a{color:var(--text); text-decoration:none}
+  nav.toc a:hover{color:var(--accent)}
+  section{margin-bottom:52px}
+  h2.sec{
+    font-size:1.6rem; border-left:4px solid var(--accent); padding-left:14px;
+    margin:0 0 20px; scroll-margin-top:24px;
+  }
+  h3{font-size:1.2rem; color:#E2E8F0; margin:28px 0 12px}
+  p,li{color:#CBD5E1}
+  strong{color:var(--text)}
+  a{color:var(--accent)}
+  code{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:5px;
+    padding:1px 6px; font-size:.86em; font-family:"SF Mono",Menlo,Consolas,monospace;
+    color:#A7F3D0;
+  }
+  .card{border:1px solid var(--border); background:var(--card); border-radius:12px; padding:20px 24px; margin:18px 0}
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:.9rem; display:block; overflow-x:auto}
+  th,td{border:1px solid var(--border); padding:9px 12px; text-align:left; vertical-align:top}
+  th{background:#11182B; color:var(--accent); font-weight:600}
+  td code{white-space:nowrap}
+  tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+  .codeblock{position:relative; margin:18px 0}
+  .codeblock pre{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:10px;
+    padding:18px 18px 18px; overflow-x:auto; margin:0;
+    font-family:"SF Mono",Menlo,Consolas,monospace; font-size:.83rem; line-height:1.5;
+    color:#D9E2EC;
+  }
+  .copy-btn{
+    position:absolute; top:10px; right:10px; cursor:pointer;
+    background:#11182B; color:var(--accent); border:1px solid var(--border);
+    border-radius:7px; padding:5px 12px; font-size:.74rem; font-weight:600;
+    letter-spacing:.4px; transition:all .15s;
+  }
+  .copy-btn:hover{background:var(--accent); color:#020617; border-color:var(--accent)}
+  .copy-btn.copied{background:var(--accent); color:#020617}
+  .shots{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px}
+  .shot{border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--card)}
+  .shot img{width:100%; display:block; aspect-ratio:16/10; object-fit:cover; background:#070B17}
+  .shot .cap{padding:10px 14px; font-size:.85rem; color:var(--muted)}
+  .formula{background:var(--code-bg); border:1px dashed var(--accent); border-radius:10px; padding:16px 18px; color:#A7F3D0; font-family:"SF Mono",Menlo,monospace; font-size:.85rem; white-space:pre-wrap}
+  .note{border-left:3px solid var(--accent); background:rgba(34,197,94,.06); padding:10px 16px; border-radius:0 8px 8px 0; margin:14px 0; color:#CBD5E1}
+  footer{border-top:1px solid var(--border); padding-top:24px; color:var(--muted); font-size:.85rem}
+  @media(max-width:680px){nav.toc ol{columns:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1><span class="shield">&#128737;</span> ResilioChain</h1>
+  <p>Technical Documentation — Agentic AI for supply-chain disruption response, powered by MongoDB Atlas + LangGraph + AWS Bedrock (Claude).</p>
+  <div class="badges">
+    <span class="badge">MongoDB Atlas</span>
+    <span class="badge">$graphLookup</span>
+    <span class="badge">$vectorSearch</span>
+    <span class="badge">Vector RAG</span>
+    <span class="badge">LangGraph</span>
+    <span class="badge">AWS Bedrock — Claude Haiku 4.5</span>
+    <span class="badge">FastAPI</span>
+    <span class="badge">Next.js 14</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#arch">Architecture (5 layers)</a></li>
+    <li><a href="#state">DisruptionState</a></li>
+    <li><a href="#schema">MongoDB schema</a></li>
+    <li><a href="#pipelines">The 3 AI pipelines</a></li>
+    <li><a href="#workflow">Agent workflow</a></li>
+    <li><a href="#confidence">Confidence formula</a></li>
+    <li><a href="#setup">Setup &amp; install</a></li>
+    <li><a href="#api">API reference</a></li>
+    <li><a href="#deploy">Deployment</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+    <li><a href="#screens">Screenshots</a></li>
+  </ol>
+</nav>
+
+<section id="overview">
+  <h2 class="sec">1. Overview</h2>
+  <p>When a typhoon closes a port, a war disrupts a region, or sanctions block a supplier, ResilioChain ingests the disruption alert and runs a five-agent AI workflow that:</p>
+  <ol>
+    <li><strong>Classifies</strong> the disruption severity and scope (Supervisor).</li>
+    <li><strong>Computes the blast radius</strong> — impacted orders, SKUs, suppliers — via a MongoDB <code>$graphLookup</code> over an order &rarr; supplier dependency graph (Impact Assessor).</li>
+    <li><strong>Sources alternatives</strong> — semantic <code>$vectorSearch</code>, hard-filtered by required capacity (Sourcing).</li>
+    <li><strong>Vets compliance</strong> — Vector <strong>RAG</strong> against ESG / sanctions / labour / carbon policy; loops back to sourcing when a candidate fails (max 3 retries) (Compliance).</li>
+    <li><strong>Compiles a mitigation brief</strong> with a <strong>deterministic confidence score</strong> and an auto-execute / human-review recommendation (Mitigation Planner).</li>
+  </ol>
+  <p>Every decision is checkpointed and written to an append-only audit trail. MongoDB Atlas is both the system of record and the AI retrieval engine — agents touch the database <strong>only</strong> through a fixed set of MCP tools.</p>
+  <div class="note"><strong>Demo scenario:</strong> Typhoon Yagi closes the Port of Tanjung Pelepas (Malaysia) for 72h. Primary supplier <strong>SUP-001</strong> (Chang Electronics) cannot fulfil 23 active orders totalling 48,200 units of automotive-grade MCUs. ResilioChain rejects <strong>SUP-FAIL</strong> (Vietnam, failing ESG) and recommends <strong>SUP-002</strong> (PT Maju Jaya, Indonesia).</div>
+  <table>
+    <tr><th>Layer</th><th>Tech</th></tr>
+    <tr><td>UI</td><td>Next.js 14, React, Tailwind, Framer Motion</td></tr>
+    <tr><td>Orchestration</td><td>LangGraph multi-agent state machine (Python)</td></tr>
+    <tr><td>Backend / API</td><td>FastAPI</td></tr>
+    <tr><td>Data &amp; AI retrieval</td><td>MongoDB Atlas — <code>$graphLookup</code>, <code>$vectorSearch</code>, Vector RAG, checkpoints</td></tr>
+    <tr><td>LLM</td><td>AWS Bedrock — Claude Haiku 4.5 (provider-abstracted)</td></tr>
+  </table>
+</section>
+
+<section id="arch">
+  <h2 class="sec">2. Architecture (5 layers)</h2>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>┌──────────────────────────────────────────────────────────────────────┐
+│ 1. EXTERNAL TRIGGER &amp; OBSERVABILITY                                    │
+│    Disruption alert (API / UI / external system) ──► workflow start    │
+│    Telemetry, traces, agent decisions ──► audit_logs (+ console logs)  │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                 ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│ 2. LANGGRAPH ORCHESTRATION LAYER  (Python state machine)               │
+│        ┌────────────────┐  decides next node on DisruptionState        │
+│        │  A. SUPERVISOR │◄──────────────────────────────────────┐      │
+│        └───────┬────────┘                                        │      │
+│      classify  │ route                                           │      │
+│                ▼                                                 │      │
+│   ┌────────────────────┐   ┌───────────────┐   ┌─────────────┐  │      │
+│   │ B. Impact Assessor │──►│ C. Sourcing   │──►│ D. Compliance│─┘      │
+│   │  $graphLookup      │   │ $vectorSearch │◄──│  Vector RAG  │  retry │
+│   └────────────────────┘   └───────────────┘   └──────┬──────┘ (≤3)   │
+│                                                        ▼               │
+│                                          ┌──────────────────────────┐  │
+│                                          │ E. Mitigation Planner     │ │
+│                                          │ deterministic confidence  │ │
+│                                          │ + HITL gate               │ │
+│                                          └──────────────────────────┘  │
+└───────────────────────────────┬──────────────────────────────────────┘
+                                 ▼  (every node reads/writes via MCP tools)
+┌──────────────────────────────────────────────────────────────────────┐
+│ 3. MONGODB ATLAS — THE CORE                                            │
+│    M1 orders (graph)  M2 suppliers (vector)  M3 compliance (RAG)       │
+│    M4 agent_checkpoints + mitigation_plans   audit_logs  disruptions   │
+└──────────────────────────────────────────────────────────────────────┘
+                                 ▲
+┌──────────────────────────────────────────────────────────────────────┐
+│ 4. AWS BEDROCK LLM LAYER  — Claude Haiku 4.5 (provider-abstracted)     │
+│    Each agent calls the LLM for classification / extraction / planning │
+└──────────────────────────────────────────────────────────────────────┘
+                                 ▲
+┌──────────────────────────────────────────────────────────────────────┐
+│ 5. ENTERPRISE UI  — Next.js dashboard, live workflow stream, brief     │
+└──────────────────────────────────────────────────────────────────────┘</pre>
+  </div>
+  <p><strong>MCP tools (data-access boundary)</strong> — agents may ONLY touch MongoDB through these: <code>blast_radius_query</code>, <code>supplier_vector_search</code>, <code>compliance_rag_query</code>, <code>read_checkpoint</code>/<code>write_checkpoint</code>, <code>write_plan</code>/<code>update_plan_status</code>.</p>
+</section>
+
+<section id="state">
+  <h2 class="sec">3. DisruptionState (shared graph state)</h2>
+  <p>A single <code>TypedDict</code> threaded through every node and persisted as checkpoints (M4). Defined in <code>backend/app/agents/state.py</code>.</p>
+  <table>
+    <tr><th>Field</th><th>Set by</th><th>Meaning</th></tr>
+    <tr><td><code>thread_id</code></td><td>intake</td><td>workflow identity</td></tr>
+    <tr><td><code>alert_text</code></td><td>intake</td><td>raw disruption description</td></tr>
+    <tr><td><code>severity</code></td><td>Supervisor</td><td>LOW / MEDIUM / HIGH / CRITICAL</td></tr>
+    <tr><td><code>affected_region</code>, <code>affected_supplier_id</code>, <code>affected_route</code></td><td>Supervisor</td><td>extracted scope</td></tr>
+    <tr><td><code>affected_skus[]</code>, <code>impacted_orders[]</code>, <code>required_capacity</code></td><td>Impact Assessor</td><td>blast radius (capacity = SUM of <code>quantity_remaining</code>)</td></tr>
+    <tr><td><code>candidate_suppliers[]</code>, <code>sourcing_query</code></td><td>Sourcing</td><td>vector-matched, capacity-filtered backups</td></tr>
+    <tr><td><code>compliance_results[]</code>, <code>vetted_suppliers[]</code>, <code>rejected_supplier_ids[]</code></td><td>Compliance</td><td>per-supplier pass/fail + reasons</td></tr>
+    <tr><td><code>compliance_retries</code></td><td>graph</td><td>loop counter (≤ <code>COMPLIANCE_MAX_RETRIES</code>)</td></tr>
+    <tr><td><code>mitigation_brief</code>, <code>confidence_score</code>, <code>recommended_action</code></td><td>Planner</td><td>final output (AUTO_EXECUTE | HUMAN_REVIEW)</td></tr>
+    <tr><td><code>status</code>, <code>error</code></td><td>graph</td><td>running | complete | halted_no_impact | escalated_hitl</td></tr>
+  </table>
+</section>
+
+<section id="schema">
+  <h2 class="sec">4. MongoDB schema</h2>
+  <p>Database: <strong><code>resiliochain</code></strong> (Atlas cluster0). Collection names defined in <code>backend/app/config.py</code>.</p>
+
+  <h3>M1 — <code>orders</code> (source for <code>$graphLookup</code>)</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+    <tr><td><code>_id</code></td><td>ObjectId</td><td>auto</td></tr>
+    <tr><td><code>order_number</code></td><td>String</td><td>ORD-1044 … ORD-1073, unique</td></tr>
+    <tr><td><code>status</code></td><td>String</td><td><code>active</code> (only active orders in blast radius)</td></tr>
+    <tr><td><code>sku_ids</code></td><td>String[]</td><td>e.g. ["MCU-32X","SEN-IMU9","CAP-470UF"]</td></tr>
+    <tr><td><code>supplier_id</code></td><td>String</td><td>matches a <code>suppliers._id</code> — graph edge</td></tr>
+    <tr><td><code>quantity_ordered</code></td><td>Number</td><td>5,000–20,000</td></tr>
+    <tr><td><code>quantity_remaining</code></td><td>Number</td><td>80–95% of ordered</td></tr>
+    <tr><td><code>route</code></td><td>Object</td><td>{ origin, destination, via_port }</td></tr>
+    <tr><td><code>bom</code></td><td>Object</td><td>polymorphic BOM { part_number, spec, grade }</td></tr>
+    <tr><td><code>depends_on</code></td><td>String[]</td><td>[supplier_id] — <strong>the <code>$graphLookup</code> edge field</strong></td></tr>
+    <tr><td><code>unit_price</code></td><td>Number</td><td>original price (cost-variance calc)</td></tr>
+    <tr><td><code>created_at</code></td><td>Date</td><td>within last 90 days</td></tr>
+  </table>
+  <p><strong>Indexes:</strong> <code>{supplier_id:1}</code>, <code>{status:1}</code>, <code>{depends_on:1}</code>, <code>{order_number:1}</code> (unique).</p>
+
+  <h3>M2 — <code>suppliers</code> (source for <code>$vectorSearch</code>)</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+    <tr><td><code>_id</code></td><td>String</td><td>SUP-001 (disrupted) … SUP-020</td></tr>
+    <tr><td><code>name</code></td><td>String</td><td>e.g. PT Maju Jaya Electronics</td></tr>
+    <tr><td><code>capabilities</code></td><td>String[]</td><td>["automotive-grade microcontrollers","32-bit MCU","AEC-Q100 certified"]</td></tr>
+    <tr><td><code>capacity_units_month</code></td><td>Number</td><td>≥ 48,200 for ≥2 backups (hard filter)</td></tr>
+    <tr><td><code>geo_region</code></td><td>String</td><td>Indonesia, Malaysia, South Korea, Vietnam</td></tr>
+    <tr><td><code>lead_time_days</code></td><td>Number</td><td>14–45</td></tr>
+    <tr><td><code>esg_score</code></td><td>Number</td><td>SUP-FAIL = 22; others 65–92</td></tr>
+    <tr><td><code>certifications</code></td><td>String[]</td><td>["ISO-14001","carbon-neutral-2024"]</td></tr>
+    <tr><td><code>unit_price</code></td><td>Number</td><td>5–15% above original</td></tr>
+    <tr><td><code>embed_text</code></td><td>String</td><td>name + capabilities (embedding input)</td></tr>
+    <tr><td><code>embedding</code></td><td>Float[]</td><td><strong>auto-generated by Atlas Voyage AI</strong> (autoEmbed) — do not populate manually</td></tr>
+    <tr><td><code>last_updated</code></td><td>Date</td><td>now</td></tr>
+  </table>
+
+  <h3>M3 — <code>compliance_policies</code> (source for Vector RAG)</h3>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+    <tr><td><code>_id</code></td><td>ObjectId</td><td>auto</td></tr>
+    <tr><td><code>source_doc</code></td><td>String</td><td>2025_ESG_Guidelines.pdf, Trade_Sanctions_2025.pdf, Labour_Standards.pdf</td></tr>
+    <tr><td><code>chunk_index</code></td><td>Number</td><td>0-based within source</td></tr>
+    <tr><td><code>text</code></td><td>String</td><td>300–500 token policy chunk</td></tr>
+    <tr><td><code>policy_type</code></td><td>String</td><td>ESG | trade_sanction | labour | carbon</td></tr>
+    <tr><td><code>embedding</code></td><td>Float[]</td><td>auto-generated (Voyage AI)</td></tr>
+    <tr><td><code>effective_date</code></td><td>Date</td><td>2025-01-01</td></tr>
+  </table>
+
+  <h3>M4 — <code>agent_checkpoints</code> + <code>mitigation_plans</code></h3>
+  <ul>
+    <li><strong><code>agent_checkpoints</code></strong> — LangGraph thread memory: <code>{ thread_id, ts, node, state }</code>.</li>
+    <li><strong><code>mitigation_plans</code></strong> — written by the Planner via <code>write_plan</code>: <code>{ plan_id, thread_id, affected_orders_count, backup_supplier, reroute_via, lead_time_delta_days, cost_variance_usd, cost_variance_pct, esg_status, confidence_score, recommended_action, options[], status, created_at }</code>.</li>
+  </ul>
+
+  <h3><code>audit_logs</code> &amp; <code>disruptions</code></h3>
+  <ul>
+    <li><strong><code>audit_logs</code></strong> — append-only decision trail: <code>{ ts, thread_id, agent, action, input_summary, output_summary, level }</code>.</li>
+    <li><strong><code>disruptions</code></strong> — intake records: <code>{ _id, alert_text, region, product, supplier_id, issue, created_at, status }</code>.</li>
+  </ul>
+
+  <h3>Vector index definitions</h3>
+  <div class="card">
+    <p><strong><code>supplier_vector_index</code></strong> (type <code>vectorSearch</code>, on <code>suppliers</code>):</p>
+    <ul>
+      <li><code>embedding</code> — autoEmbed (Voyage AI <code>voyage-4</code>) over <code>embed_text</code>, <strong>cosine</strong> similarity.</li>
+      <li><code>filter</code> fields: <code>capacity_units_month</code>, <code>geo_region</code>, <code>esg_score</code>.</li>
+    </ul>
+    <p><strong><code>policy_vector_index</code></strong> (type <code>vectorSearch</code>, on <code>compliance_policies</code>):</p>
+    <ul>
+      <li><code>embedding</code> — autoEmbed (Voyage AI) over <code>text</code>.</li>
+      <li><code>filter</code> field: <code>policy_type</code>.</li>
+    </ul>
+  </div>
+  <div class="note"><strong>Embedding strategy.</strong> Default <code>EMBEDDING_MODE=autoembed</code>: Atlas manages Voyage AI embeddings at index/query time (insert only <code>embed_text</code>/<code>text</code>). Fallback <code>explicit</code>: <code>seed.py</code> calls Voyage AI (<code>VOYAGE_API_KEY</code>) to populate <code>embedding</code> and the index switches to a plain <code>vector</code> field. Query stages are identical either way.</div>
+</section>
+
+<section id="pipelines">
+  <h2 class="sec">5. The three MongoDB AI pipelines</h2>
+
+  <h3>Pipeline 1 — <code>$graphLookup</code> blast radius</h3>
+  <p><code>blast_radius_query.py</code>: traverse <code>orders.depends_on &rarr; suppliers._id</code>, keep orders whose chain includes the disrupted supplier, aggregate impacted orders, unique SKUs, and <code>required_capacity</code> = SUM of <code>quantity_remaining</code>.</p>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>pipeline = [
+    {"$match": {"status": "active"}},
+    {"$graphLookup": {
+        "from": settings.COL_SUPPLIERS,
+        "startWith": "$depends_on",
+        "connectFromField": "depends_on",
+        "connectToField": "_id",
+        "as": "dependency_chain",
+    }},
+    {"$match": {"dependency_chain._id": affected_supplier_id}},
+    {"$group": {
+        "_id": None,
+        "impacted_orders": {"$push": {
+            "order_number": "$order_number", "sku_ids": "$sku_ids",
+            "quantity_remaining": "$quantity_remaining",
+            "route": "$route", "unit_price": "$unit_price",
+        }},
+        "all_skus": {"$push": "$sku_ids"},
+        "required_capacity": {"$sum": "$quantity_remaining"},
+    }},
+]</pre>
+  </div>
+  <p>Empty result &rarr; <code>{affected_skus:[], impacted_orders:[], required_capacity:0}</code> and the workflow halts (<code>halted_no_impact</code>).</p>
+
+  <h3>Pipeline 2 — <code>$vectorSearch</code> sourcing with capacity filter</h3>
+  <p><code>supplier_vector_search.py</code>: semantic recall over <code>suppliers</code> with a <strong>hard capacity filter enforced at the query level</strong> (not by the LLM). The disrupted supplier/region is excluded after retrieval (<code>_id</code> cannot be a vector-filter field).</p>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>vfilter = {"capacity_units_month": {"$gte": int(required_capacity)}}
+
+# autoembed mode (default)
+stage = {"$vectorSearch": {
+    "index": settings.IDX_SUPPLIER_VECTOR,
+    "path": "embed_text",
+    "query": {"text": query_text},
+    "filter": vfilter,
+    "numCandidates": 100,
+    "limit": top_k,            # default 3
+}}
+# explicit mode -> "path": "embedding", "queryVector": embed_query(query_text)
+
+pipeline = [stage,
+    {"$match": {"_id": {"$ne": exclude_supplier_id},
+                "geo_region": {"$ne": exclude_region}}},   # post-filter
+    {"$project": {"_id": 1, "name": 1, "capabilities": 1,
+                  "capacity_units_month": 1, "geo_region": 1,
+                  "lead_time_days": 1, "esg_score": 1, "certifications": 1,
+                  "unit_price": 1,
+                  "similarity_score": {"$meta": "vectorSearchScore"}}},
+]</pre>
+  </div>
+
+  <h3>Pipeline 3 — Vector RAG compliance</h3>
+  <p><code>compliance_rag_query.py</code>: build a query from a candidate's <code>geo_region</code> + <code>capabilities</code>, retrieve the most relevant policy chunks (optionally by <code>policy_type</code>), then the Compliance Agent reasons over ESG / sanctions / labour / carbon.</p>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>query_text = (f"{region} supplier ESG labour sanctions carbon compliance for "
+              f"automotive electronics {caps}")
+
+vs = {"index": settings.IDX_POLICY_VECTOR, "path": "text",
+      "query": {"text": query_text}, "numCandidates": 100, "limit": top_k}  # default 5
+if policy_type:
+    vs["filter"] = {"policy_type": policy_type}
+
+pipeline = [
+    {"$vectorSearch": vs},
+    {"$project": {"_id": 0, "source_doc": 1, "policy_type": 1, "text": 1,
+                  "score": {"$meta": "vectorSearchScore"}}},
+]</pre>
+  </div>
+  <div class="note"><strong>Rate-limit handling.</strong> All vector pipelines run through <code>_vs.run_vector_pipeline</code>, which retries on Voyage AI rate-limit errors (free tier: 3 RPM / 10K TPM) with ~21s spacing, up to 4 attempts.</div>
+</section>
+
+<section id="workflow">
+  <h2 class="sec">6. Agent workflow</h2>
+  <p>Five LangGraph nodes (<code>backend/app/agents/</code>). Structured JSON in/out, each writes to <code>audit_logs</code>, fails gracefully. Models default to Bedrock Claude Haiku 4.5.</p>
+  <table>
+    <tr><th>Agent</th><th>Model</th><th>Role</th><th>MCP tools</th></tr>
+    <tr><td>A. Supervisor</td><td>Sonnet&rarr;Haiku</td><td>Classify severity, extract scope, route; 2nd pass compiles brief + HITL decision</td><td><code>read/write_checkpoint</code>, <code>write_plan</code></td></tr>
+    <tr><td>B. Impact Assessor</td><td>Haiku</td><td>Blast radius via <code>$graphLookup</code>; aggregate <code>required_capacity</code></td><td><code>blast_radius_query</code></td></tr>
+    <tr><td>C. Sourcing</td><td>Haiku</td><td><code>$vectorSearch</code> backups with hard capacity filter; top-3</td><td><code>supplier_vector_search</code></td></tr>
+    <tr><td>D. Compliance</td><td>Haiku</td><td>Vector RAG over policies; validate each candidate iteratively</td><td><code>compliance_rag_query</code></td></tr>
+    <tr><td>E. Mitigation Planner</td><td>Sonnet&rarr;Haiku</td><td>Select top vetted supplier, cost variance, deterministic confidence, write plan</td><td><code>write_plan</code>, <code>update_plan_status</code>, <code>read_checkpoint</code></td></tr>
+  </table>
+
+  <h3>Graph wiring &amp; conditional-edge retry logic (<code>graph.py</code>)</h3>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>g.set_entry_point("supervisor")
+g.add_edge("supervisor", "impact_assessor")
+g.add_conditional_edges("impact_assessor", _after_impact,
+                        {"halt": END, "sourcing": "sourcing"})
+g.add_edge("sourcing", "compliance")
+g.add_conditional_edges("compliance", _after_compliance,
+                        {"planner": "planner", "retry_sourcing": "sourcing"})
+g.add_edge("planner", END)
+
+def _after_impact(state):
+    return "halt" if state.get("status") == "halted_no_impact" else "sourcing"
+
+def _after_compliance(state):
+    if state.get("vetted_suppliers"):
+        return "planner"
+    if state.get("compliance_retries", 0) &lt; settings.compliance_max_retries \
+            and state.get("candidate_suppliers"):
+        return "retry_sourcing"           # loop back for the next-best candidate
+    return "planner"                       # planner escalates to HITL (no vetted suppliers)</pre>
+  </div>
+  <ul>
+    <li><strong>Compliance &rarr; Sourcing:</strong> if no candidate passes, loop back for the next-best vector match. After 3 retries (<code>COMPLIANCE_MAX_RETRIES</code>) &rarr; planner escalates to HITL.</li>
+    <li><strong>Impact halt:</strong> empty blast radius &rarr; END (no Sourcing).</li>
+    <li><strong>Supervisor HITL gate:</strong> brief cannot compile until <code>impacted_orders[]</code>, <code>candidate_suppliers[]</code>, <code>compliance_results[]</code> are populated.</li>
+    <li>A <code>recursion_limit</code> of 25 guards against unexpected loops.</li>
+  </ul>
+</section>
+
+<section id="confidence">
+  <h2 class="sec">7. Deterministic confidence formula</h2>
+  <p>Computed in <code>backend/app/agents/confidence.py</code> — <strong>never produced by the LLM.</strong> Vector similarity is a weak signal for short supplier texts, so it is used only for candidate recall, not the final score.</p>
+  <div class="formula">confidence (0-100) =
+    0.35 * esg_component        (esg_score / 100)
+  + 0.30 * cost_component       (1 - clamp(|cost_variance_pct| / 40))
+  + 0.15 * capacity_component   (clamp((capacity - required) / required, 0, 1))
+  + 0.10 * leadtime_component   (1 - clamp(lead_time_days / 60))
+  + 0.10 * compliance_component (1.0 if all compliance dimensions PASS else 0.0)</div>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>def compute_confidence(*, esg_score, cost_variance_pct, capacity_units_month,
+                       required_capacity, lead_time_days, compliance_passed) -> int:
+    esg_c  = _clamp(esg_score / 100.0)
+    cost_c = _clamp(1.0 - abs(cost_variance_pct) / 40.0)
+    headroom = ((capacity_units_month - required_capacity) / required_capacity
+                if required_capacity else 0.0)
+    cap_c  = _clamp(headroom)
+    lead_c = _clamp(1.0 - lead_time_days / 60.0)
+    comp_c = 1.0 if compliance_passed else 0.0
+    score  = 100.0 * (0.35*esg_c + 0.30*cost_c + 0.15*cap_c + 0.10*lead_c + 0.10*comp_c)
+    return int(round(score))
+
+def decide_action(confidence, esg_score) -> str:
+    if confidence >= settings.confidence_auto_threshold and esg_score >= 60:
+        return "AUTO_EXECUTE"
+    return "HUMAN_REVIEW"</pre>
+  </div>
+  <p><code>AUTO_EXECUTE</code> only if confidence ≥ <code>CONFIDENCE_AUTO_THRESHOLD</code> (default 85) <strong>AND</strong> <code>esg_score ≥ 60</code>; otherwise <code>HUMAN_REVIEW</code> (HITL) is mandatory.</p>
+</section>
+
+<section id="setup">
+  <h2 class="sec">8. Setup &amp; installation</h2>
+  <h3>Prerequisites</h3>
+  <ul>
+    <li>Python 3.11+, Node.js 18+</li>
+    <li>MongoDB Atlas cluster with Vector Search enabled</li>
+    <li>AWS Bedrock access (Claude Haiku 4.5) — static keys or an IAM role</li>
+  </ul>
+
+  <h3>Environment variables (<code>.env</code>) — key names only</h3>
+  <table>
+    <tr><th>Key</th><th>Purpose</th></tr>
+    <tr><td><code>MONGODB_URI</code></td><td>Atlas connection string</td></tr>
+    <tr><td><code>MONGODB_DB</code></td><td>database name (resiliochain)</td></tr>
+    <tr><td><code>AWS_ACCESS_KEY_ID</code></td><td>Bedrock credential (or IAM role)</td></tr>
+    <tr><td><code>AWS_SECRET_ACCESS_KEY</code></td><td>Bedrock credential</td></tr>
+    <tr><td><code>AWS_REGION</code></td><td>Bedrock region (e.g. us-east-1)</td></tr>
+    <tr><td><code>BEDROCK_MODEL_ID</code></td><td>default model id (Claude Haiku 4.5)</td></tr>
+    <tr><td><code>BEDROCK_MODEL_SUPERVISOR</code></td><td>optional per-agent override</td></tr>
+    <tr><td><code>BEDROCK_MODEL_PLANNER</code></td><td>optional per-agent override</td></tr>
+    <tr><td><code>LLM_MODE</code></td><td>bedrock | mock</td></tr>
+    <tr><td><code>EMBEDDING_MODE</code></td><td>autoembed | explicit</td></tr>
+    <tr><td><code>VOYAGE_API_KEY</code></td><td>required only in explicit mode</td></tr>
+    <tr><td><code>VOYAGE_MODEL</code></td><td>embedding model (voyage-4)</td></tr>
+    <tr><td><code>API_HOST</code></td><td>bind host (0.0.0.0)</td></tr>
+    <tr><td><code>API_PORT</code></td><td>API port (use 8010 — see note)</td></tr>
+    <tr><td><code>CONFIDENCE_AUTO_THRESHOLD</code></td><td>auto-execute threshold (default 85)</td></tr>
+    <tr><td><code>COMPLIANCE_MAX_RETRIES</code></td><td>sourcing&harr;compliance retry cap (default 3)</td></tr>
+  </table>
+  <div class="note"><strong>Port note:</strong> the canonical API port is <strong>8010</strong> (8000 was occupied by another local service). Set <code>NEXT_PUBLIC_API_BASE=http://localhost:8010</code> for the frontend.</div>
+
+  <h3>Backend (virtualenv + uvicorn on 8010)</h3>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m app.db.seed              # load demo dataset into Atlas
+python -m app.db.indexes           # create vector + graph indexes
+python -m app.agents.graph --demo  # run the Typhoon-Yagi scenario end-to-end
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8010</pre>
+  </div>
+
+  <h3>Frontend (Next.js on 3000)</h3>
+  <div class="codeblock">
+    <button class="copy-btn">Copy</button>
+<pre>cd frontend
+npm install
+NEXT_PUBLIC_API_BASE=http://localhost:8010 npm run dev   # http://localhost:3000</pre>
+  </div>
+</section>
+
+<section id="api">
+  <h2 class="sec">9. API reference</h2>
+  <p>Base URL: <code>http://localhost:8010</code>. All responses are clean JSON. Errors: <code>{ "error": { "code", "message" } }</code> with the proper HTTP status.</p>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
+    <tr><td>GET</td><td><code>/health</code></td><td>Liveness + MongoDB ping + LLM mode</td></tr>
+    <tr><td>POST</td><td><code>/disruptions</code></td><td>Create a disruption alert &rarr; <code>disruption_id</code></td></tr>
+    <tr><td>GET</td><td><code>/disruptions</code></td><td>List disruption alerts</td></tr>
+    <tr><td>GET</td><td><code>/disruptions/{id}</code></td><td>One disruption + latest workflow result</td></tr>
+    <tr><td>POST</td><td><code>/workflow/run</code></td><td>Run the LangGraph workflow (final state)</td></tr>
+    <tr><td>GET</td><td><code>/workflow/stream/{thread_id}</code></td><td><strong>SSE</strong> stream of agent steps</td></tr>
+    <tr><td>GET</td><td><code>/suppliers/classify</code></td><td>Supplier impact classification view data</td></tr>
+    <tr><td>GET</td><td><code>/audit-logs</code></td><td>Audit trail (filter by <code>thread_id</code>)</td></tr>
+    <tr><td>GET</td><td><code>/checkpoints/{thread_id}</code></td><td>Checkpoint history for a thread</td></tr>
+    <tr><td>GET</td><td><code>/plans/{thread_id}</code></td><td>Mitigation plan(s) for a thread</td></tr>
+    <tr><td>GET</td><td><code>/pipelines</code></td><td>Metadata about the 3 MongoDB AI pipelines</td></tr>
+  </table>
+
+  <h3>GET <code>/health</code></h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>{ "status": "ok", "mongodb": "connected", "llm_mode": "bedrock",
+  "embedding_mode": "autoembed", "db": "resiliochain" }</pre>
+  </div>
+
+  <h3>POST <code>/disruptions</code></h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>// request
+{ "eventType": "Typhoon", "region": "Tanjung Pelepas, Malaysia",
+  "product": "Automotive-grade MCU", "supplier": "SUP-001",
+  "issue": "Port closed 72h — supplier has stock but cannot deliver" }
+
+// response
+{ "disruption_id": "665f0a...c21", "status": "created" }</pre>
+  </div>
+
+  <h3>POST <code>/workflow/run</code></h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>// request
+{ "alert_text": "Typhoon Yagi has closed the Port of Tanjung Pelepas for 72 hours. SUP-001 cannot deliver 23 active orders totalling 48,200 units of automotive-grade MCUs." }
+
+// response — final DisruptionState
+{
+  "thread_id": "demo-9f3a1c2b",
+  "severity": "HIGH",
+  "affected_supplier_id": "SUP-001",
+  "affected_region": "Malaysia",
+  "impacted_orders": [
+    { "order_number": "ORD-1044", "sku_ids": ["MCU-32X"],
+      "quantity_remaining": 4200, "unit_price": 3.10 }
+  ],
+  "required_capacity": 48200,
+  "candidate_suppliers": [
+    { "supplier_id": "SUP-FAIL", "similarity_score": 0.51,
+      "geo_region": "Vietnam", "esg_score": 22 },
+    { "supplier_id": "SUP-002", "name": "PT Maju Jaya Electronics",
+      "similarity_score": 0.49, "geo_region": "Indonesia", "esg_score": 88 }
+  ],
+  "compliance_results": [
+    { "supplier_id": "SUP-FAIL", "passed": false,
+      "fail_reasons": ["Vietnam labour/ESG risk"] },
+    { "supplier_id": "SUP-002", "passed": true }
+  ],
+  "vetted_suppliers": [ { "supplier_id": "SUP-002", "esg_score": 88 } ],
+  "mitigation_brief": {
+    "plan_id": "PLAN-7c2a", "affected_orders_count": 23,
+    "backup_supplier": "SUP-002", "backup_supplier_name": "PT Maju Jaya Electronics",
+    "reroute_via": "Port of Tanjung Priok", "lead_time_delta_days": 6,
+    "cost_variance_usd": 33740, "cost_variance_pct": 7.0,
+    "esg_status": "PASS", "confidence_score": 88,
+    "recommended_action": "AUTO_EXECUTE", "options": []
+  },
+  "confidence_score": 88,
+  "recommended_action": "AUTO_EXECUTE",
+  "status": "complete"
+}</pre>
+  </div>
+
+  <h3>GET <code>/workflow/stream/{thread_id}</code> (SSE)</h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>event: step
+data: {"agent":"supervisor","action":"classify","severity":"HIGH"}
+
+event: step
+data: {"agent":"impact_assessor","action":"blast_radius","impacted_orders":23,"required_capacity":48200}
+
+event: step
+data: {"agent":"sourcing","action":"vector_search","candidates":3}
+
+event: step
+data: {"agent":"compliance","action":"vet","supplier_id":"SUP-FAIL","passed":false}
+
+event: step
+data: {"agent":"compliance","action":"vet","supplier_id":"SUP-002","passed":true}
+
+event: done
+data: {"status":"complete","recommended_action":"AUTO_EXECUTE","confidence_score":88}</pre>
+  </div>
+
+  <h3>GET <code>/audit-logs?thread_id=...</code></h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>[
+  { "ts": "2026-06-30T10:02:11Z", "thread_id": "demo-9f3a1c2b",
+    "agent": "system", "action": "workflow_start",
+    "input_summary": "Typhoon Yagi...", "level": "info" },
+  { "ts": "2026-06-30T10:02:14Z", "thread_id": "demo-9f3a1c2b",
+    "agent": "compliance", "action": "vet",
+    "output_summary": "SUP-FAIL rejected: Vietnam labour/ESG risk", "level": "info" }
+]</pre>
+  </div>
+
+  <h3>GET <code>/plans/{thread_id}</code></h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>[
+  { "plan_id": "PLAN-7c2a", "thread_id": "demo-9f3a1c2b",
+    "affected_orders_count": 23, "backup_supplier": "SUP-002",
+    "reroute_via": "Port of Tanjung Priok", "lead_time_delta_days": 6,
+    "cost_variance_usd": 33740, "cost_variance_pct": 7.0,
+    "esg_status": "PASS", "confidence_score": 88,
+    "recommended_action": "AUTO_EXECUTE", "status": "PROPOSED",
+    "options": [], "created_at": "2026-06-30T10:02:20Z" }
+]</pre>
+  </div>
+
+  <h3>GET <code>/pipelines</code></h3>
+  <div class="codeblock"><button class="copy-btn">Copy</button>
+<pre>[
+  { "id": "blast_radius_query", "operator": "$graphLookup", "collection": "orders",
+    "purpose": "Compute blast radius over the order->supplier dependency graph" },
+  { "id": "supplier_vector_search", "operator": "$vectorSearch", "collection": "suppliers",
+    "index": "supplier_vector_index", "purpose": "Semantic sourcing with hard capacity filter" },
+  { "id": "compliance_rag_query", "operator": "$vectorSearch", "collection": "compliance_policies",
+    "index": "policy_vector_index", "purpose": "Vector RAG over ESG/sanctions/labour/carbon policy" }
+]</pre>
+  </div>
+</section>
+
+<section id="deploy">
+  <h2 class="sec">10. Deployment guide</h2>
+  <h3>Local</h3>
+  <ul>
+    <li>Backend: <code>uvicorn app.main:app --reload --port 8010</code>.</li>
+    <li>Frontend: <code>npm run dev</code> (port 3000), with <code>NEXT_PUBLIC_API_BASE=http://localhost:8010</code>.</li>
+  </ul>
+  <h3>Production</h3>
+  <ul>
+    <li><strong>Backend:</strong> containerize FastAPI (Dockerfile, gunicorn + uvicorn workers) &rarr; AWS ECS/Fargate, Fly.io, or Render. Prefer an <strong>IAM role for Bedrock</strong> over static keys.</li>
+    <li><strong>Frontend:</strong> Vercel (Next.js native) &rarr; set <code>NEXT_PUBLIC_API_BASE</code> to the deployed API URL.</li>
+    <li><strong>MongoDB:</strong> Atlas (managed); ensure both Vector Search indexes are <strong>ACTIVE</strong>; restrict the network access list; use a least-privilege DB user.</li>
+  </ul>
+  <h3>Pre-deploy checklist</h3>
+  <ul>
+    <li>Rotate any credentials shared during development.</li>
+    <li><code>supplier_vector_index</code> + <code>policy_vector_index</code> ACTIVE.</li>
+    <li>Seed data loaded (or production data migrated).</li>
+    <li><code>pytest</code> green; <code>/health</code> returns <code>ok</code>.</li>
+    <li>CORS allows the frontend origin.</li>
+  </ul>
+</section>
+
+<section id="trouble">
+  <h2 class="sec">11. Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr>
+    <tr><td>Voyage rate limit / 429 in vector logs</td><td>Free-tier autoEmbed cap (3 RPM / 10K TPM)</td><td><code>_vs.run_vector_pipeline</code> retries with ~21s spacing; add a payment method to Atlas/Voyage to lift the limit, or set <code>EMBEDDING_MODE=explicit</code> with a <code>VOYAGE_API_KEY</code> to control batching.</td></tr>
+    <tr><td>API won't bind — port 8000 in use</td><td>Another local service holds 8000</td><td>Run on <strong>8010</strong>: <code>uvicorn app.main:app --port 8010</code> and set <code>NEXT_PUBLIC_API_BASE=http://localhost:8010</code>.</td></tr>
+    <tr><td><code>/health</code> shows mongodb: disconnected / timeout</td><td>Bad <code>MONGODB_URI</code>, IP not allowlisted, wrong DB user</td><td>Verify the SRV string and <code>MONGODB_DB</code>; add your IP to the Atlas Network Access list; confirm the DB user/role.</td></tr>
+    <tr><td>Vector search returns nothing</td><td>Indexes not built or still building</td><td>Run <code>python -m app.db.indexes</code>; confirm both indexes are ACTIVE in Atlas.</td></tr>
+    <tr><td>Workflow halts with <code>halted_no_impact</code></td><td>Blast radius query returned empty</td><td>Confirm seed data loaded and orders' <code>depends_on</code> points at the disrupted <code>supplier_id</code>.</td></tr>
+    <tr><td>All candidates rejected &rarr; <code>escalated_hitl</code></td><td>No compliant supplier within 3 retries</td><td>Expected guardrail; review <code>audit_logs</code> <code>fail_reasons</code> and the brief's <code>options[]</code>.</td></tr>
+  </table>
+</section>
+
+<section id="screens">
+  <h2 class="sec">12. Screenshots</h2>
+  <div class="shots">
+    <div class="shot"><img src="./screenshots/dashboard.png" alt="Dashboard"><div class="cap">Dashboard — disruption intake &amp; supplier classification</div></div>
+    <div class="shot"><img src="./screenshots/workflow.png" alt="Workflow stream"><div class="cap">Live workflow — agent steps streamed over SSE</div></div>
+    <div class="shot"><img src="./screenshots/brief.png" alt="Mitigation brief"><div class="cap">Mitigation brief — confidence score &amp; recommended action</div></div>
+  </div>
+</section>
+
+<footer>
+  Generated for the ResilioChain project. Ground truth: <code>ARCHITECTURE.md</code>, <code>MONGODB_SCHEMA.md</code>, <code>AGENTS.md</code>, <code>API_SPEC.md</code>, <code>backend/app/agents/*</code>, <code>backend/app/mcp_tools/*</code>.
+</footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentElement.querySelector('pre');
+      var text = pre ? pre.innerText : '';
+      function done(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove('copied'); }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(text, done); });
+      } else {
+        fallback(text, done);
+      }
+    });
+  });
+  function fallback(text, cb){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta); cb();
+  }
+</script>
+</body>
+</html>

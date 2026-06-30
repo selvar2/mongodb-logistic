@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ResilioChain — Agentic Supply-Chain Resilience</title>
+<meta name="description" content="When the world breaks the supply chain, ResilioChain reroutes it — autonomously, compliantly, on MongoDB." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#040711; --bg2:#020617; --ink:#F4F8FF; --mut:#8A97B2; --mut2:#5E6B86;
+    --emerald:#22C55E; --teal:#14B8A6; --indigo:#6366F1; --amber:#F59E0B; --red:#EF4444;
+    --line:rgba(255,255,255,.08); --glass:rgba(255,255,255,.025);
+    --maxw:1180px;
+    --fdisp:"Space Grotesk",system-ui,sans-serif; --fbody:"Sora",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--fbody);
+    -webkit-font-smoothing:antialiased; overflow-x:hidden; line-height:1.6;
+  }
+  /* mesh-gradient orbs */
+  .orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45}
+  .orb.a{width:540px;height:540px;background:radial-gradient(circle,#22C55E,transparent 70%);top:-160px;left:-120px}
+  .orb.b{width:620px;height:620px;background:radial-gradient(circle,#6366F1,transparent 70%);top:18%;right:-180px;opacity:.35}
+  .orb.c{width:500px;height:500px;background:radial-gradient(circle,#14B8A6,transparent 70%);bottom:-160px;left:30%;opacity:.3}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  main{position:relative;z-index:2}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  section{padding:140px 0}
+  h1,h2,h3{font-family:var(--fdisp);font-weight:600;letter-spacing:-.02em;line-height:1.04}
+  .eyebrow{font-family:var(--fdisp);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--emerald);font-weight:600}
+  .muted{color:var(--mut)}
+  a{color:inherit;text-decoration:none}
+
+  /* nav */
+  nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:50;
+    display:flex;align-items:center;gap:26px;padding:11px 14px 11px 20px;border-radius:999px;
+    background:rgba(8,12,22,.6);backdrop-filter:blur(18px);border:1px solid var(--line)}
+  nav .brand{font-family:var(--fdisp);font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px}
+  nav .brand b{color:var(--emerald)}
+  nav .links{display:flex;gap:22px;font-size:13.5px;color:var(--mut)}
+  nav .links a:hover{color:var(--ink)}
+  nav .cta{font-family:var(--fdisp);font-weight:600;font-size:13px;background:var(--emerald);color:#03130a;padding:9px 16px;border-radius:999px}
+  @media(max-width:760px){nav .links{display:none}}
+
+  /* hero */
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-top:120px}
+  .hero h1{font-size:clamp(2.9rem,7vw,5.6rem);max-width:14ch;font-weight:700}
+  .hero h1 .grad{background:linear-gradient(100deg,#22C55E,#14B8A6 40%,#6366F1);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{margin-top:26px;font-size:clamp(1.05rem,1.6vw,1.3rem);color:var(--mut);max-width:60ch}
+  .reveal-line{display:block;overflow:hidden}
+  .reveal-line>span{display:block;will-change:transform}
+  .hero .ctas{margin-top:40px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+  .btn{font-family:var(--fdisp);font-weight:600;font-size:15px;padding:15px 26px;border-radius:14px;border:1px solid transparent;transition:transform .25s cubic-bezier(.2,.8,.2,1),background .25s}
+  .btn.primary{background:var(--emerald);color:#03130a}
+  .btn.ghost{background:var(--glass);border-color:var(--line);color:var(--ink)}
+  .btn:hover{transform:translateY(-2px)}
+  .hero .scrollcue{margin-top:64px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut2)}
+
+  /* generic reveal */
+  .r{opacity:0;transform:translateY(28px)}
+
+  /* problem */
+  .lead{font-family:var(--fdisp);font-weight:500;font-size:clamp(1.6rem,3.4vw,2.9rem);line-height:1.18;max-width:20ch;letter-spacing:-.02em}
+  .lead .hl{color:var(--amber)}
+  .lead .hl2{color:var(--red)}
+  .problem-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+  @media(max-width:860px){.problem-grid{grid-template-columns:1fr;gap:36px}}
+  .stat-strip{display:flex;gap:18px;flex-wrap:wrap;margin-top:36px}
+  .stat-strip .s{flex:1;min-width:130px;background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .stat-strip .s .n{font-family:var(--fdisp);font-weight:700;font-size:2rem}
+  .stat-strip .s .l{font-size:12.5px;color:var(--mut);margin-top:4px}
+
+  /* agents flow */
+  .agents-svg{width:100%;height:auto}
+  .agent-node rect{fill:#0B1120;stroke:var(--line)}
+  .agent-cap{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:40px}
+  @media(max-width:900px){.agent-cap{grid-template-columns:repeat(2,1fr)}}
+  .agent-cap .c{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .agent-cap .c .k{font-family:var(--fdisp);font-weight:600;font-size:14px}
+  .agent-cap .c .t{font-size:12px;color:var(--mut);margin-top:6px}
+  .agent-cap .c .tag{font-size:10.5px;color:var(--emerald);font-family:var(--fdisp);letter-spacing:.04em;margin-top:10px;display:inline-block}
+
+  /* mongo cards */
+  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:860px){.cards3{grid-template-columns:1fr}}
+  .gcard{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid var(--line);border-radius:20px;padding:28px;transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s;position:relative;overflow:hidden}
+  .gcard:hover{transform:translateY(-6px);border-color:rgba(34,197,94,.4)}
+  .gcard .pill{font-family:var(--fdisp);font-size:11px;letter-spacing:.04em;color:var(--teal);border:1px solid var(--line);padding:5px 10px;border-radius:999px;display:inline-block}
+  .gcard h3{font-size:1.3rem;margin:16px 0 10px}
+  .gcard code{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#9FE8C4;background:rgba(34,197,94,.08);padding:2px 7px;border-radius:6px}
+
+  /* result */
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  @media(max-width:860px){.result-grid{grid-template-columns:1fr}}
+  .ring-wrap{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .ring{position:relative;width:240px;height:240px}
+  .ring .label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .label .v{font-family:var(--fdisp);font-weight:700;font-size:3.6rem;color:var(--amber)}
+  .ring .label .l{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--mut)}
+  .verdict{display:flex;flex-direction:column;gap:14px}
+  .vrow{display:flex;align-items:center;gap:14px;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .vrow .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .vrow.win{border-color:rgba(34,197,94,.35)}
+  .vrow.win .dot{background:var(--emerald)}
+  .vrow.bad .dot{background:var(--red)}
+  .vrow .who{font-family:var(--fdisp);font-weight:600}
+  .vrow .sub{font-size:12.5px;color:var(--mut)}
+  .bignums{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:50px}
+  @media(max-width:680px){.bignums{grid-template-columns:1fr}}
+  .bignums .b{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+  .bignums .b .n{font-family:var(--fdisp);font-weight:700;font-size:2.6rem;background:linear-gradient(120deg,#22C55E,#6366F1);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .bignums .b .l{font-size:12.5px;color:var(--mut);margin-top:6px}
+
+  /* bento */
+  .bento{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:130px;gap:16px}
+  @media(max-width:860px){.bento{grid-template-columns:repeat(2,1fr)}}
+  .bento .t{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+  .bento .t.big{grid-column:span 2;grid-row:span 2}
+  .bento .t .k{font-family:var(--fdisp);font-weight:600;font-size:1.05rem}
+  .bento .t .d{font-size:12.5px;color:var(--mut)}
+
+  /* footer */
+  footer{padding:120px 0 70px;text-align:center}
+  footer h2{font-size:clamp(2rem,5vw,3.6rem);max-width:16ch;margin:0 auto}
+  footer .ctas{margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  footer .fine{margin-top:60px;color:var(--mut2);font-size:12.5px;border-top:1px solid var(--line);padding-top:26px}
+  .compare{display:inline-flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:12.5px}
+  .compare a{color:var(--teal);border:1px solid var(--line);padding:7px 13px;border-radius:999px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .r{opacity:1!important;transform:none!important}
+    .reveal-line>span{transform:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="orbs" aria-hidden="true"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<nav>
+  <span class="brand">🛡️ Resilio<b>Chain</b></span>
+  <span class="links">
+    <a href="#problem">Problem</a>
+    <a href="#agents">Agents</a>
+    <a href="#mongo">MongoDB Core</a>
+    <a href="#result">Result</a>
+  </span>
+  <a class="cta" href="http://localhost:3000">Open App</a>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="hero wrap" id="top">
+    <div class="eyebrow r" data-hero>Agentic Supply-Chain Resilience</div>
+    <h1 style="margin-top:22px">
+      <span class="reveal-line"><span>When the world breaks</span></span>
+      <span class="reveal-line"><span>the supply chain,</span></span>
+      <span class="reveal-line"><span class="grad">ResilioChain reroutes it.</span></span>
+    </h1>
+    <p class="r" data-hero>An autonomous multi-agent system that reads a disruption, traces the blast
+      radius across your order graph, finds a compliant backup supplier by meaning — and writes the
+      mitigation plan. Built on MongoDB Atlas, LangGraph, and AWS Bedrock.</p>
+    <div class="ctas r" data-hero>
+      <a class="btn primary mag" href="http://localhost:3000">Launch the console</a>
+      <a class="btn ghost mag" href="#result">See a live decision</a>
+    </div>
+    <div class="scrollcue r" data-hero>Scroll ↓</div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section id="problem" class="wrap">
+    <div class="problem-grid">
+      <div>
+        <div class="eyebrow r">The disruption</div>
+        <p class="lead r" style="margin-top:18px">
+          A typhoon closes the port. The supplier <span class="hl">has the stock</span> —
+          but <span class="hl2">cannot deliver it.</span>
+        </p>
+        <p class="muted r" style="margin-top:22px;max-width:48ch">
+          Typhoon Yagi shuts the Port of Tanjung Pelepas for 72 hours. SUP-001 (Chang Electronics,
+          Malaysia) is sitting on inventory it physically can't move. Twenty-three live orders freeze.
+          Stock availability is not the same as deliverability — and legacy systems can't tell the
+          difference.
+        </p>
+      </div>
+      <div class="stat-strip">
+        <div class="s r"><div class="n"><span class="count" data-to="23">0</span></div><div class="l">orders frozen</div></div>
+        <div class="s r"><div class="n"><span class="count" data-to="48200">0</span></div><div class="l">units stranded</div></div>
+        <div class="s r"><div class="n">72h</div><div class="l">port closed</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENTS -->
+  <section id="agents" class="wrap">
+    <div class="eyebrow r">The response — a 5-agent state machine</div>
+    <h2 class="r" style="font-size:clamp(1.9rem,4vw,3rem);margin-top:16px;max-width:18ch">Five specialists, one orchestrated decision.</h2>
+    <svg class="agents-svg" viewBox="0 0 1000 150" style="margin-top:30px" aria-hidden="true">
+      <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#22C55E"/></marker></defs>
+      <line class="flow" x1="175" y1="60" x2="205" y2="60" stroke="#22C55E" stroke-width="2" marker-end="url(#ah)"/>
+      <line class="flow" x1="375" y1="60" x2="405" y2="60" stroke="#22C55E" stroke-width="2" marker-end="url(#ah)"/>
+      <line class="flow" x1="575" y1="60" x2="605" y2="60" stroke="#22C55E" stroke-width="2" marker-end="url(#ah)"/>
+      <line class="flow" x1="775" y1="60" x2="805" y2="60" stroke="#22C55E" stroke-width="2" marker-end="url(#ah)"/>
+      <line class="flow retry" x1="690" y1="92" x2="490" y2="92" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ah)"/>
+      <text x="500" y="86" fill="#F59E0B" font-size="10" font-family="Space Grotesk" text-anchor="middle">retry ≤ 3 on ESG fail</text>
+      <g class="agent-node"><rect x="15" y="42" width="160" height="36" rx="9"/><text x="95" y="65" text-anchor="middle" fill="#F4F8FF" font-size="13" font-family="Space Grotesk">Supervisor</text></g>
+      <g class="agent-node"><rect x="215" y="42" width="160" height="36" rx="9"/><text x="295" y="65" text-anchor="middle" fill="#F4F8FF" font-size="13" font-family="Space Grotesk">Impact Assessor</text></g>
+      <g class="agent-node"><rect x="415" y="42" width="160" height="36" rx="9"/><text x="495" y="65" text-anchor="middle" fill="#F4F8FF" font-size="13" font-family="Space Grotesk">Sourcing</text></g>
+      <g class="agent-node"><rect x="615" y="42" width="160" height="36" rx="9"/><text x="695" y="65" text-anchor="middle" fill="#F4F8FF" font-size="13" font-family="Space Grotesk">Compliance</text></g>
+      <g class="agent-node"><rect x="815" y="42" width="170" height="36" rx="9"/><text x="900" y="65" text-anchor="middle" fill="#F4F8FF" font-size="13" font-family="Space Grotesk">Mitigation Planner</text></g>
+    </svg>
+    <div class="agent-cap">
+      <div class="c r"><div class="k">Supervisor</div><div class="t">Classifies severity, routes the squad, makes the final call.</div><span class="tag">Claude · HITL</span></div>
+      <div class="c r"><div class="k">Impact Assessor</div><div class="t">Traces every order that depends on the broken supplier.</div><span class="tag">$graphLookup</span></div>
+      <div class="c r"><div class="k">Sourcing</div><div class="t">Finds backups by meaning, hard-filtered on capacity.</div><span class="tag">$vectorSearch</span></div>
+      <div class="c r"><div class="k">Compliance</div><div class="t">Vets ESG / sanctions / labour against policy, with retries.</div><span class="tag">Vector RAG</span></div>
+      <div class="c r"><div class="k">Mitigation Planner</div><div class="t">Scores confidence deterministically and writes the plan.</div><span class="tag">write_plan</span></div>
+    </div>
+  </section>
+
+  <!-- MONGO CORE -->
+  <section id="mongo" class="wrap">
+    <div class="eyebrow r">MongoDB Atlas — the AI core</div>
+    <h2 class="r" style="font-size:clamp(1.9rem,4vw,3rem);margin-top:16px;max-width:20ch">One database. Three AI retrieval modes. Zero glue.</h2>
+    <div class="cards3" style="margin-top:44px">
+      <div class="gcard r"><span class="pill">Graph</span><h3>Blast radius</h3><p class="muted" style="font-size:14px">A recursive <code>$graphLookup</code> walks <code>orders → depends_on → suppliers</code> to find every order the disruption touches and sum the capacity at risk.</p></div>
+      <div class="gcard r"><span class="pill">Vector</span><h3>Semantic sourcing</h3><p class="muted" style="font-size:14px"><code>$vectorSearch</code> over Voyage-AI auto-embeddings ranks backup suppliers by capability, with a hard <code>capacity ≥ 48,200</code> filter and region exclusion.</p></div>
+      <div class="gcard r"><span class="pill">RAG</span><h3>Compliance vetting</h3><p class="muted" style="font-size:14px">A second <code>$vectorSearch</code> retrieves the exact policy chunks that flag a supplier — grounding every accept / reject decision in real ESG &amp; sanctions text.</p></div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="wrap">
+    <div class="eyebrow r">The decision</div>
+    <h2 class="r" style="font-size:clamp(1.9rem,4vw,3rem);margin:16px 0 50px;max-width:18ch">Compliant, ranked, and audit-ready — in seconds.</h2>
+    <div class="result-grid">
+      <div class="ring-wrap r">
+        <div class="ring">
+          <svg width="240" height="240" viewBox="0 0 240 240" style="transform:rotate(-90deg)">
+            <circle cx="120" cy="120" r="100" fill="none" stroke="#141A2B" stroke-width="18"/>
+            <circle id="ringfg" cx="120" cy="120" r="100" fill="none" stroke="#F59E0B" stroke-width="18" stroke-linecap="round" stroke-dasharray="628" stroke-dashoffset="628"/>
+          </svg>
+          <div class="label"><div class="v"><span class="count" data-to="75">0</span></div><div class="l">confidence</div></div>
+        </div>
+        <div style="font-family:var(--fdisp);font-weight:600;color:var(--amber)">⚠ HUMAN REVIEW</div>
+      </div>
+      <div class="verdict">
+        <div class="vrow win r"><span class="dot"></span><div><div class="who">PT Maju Jaya Electronics · SUP-002</div><div class="sub">Indonesia · ESG 88 · capacity 60,000 · +8% cost · compliant → recommended</div></div></div>
+        <div class="vrow bad r"><span class="dot"></span><div><div class="who">Vina Components · SUP-FAIL</div><div class="sub">Vietnam · ESG 22 → rejected: below the required minimum of 60</div></div></div>
+        <div class="vrow bad r"><span class="dot"></span><div><div class="who">Malaysia suppliers</div><div class="sub">Excluded — located inside the disrupted region</div></div></div>
+        <p class="muted r" style="font-size:13.5px;margin-top:6px">Confidence is computed deterministically from ESG, cost variance, capacity headroom and lead time — never by the model — so the recommendation is reproducible and auditable.</p>
+      </div>
+    </div>
+    <div class="bignums">
+      <div class="b r"><div class="n"><span class="count" data-to="23">0</span></div><div class="l">orders rerouted</div></div>
+      <div class="b r"><div class="n">+<span class="count" data-to="8">0</span>%</div><div class="l">cost variance (≈ $9,640)</div></div>
+      <div class="b r"><div class="n">+<span class="count" data-to="21">0</span>d</div><div class="l">lead-time delta · via Singapore</div></div>
+    </div>
+  </section>
+
+  <!-- BENTO -->
+  <section class="wrap">
+    <div class="eyebrow r">Built on</div>
+    <div class="bento" style="margin-top:30px">
+      <div class="t big r"><div class="k">MongoDB Atlas</div><div class="d">Graph traversal, vector search, RAG, agent checkpoints &amp; audit trail — all in one operational database.</div></div>
+      <div class="t r"><div class="k">LangGraph</div><div class="d">5-agent state machine</div></div>
+      <div class="t r"><div class="k">AWS Bedrock</div><div class="d">Claude, provider-abstracted</div></div>
+      <div class="t r"><div class="k">FastAPI</div><div class="d">REST + SSE streaming</div></div>
+      <div class="t r"><div class="k">Next.js 14</div><div class="d">Enterprise console UI</div></div>
+    </div>
+  </section>
+
+  <footer class="wrap">
+    <div class="eyebrow r">Ready when the next storm hits</div>
+    <h2 class="r" style="margin-top:18px">Turn a 72-hour crisis into a 6-second decision.</h2>
+    <div class="ctas r">
+      <a class="btn primary mag" href="http://localhost:3000">Open the console</a>
+      <a class="btn ghost mag" href="http://localhost:8010/docs">Explore the API</a>
+    </div>
+    <div class="compare">
+      <span class="muted">Compare the docs:</span>
+      <a href="./technical.html">technical.html</a>
+      <a href="./non-technical.html">non-technical.html</a>
+      <a href="./showcase.html">showcase.html (this)</a>
+    </div>
+    <div class="fine">ResilioChain — MongoDB Agentic AI Hackathon 2026 · Demo scenario: Typhoon Yagi / Port of Tanjung Pelepas</div>
+  </footer>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !window.gsap){ document.querySelectorAll('.r,.reveal-line>span').forEach(function(e){e.style.opacity=1;e.style.transform='none';});
+    // still draw ring + counts statically
+    var rf=document.getElementById('ringfg'); if(rf) rf.style.strokeDashoffset=628*(1-0.75);
+    document.querySelectorAll('.count').forEach(function(c){c.textContent=(+c.dataset.to).toLocaleString();});
+    return; }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // hero entrance
+  gsap.set('.reveal-line>span',{yPercent:115});
+  var tl = gsap.timeline({defaults:{ease:'power4.out'}});
+  tl.to('.reveal-line>span',{yPercent:0,duration:1,stagger:.12,delay:.15})
+    .from('[data-hero]',{y:24,opacity:0,duration:.8,stagger:.12},'-=.5');
+
+  // generic scroll reveals
+  gsap.utils.toArray('.r').forEach(function(el){
+    if(el.hasAttribute('data-hero')) return;
+    gsap.fromTo(el,{y:30,opacity:0},{y:0,opacity:1,duration:.7,ease:'power3.out',
+      scrollTrigger:{trigger:el,start:'top 88%'}});
+  });
+
+  // agent flow lines draw-in
+  gsap.utils.toArray('.flow').forEach(function(l,i){
+    var len = l.getTotalLength ? l.getTotalLength() : 40;
+    gsap.set(l,{strokeDasharray:len, strokeDashoffset:len});
+    gsap.to(l,{strokeDashoffset:0,duration:.5,ease:'power2.out',
+      scrollTrigger:{trigger:'#agents',start:'top 70%'},delay:i*0.12});
+  });
+  gsap.from('.agent-node',{opacity:0,y:14,duration:.5,stagger:.1,
+    scrollTrigger:{trigger:'#agents',start:'top 70%'}});
+
+  // count-ups
+  gsap.utils.toArray('.count').forEach(function(c){
+    var to=+c.dataset.to, obj={v:0};
+    gsap.to(obj,{v:to,duration:1.4,ease:'power2.out',
+      scrollTrigger:{trigger:c,start:'top 90%'},
+      onUpdate:function(){ c.textContent = Math.round(obj.v).toLocaleString(); }});
+  });
+
+  // confidence ring draw to 75%
+  var rf=document.getElementById('ringfg');
+  if(rf){ gsap.to(rf,{strokeDashoffset:628*(1-0.75),duration:1.5,ease:'power2.out',
+      scrollTrigger:{trigger:'#result',start:'top 65%'}}); }
+
+  // parallax orbs
+  gsap.to('.orb.a',{yPercent:30,ease:'none',scrollTrigger:{scrub:true,trigger:'body',start:'top top',end:'bottom bottom'}});
+  gsap.to('.orb.b',{yPercent:-25,ease:'none',scrollTrigger:{scrub:true,trigger:'body',start:'top top',end:'bottom bottom'}});
+
+  // magnetic buttons
+  document.querySelectorAll('.mag').forEach(function(b){
+    b.addEventListener('mousemove',function(e){var r=b.getBoundingClientRect();
+      gsap.to(b,{x:(e.clientX-r.left-r.width/2)*.25,y:(e.clientY-r.top-r.height/2)*.35,duration:.4});});
+    b.addEventListener('mouseleave',function(){gsap.to(b,{x:0,y:0,duration:.5,ease:'elastic.out(1,.4)'});});
+  });
+})();
+</script>
+</body>
+</html>

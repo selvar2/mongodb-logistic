@@ -1,0 +1,9 @@
+# Runtime deps for the Bedrock AgentCore container (Python 3.14 base, uv resolver).
+# Loose ranges so uv can resolve a compatible set; bedrock-agentcore pulls a
+# recent boto3 (>=1.43.31) and a compatible pydantic transitively.
+bedrock-agentcore>=1.15.0
+boto3>=1.43.31
+pymongo>=4.10,<5
+langgraph>=0.2.53,<0.3
+langchain-core>=0.3,<0.4
+python-dotenv>=1.0

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResilioChain — Explained Simply</title>
+<style>
+  :root{
+    --bg:#f6f8fc; --card:#ffffff; --ink:#1f2a44; --soft:#5a6884;
+    --line:#e4e9f2; --brand:#2563eb; --brand-soft:#eaf1ff;
+    --green:#16a34a; --green-soft:#e7f7ee; --red:#dc2626; --red-soft:#fdeaea;
+    --amber:#d97706; --amber-soft:#fdf2e0; --shadow:0 6px 24px rgba(31,42,68,.07);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px; margin:0 auto; padding:32px 22px 80px}
+  header.hero{
+    text-align:center; padding:48px 24px; border-radius:22px;
+    background:linear-gradient(135deg,#eaf1ff 0%,#f3f7ff 60%,#ffffff 100%);
+    border:1px solid var(--line); box-shadow:var(--shadow); margin-bottom:34px;
+  }
+  header.hero .badge{font-size:46px}
+  header.hero h1{margin:.2em 0 .1em; font-size:2.1rem; letter-spacing:-.5px}
+  header.hero p{margin:0 auto; max-width:560px; color:var(--soft); font-size:1.08rem}
+  h2{font-size:1.5rem; margin:42px 0 12px; letter-spacing:-.3px}
+  h3{font-size:1.12rem; margin:22px 0 6px}
+  p{margin:.6em 0}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 24px; box-shadow:var(--shadow); margin:18px 0;
+  }
+  .pull{
+    border-left:5px solid var(--brand); background:var(--brand-soft);
+    padding:16px 20px; border-radius:0 12px 12px 0; margin:20px 0; font-size:1.06rem;
+  }
+  .words{display:grid; gap:14px}
+  .words .w{display:flex; gap:14px; align-items:flex-start}
+  .words .w .emoji{font-size:26px; line-height:1.4}
+  .story{
+    border-left:5px solid var(--amber); background:var(--amber-soft);
+    padding:16px 20px; border-radius:0 12px 12px 0; margin:20px 0;
+  }
+  /* helper cards */
+  .helpers{display:grid; gap:14px}
+  .helper{
+    display:flex; gap:16px; align-items:flex-start;
+    background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px;
+  }
+  .helper .ico{font-size:30px; line-height:1}
+  .helper h3{margin:0 0 2px}
+  .helper .role{color:var(--soft); margin:0}
+  /* flow diagram */
+  .flow{display:flex; flex-direction:column; align-items:center; gap:0; margin:8px 0}
+  .step{
+    width:100%; max-width:560px; text-align:center; padding:14px 16px;
+    border-radius:12px; border:1px solid var(--line); background:var(--card);
+    box-shadow:0 2px 8px rgba(31,42,68,.05);
+  }
+  .step b{display:block}
+  .step small{color:var(--soft)}
+  .arrow{color:var(--brand); font-size:22px; line-height:1.1; margin:6px 0}
+  .loopnote{font-size:.85rem; color:var(--amber); margin:4px 0}
+  /* verdict rows */
+  .verdict{display:flex; gap:14px; align-items:flex-start; padding:14px 16px; border-radius:12px; margin:12px 0}
+  .verdict.bad{background:var(--red-soft); border:1px solid #f3c9c9}
+  .verdict.good{background:var(--green-soft); border:1px solid #bfe6cd}
+  .verdict .tag{font-weight:700; font-size:26px; line-height:1}
+  /* confidence meter */
+  .meter{height:14px; border-radius:10px; background:#eef2f8; overflow:hidden; margin:10px 0}
+  .meter > span{display:block; height:100%; background:linear-gradient(90deg,#f59e0b,#16a34a)}
+  .scale{display:flex; justify-content:space-between; color:var(--soft); font-size:.82rem}
+  /* demo steps with copy */
+  .demo .dstep{margin:16px 0}
+  .demo .dstep .lbl{font-weight:600; margin-bottom:8px}
+  .codebox{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    background:#0f172a; color:#e2e8f0; border-radius:10px; padding:12px 14px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.92rem;
+  }
+  .codebox code{white-space:pre-wrap; word-break:break-all}
+  .copybtn{
+    flex:none; border:none; background:#1e293b; color:#cbd5e1; cursor:pointer;
+    border-radius:7px; padding:7px 12px; font-size:.8rem; font-weight:600; transition:.15s;
+  }
+  .copybtn:hover{background:#334155; color:#fff}
+  .copybtn.done{background:var(--green); color:#fff}
+  /* screenshots */
+  .shots{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .shot{border:1px dashed #c3cee0; border-radius:14px; background:#fbfcfe; padding:14px; text-align:center}
+  .shot .ph{
+    height:150px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    color:var(--soft); font-size:.85rem; background:repeating-linear-gradient(45deg,#eef2f9,#eef2f9 12px,#f6f9fe 12px,#f6f9fe 24px);
+  }
+  .shot .cap{margin-top:8px; font-size:.85rem; color:var(--soft)}
+  .shot .path{font-family:ui-monospace,monospace; font-size:.78rem; color:var(--brand)}
+  footer{text-align:center; color:var(--soft); margin-top:50px; font-size:.92rem}
+  @media (max-width:560px){ .shots{grid-template-columns:1fr} header.hero h1{font-size:1.7rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="badge">🛡️</div>
+    <h1>ResilioChain, Explained Simply</h1>
+    <p>A smart assistant that finds you a new supplier the moment something goes wrong — written for people who don't write code.</p>
+  </header>
+
+  <h2>What is ResilioChain? (in one breath)</h2>
+  <div class="card">
+    <p>Imagine you run a company that builds things — say, cars. To build a car you need
+    thousands of little parts, and you buy those parts from other companies. When something
+    goes wrong and your parts can't arrive, your whole factory can grind to a halt.</p>
+    <div class="pull"><strong>ResilioChain watches for trouble and, the moment a part stops flowing,
+    quickly finds you a new place to buy it from — one that's safe, allowed, and reliable.</strong></div>
+    <p>Think of it like a GPS that reroutes you around a traffic jam. Except instead of roads,
+    it reroutes your <em>suppliers</em>.</p>
+  </div>
+
+  <h2>Let's learn three words first</h2>
+  <div class="card words">
+    <div class="w"><div class="emoji">🏭</div><div><strong>A "supplier"</strong> is a company that sells you something you need.
+      If you make cars, a supplier might make the tiny computer chips inside the dashboard. No chips → no dashboards → no cars.</div></div>
+    <div class="w"><div class="emoji">🌀</div><div><strong>A "disruption"</strong> is anything that suddenly stops a supplier from delivering:
+      a <strong>typhoon</strong>, a <strong>closed port</strong>, a <strong>war</strong>, or <strong>sanctions</strong>
+      (when governments say "you're not allowed to trade with that company anymore").</div></div>
+    <div class="w"><div class="emoji">💧</div><div><strong>The "ripple effect"</strong> is how <em>one</em> problem spreads to hurt
+      <em>lots</em> of things downstream — like dropping a stone in a pond.</div></div>
+  </div>
+
+  <h2>The sneaky problem most people miss 🤔</h2>
+  <div class="card">
+    <div class="pull"><strong>A supplier can have your parts sitting right there in the warehouse — and you still can't get them.</strong></div>
+    <p>How? Picture this. Your supplier has <strong>48,200 computer chips</strong> ready to ship. They're boxed up.
+    They're paid for. But the <strong>port is closed</strong> because a typhoon hit. The truck can't drive onto the ship.
+    The ship can't leave the harbor.</p>
+    <p>The stock exists. The <em>delivery</em> is stuck. <strong>Having the parts and getting the parts are two
+    completely different things.</strong> That's why ResilioChain doesn't just ask "who has stock?" — it asks
+    "who can actually <em>deliver</em>?"</p>
+  </div>
+
+  <h2>Our story: Typhoon Yagi 🌀</h2>
+  <div class="story">
+    <strong>Typhoon Yagi</strong> closes the <strong>Port of Tanjung Pelepas, Malaysia</strong> for 72 hours.
+    Our main supplier, <strong>SUP-001 (Chang Electronics)</strong>, has <strong>48,200 units</strong> of special
+    automotive computer chips stuck behind that closed port. Twenty-three of our orders are about to be late.
+    <br><br>Watch how ResilioChain handles it, step by step.
+  </div>
+
+  <h2>The five helpers working together</h2>
+  <p>ResilioChain isn't one robot — it's a little <strong>team of five AI helpers</strong>, each with one job.
+  They pass the problem down the line like a relay race.</p>
+  <div class="helpers">
+    <div class="helper"><div class="ico">🧠</div><div><h3>1. The Supervisor — "the brain"</h3>
+      <p class="role">Reads the alarm, figures out how bad it is and who's affected, and sends the team to work. At the end, it writes the final recommendation.</p></div></div>
+    <div class="helper"><div class="ico">💥</div><div><h3>2. The Impact Assessor — "who gets hurt?"</h3>
+      <p class="role">The ripple-effect helper. It traces every order tied to the broken supplier and adds it all up: 23 orders, <strong>48,200 units</strong> at risk.</p></div></div>
+    <div class="helper"><div class="ico">🔎</div><div><h3>3. The Sourcing Agent — "find a replacement"</h3>
+      <p class="role">Goes shopping for backups that make the same kind of part — and only ones <strong>big enough</strong> to actually cover all 48,200 units.</p></div></div>
+    <div class="helper"><div class="ico">✅</div><div><h3>4. The Compliance Agent — "is this one allowed & ethical?"</h3>
+      <p class="role">Checks sanctions, worker treatment, and environmental record (the "ESG score"). If a candidate fails, it sends it back to Helper 3 — up to 3 tries.</p></div></div>
+    <div class="helper"><div class="ico">📋</div><div><h3>5. The Mitigation Planner — "write the final answer"</h3>
+      <p class="role">Picks the best supplier that passed, works out extra cost and delay, gives a confidence score, and writes a clear one-page brief.</p></div></div>
+  </div>
+
+  <h2>A picture of the relay race</h2>
+  <div class="card">
+    <div class="flow">
+      <div class="step"><b>🌀 Typhoon alert comes in</b></div>
+      <div class="arrow">▼</div>
+      <div class="step"><b>🧠 Supervisor</b><small>"This is serious. SUP-001 is down."</small></div>
+      <div class="arrow">▼</div>
+      <div class="step"><b>💥 Impact Assessor</b><small>"23 orders, 48,200 units at risk." (the ripple effect)</small></div>
+      <div class="arrow">▼</div>
+      <div class="step"><b>🔎 Sourcing</b><small>"Here are 3 backups big enough to cover it."</small></div>
+      <div class="arrow">▼</div>
+      <div class="step"><b>✅ Compliance</b><small>"Check each one's ethics &amp; sanctions."</small>
+        <div class="loopnote">↺ if one fails, go back and try the next — up to 3 times</div></div>
+      <div class="arrow">▼</div>
+      <div class="step"><b>📋 Planner</b><small>"Best safe choice + confidence score + cost."</small></div>
+      <div class="arrow">▼</div>
+      <div class="step"><b>👀 Human reads the one-page brief and approves</b></div>
+    </div>
+  </div>
+
+  <h2>Why a supplier gets rejected 🚫</h2>
+  <div class="card">
+    <p>The sourcing helper found backups — but not all of them were good citizens.</p>
+    <div class="verdict bad">
+      <div class="tag">🚫</div>
+      <div><strong>SUP-FAIL (Vietnam)</strong> — had the right parts and enough capacity, but <strong>failed the ethics check</strong>.
+      Its ESG score was too low. <strong>Rejected.</strong> Cheap and fast isn't worth it if it isn't ethical or allowed.</div>
+    </div>
+    <div class="verdict good">
+      <div class="tag">✅</div>
+      <div><strong>SUP-002 — "PT Maju Jaya" (Indonesia)</strong> — same parts, enough capacity, <em>and</em> passed every rule check.
+      <strong>It won.</strong> The orders get rerouted here.</div>
+    </div>
+    <p>The point: ResilioChain refuses to recommend a supplier that breaks the rules — even one that otherwise looks great.</p>
+  </div>
+
+  <h2>"Confidence score" &amp; "human review" 🎯</h2>
+  <div class="card">
+    <p>When ResilioChain finishes, it grades its own answer from <strong>0 to 100</strong> — its <strong>confidence score</strong>.
+    It's like a student saying "I'm 92% sure this is right."</p>
+    <div class="meter"><span style="width:92%"></span></div>
+    <div class="scale"><span>0 — needs a human</span><span>85 — confident</span><span>100</span></div>
+    <p style="margin-top:16px"><strong>85 or above:</strong> the plan is solid and can go ahead quickly.<br>
+    <strong>Below 85, or a supplier with a shaky ethics score:</strong> the computer raises its hand and says
+    <em>"a human should look at this first."</em> That's <strong>human review</strong>.</p>
+    <p>This is on purpose. When the computer isn't sure, it doesn't guess — it asks a person. <strong>You stay in control.</strong>
+    And every decision is written down in an audit trail, so you can always see <em>why</em> a choice was made.</p>
+  </div>
+
+  <h2>Try the demo yourself 🚀</h2>
+  <p>You don't need to understand any code to watch it work. Click <strong>Copy</strong> on any step.</p>
+  <div class="card demo">
+    <div class="dstep">
+      <div class="lbl">Step 1 — Set up your secret keys (copy the example settings file).</div>
+      <div class="codebox"><code id="c1">cp .env.example .env</code><button class="copybtn" data-target="c1">Copy</button></div>
+    </div>
+    <div class="dstep">
+      <div class="lbl">Step 2 — Load the practice data (pretend suppliers and orders).</div>
+      <div class="codebox"><code id="c2">python -m app.db.seed</code><button class="copybtn" data-target="c2">Copy</button></div>
+    </div>
+    <div class="dstep">
+      <div class="lbl">Step 3 — Run the Typhoon Yagi story from start to finish.</div>
+      <div class="codebox"><code id="c3">python -m app.agents.graph --demo</code><button class="copybtn" data-target="c3">Copy</button></div>
+    </div>
+    <div class="dstep">
+      <div class="lbl">Step 4 — Open the dashboard in your browser.</div>
+      <div class="codebox"><code id="c4">npm run dev</code><button class="copybtn" data-target="c4">Copy</button></div>
+      <p style="margin:8px 2px 0; color:var(--soft)">Then visit <strong>http://localhost:3000</strong></p>
+    </div>
+    <p style="margin-top:6px">You'll watch the alert arrive, the 48,200 stuck units get spotted, the Vietnam supplier get rejected for ethics,
+    and <strong>PT Maju Jaya (Indonesia)</strong> get recommended — with a confidence score and a tidy one-page brief.</p>
+  </div>
+
+  <h2>What it looks like 📸</h2>
+  <div class="shots">
+    <div class="shot">
+      <div class="ph">Dashboard screenshot</div>
+      <div class="cap">The live dashboard — alerts, impacted orders, and recommendations.</div>
+      <div class="path">./screenshots/dashboard.png</div>
+    </div>
+    <div class="shot">
+      <div class="ph">Mitigation brief screenshot</div>
+      <div class="cap">The one-page brief humans read and approve.</div>
+      <div class="path">./screenshots/brief.png</div>
+    </div>
+  </div>
+
+  <h2>The big idea, in one sentence</h2>
+  <div class="pull"><strong>When the world throws a surprise at your supply chain, ResilioChain finds you a safe, allowed,
+  and reliable backup <em>before</em> the surprise becomes a crisis — and tells you how sure it is, so you always know when to double-check.</strong></div>
+
+  <footer>🛡️ ResilioChain — a friendly guide. Built on MongoDB Atlas, LangGraph, and Claude.</footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var el = document.getElementById(btn.getAttribute('data-target'));
+      var text = el ? el.innerText : '';
+      navigator.clipboard.writeText(text).then(function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = old; btn.classList.remove('done'); }, 1500);
+      }).catch(function(){
+        btn.textContent = 'Press Ctrl+C';
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const LINKS = [
+  { href: "/", label: "Dashboard", icon: "▣" },
+  { href: "/analytics", label: "Analytics", icon: "📊" },
+  { href: "/intake", label: "Disruption Intake", icon: "⚠" },
+  { href: "/classification", label: "Supplier Impact", icon: "◈" },
+  { href: "/sourcing", label: "Alternative Sourcing", icon: "⊕" },
+  { href: "/workflow", label: "Agent Workflow", icon: "⟳" },
+  { href: "/brief", label: "Mitigation Brief", icon: "▤" },
+  { href: "/data-explorer", label: "MongoDB Explorer", icon: "⛁" },
+  { href: "/audit", label: "Audit Logs", icon: "❒" },
+  { href: "/observability", label: "Observability", icon: "📈" },
+  { href: "/graphrag", label: "GraphRAG", icon: "🕸" },
+  { href: "/evaluation", label: "Evaluation", icon: "✅" },
+  { href: "/docs", label: "Documentation", icon: "❖" },
+];
+
+export function Nav() {
+  const path = usePathname();
+  return (
+    <aside className="w-[240px] shrink-0 h-screen sticky top-0 border-r border-border/70 bg-surface/60 backdrop-blur flex flex-col">
+      <div className="px-5 py-5 border-b border-border/70">
+        <div className="flex items-center gap-2">
+          <span className="text-accent text-2xl">🛡️</span>
+          <div>
+            <div className="font-bold text-fg leading-tight">ResilioChain</div>
+            <div className="text-[10px] uppercase tracking-widest text-mutedfg">Supply-Chain AI</div>
+          </div>
+        </div>
+      </div>
+      <nav className="flex-1 overflow-y-auto py-3">
+        {LINKS.map((l) => {
+          const active = path === l.href;
+          return (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
+                active
+                  ? "text-accent bg-accent/10 border-r-2 border-accent font-semibold"
+                  : "text-mutedfg hover:text-fg hover:bg-muted/50"
+              }`}
+            >
+              <span className="w-4 text-center opacity-80">{l.icon}</span>
+              {l.label}
+            </Link>
+          );
+        })}
+      </nav>
+      <div className="px-5 py-3 border-t border-border/70 text-[10px] text-mutedfg">
+        MongoDB Atlas · LangGraph · Bedrock
+      </div>
+    </aside>
+  );
+}

@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ResilioChain — Dashboard (effects preview)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg-0:#020617; --bg-1:#0A1020; --bg-2:#0E1424; --bg-3:#141C30;
+    --emerald:#22C55E; --teal:#14B8A6; --amber:#F59E0B; --danger:#EF4444; --info:#3B82F6;
+    --text:#F4F8FF; --muted:#8A97B2; --faint:#5A6782;
+    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+    --grad:linear-gradient(135deg,#22C55E 0%,#14B8A6 100%);
+    --fdisp:'Space Grotesk',system-ui,sans-serif; --fbody:'Inter',system-ui,sans-serif;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:var(--fbody);background:var(--bg-0);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  /* WebGL hover layer */
+  #glcanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .app{position:relative;z-index:1;display:flex;min-height:100vh}
+
+  /* ── Sidebar ── */
+  .side{width:240px;flex:none;border-right:1px solid var(--line);background:rgba(10,16,32,.55);backdrop-filter:blur(14px);position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .brand .mk{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(34,197,94,.45);font-size:15px}
+  .brand b{font-family:var(--fdisp);font-weight:700;font-size:15px}
+  .brand small{display:block;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  nav{padding:10px 0;overflow-y:auto;flex:1}
+  .navi{display:flex;align-items:center;gap:12px;padding:9px 20px;font-size:13.5px;color:var(--muted);cursor:pointer;position:relative;transition:color .25s,background .25s}
+  .navi svg{width:17px;height:17px;color:currentColor;transition:transform .35s cubic-bezier(.2,.8,.2,1),color .35s;will-change:transform}
+  .navi:hover{color:var(--text)}
+  .navi:hover svg{transform:translateX(2px) rotate(-8deg) scale(1.18);color:var(--emerald)}
+  .navi.active{color:var(--emerald);background:rgba(34,197,94,.08)}
+  .navi.active::before{content:'';position:absolute;right:0;top:6px;bottom:6px;width:2px;background:var(--emerald)}
+
+  /* ── Main ── */
+  main{flex:1;min-width:0;padding:26px 34px}
+  .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+  .kick{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);font-family:var(--fdisp);font-weight:600}
+  h1{font-family:var(--fdisp);font-weight:700;font-size:30px;letter-spacing:-.02em}
+  .cta{font-family:var(--fdisp);font-weight:600;font-size:13.5px;padding:11px 18px;border-radius:11px;background:var(--grad);color:#03130a;cursor:pointer;border:none;transition:transform .25s,box-shadow .25s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(34,197,94,.6)}
+
+  /* ── KPI stats ── */
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+  .stat{position:relative;background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:18px;overflow:hidden;transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,background .4s}
+  .stat::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity .4s;mix-blend-mode:overlay}
+  .stat:hover{transform:translateY(-7px);border-color:var(--line2);background:var(--bg-3)}
+  .stat:hover::before{opacity:.12}
+  .stat-ico{width:38px;height:38px;border-radius:11px;background:var(--bg-3);display:flex;align-items:center;justify-content:center;margin-bottom:12px;transition:transform .45s cubic-bezier(.2,.8,.2,1),background .45s,box-shadow .45s}
+  .stat-ico svg{width:19px;height:19px;color:var(--muted);transition:color .45s}
+  .stat:hover .stat-ico{transform:translateY(-3px) rotate(-8deg) scale(1.12);background:var(--grad);box-shadow:0 14px 28px -8px rgba(34,197,94,.7)}
+  .stat:hover .stat-ico svg{color:#03130a}
+  .num{font-family:var(--fdisp);font-weight:700;font-size:34px;line-height:1;transition:transform .4s}
+  .stat:hover .num{transform:scale(1.06);background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .lbl{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .bar{height:3px;border-radius:3px;background:rgba(255,255,255,.06);margin-top:14px;overflow:hidden;position:relative}
+  .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--grad);width:var(--w,40%)}
+  .bar i::after{content:'';position:absolute;inset:0;transform:translateX(-130%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent)}
+  .stat:hover .bar i::after{animation:sheen 1s ease forwards}
+  @keyframes sheen{to{transform:translateX(130%)}}
+
+  /* ── Action cards ── */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:10px}
+  .act{position:relative;background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:22px;cursor:pointer;transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,background .4s}
+  .act:hover{transform:translateY(-6px);border-color:rgba(34,197,94,.4);background:var(--bg-3)}
+  .act-ico{width:42px;height:42px;border-radius:12px;background:var(--bg-3);display:flex;align-items:center;justify-content:center;margin-bottom:14px;transition:transform .45s cubic-bezier(.2,.8,.2,1),background .45s}
+  .act-ico svg{width:21px;height:21px;color:var(--teal);transition:color .45s}
+  .act:hover .act-ico{transform:translateY(-3px) rotate(6deg) scale(1.12);background:var(--grad)}
+  .act:hover .act-ico svg{color:#03130a}
+  .act h3{font-family:var(--fdisp);font-weight:600;font-size:15.5px;margin-bottom:6px}
+  .act p{font-size:13px;color:var(--muted)}
+
+  /* ── Capability cards (tcard) — reference hover treatment ── */
+  .sech{font-family:var(--fdisp);font-weight:600;font-size:18px;margin:30px 0 14px}
+  .grid3b{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .tcard{position:relative;background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:24px;overflow:hidden;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .4s,box-shadow .4s,background .4s}
+  /* top cap bar */
+  .tcard::after{content:'';position:absolute;top:0;left:0;right:0;height:4px;z-index:2;background:var(--cap);transition:height .4s,box-shadow .4s}
+  /* cursor-follow spotlight tinted with the card's accent */
+  .tcard::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;opacity:0;transition:opacity .4s;
+    background:radial-gradient(440px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--cicon) 22%,transparent),transparent 58%)}
+  .tcard:hover{transform:translateY(-8px);border-color:transparent;background:var(--bg-3);
+    box-shadow:0 30px 58px -26px color-mix(in srgb,var(--cicon) 55%,transparent),0 8px 22px -14px rgba(0,0,0,.6)}
+  .tcard:hover::before{opacity:1}
+  .tcard:hover::after{height:5px;box-shadow:0 4px 18px -2px color-mix(in srgb,var(--cicon) 70%,transparent)}
+  .tcard-head{position:relative;z-index:1;display:flex;align-items:center;gap:13px;margin-bottom:18px}
+  .tcard-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04);border:1px solid var(--line);
+    transition:transform .45s cubic-bezier(.2,.8,.2,1),background .45s,box-shadow .45s}
+  .tcard-ico svg{width:21px;height:21px;color:var(--cicon);transition:color .45s}
+  .tcard:hover .tcard-ico{transform:translateY(-2px) rotate(-6deg) scale(1.12);background:var(--cap);box-shadow:0 12px 26px -8px color-mix(in srgb,var(--cicon) 65%,transparent)}
+  .tcard:hover .tcard-ico svg{color:#fff}
+  .tcard-cat{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .tcard-h{display:block;font-family:var(--fdisp);font-size:18px;font-weight:600;margin-top:1px}
+  .chips{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12.5px;font-weight:500;padding:6px 13px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted);
+    transition:background .3s,color .3s,border-color .3s,transform .35s cubic-bezier(.2,.8,.2,1)}
+  .tcard:hover .chip{color:var(--text);border-color:var(--line2);transform:translateY(-3px)}
+  .tcard:hover .chip:nth-child(2){transition-delay:.05s}
+  .tcard:hover .chip:nth-child(3){transition-delay:.1s}
+  .chip:hover{background:color-mix(in srgb,var(--cicon) 26%,transparent);color:#fff;border-color:color-mix(in srgb,var(--cicon) 45%,transparent);transform:translateY(-3px) scale(1.05)}
+
+  .note{margin-top:26px;font-size:12px;color:var(--faint)}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="glcanvas"></canvas>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="side">
+    <div class="brand"><span class="mk">🛡️</span><div><b>ResilioChain</b><small>Supply-Chain AI</small></div></div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="head">
+      <div><div class="kick">Operational Console · effects preview</div><h1>Supply-Chain Resilience Dashboard</h1></div>
+      <button class="cta" data-glow>+ Report Disruption</button>
+    </div>
+
+    <div class="grid4" id="stats"></div>
+
+    <div class="grid3" id="acts"></div>
+
+    <div class="sech">Platform Capabilities</div>
+    <div class="grid3b" id="caps"></div>
+
+    <div class="note">Preview only — hover the KPI cards (numbers spin 0→value), the icons animate, and a WebGL glow follows your cursor and blooms under nav/menu items. The real app is untouched.</div>
+  </main>
+</div>
+
+<script>
+// ---------- icon set (inline SVG paths) ----------
+const I = {
+  dash:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  warn:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+  supplier:'<circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0114 0"/>',
+  search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-3.5-3.5"/>',
+  flow:'<circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 6h6l4 6M7 18h6l4-6"/>',
+  brief:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  db:'<ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v14c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/>',
+  audit:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  obs:'<path d="M3 17l5-5 4 4 8-8"/><path d="M21 8v5h-5"/>',
+  graph:'<circle cx="6" cy="6" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="9" cy="18" r="2"/><circle cx="17" cy="17" r="2"/><path d="M7.6 7.2L8.4 16M7.7 7l8.5.4M10.6 17.5l4.8-.7"/>',
+  check:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+  bolt:'<path d="M13 2L4 14h6l-1 8 9-12h-6z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+};
+const svg = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+const NAV = [
+  ['Dashboard','dash',1],['Disruption Intake','warn'],['Supplier Impact','supplier'],
+  ['Alternative Sourcing','search'],['Agent Workflow','flow'],['Mitigation Brief','brief'],
+  ['MongoDB Explorer','db'],['Audit Logs','audit'],['Observability','obs'],
+  ['GraphRAG','graph'],['Evaluation','check'],
+];
+document.getElementById('nav').innerHTML = NAV.map(([t,ic,a])=>
+  `<div class="navi ${a?'active':''}" data-glow>${svg(I[ic])}<span>${t}</span></div>`).join('');
+
+const STATS = [
+  ['Suppliers Tracked',15,'supplier','70%'],
+  ['Disrupted',1,'warn','12%'],
+  ['Compliant (ESG≥60)',13,'check','86%'],
+  ['At-Risk (ESG<60)',2,'bolt','20%'],
+];
+document.getElementById('stats').innerHTML = STATS.map(([l,n,ic,w])=>
+  `<div class="stat" data-glow>
+     <div class="stat-ico">${svg(I[ic])}</div>
+     <div class="num" data-target="${n}">0</div>
+     <div class="lbl">${l}</div>
+     <div class="bar"><i style="--w:${w}"></i></div>
+   </div>`).join('');
+
+const ACTS = [
+  ['Report a Disruption','Typhoon, port closure, sanctions — kick off the agent workflow.','warn'],
+  ['Watch Agents Work','Live LangGraph state machine: graph → vector → RAG → plan.','flow'],
+  ['Explore MongoDB','$graphLookup, $vectorSearch & Vector RAG pipelines.','db'],
+];
+document.getElementById('acts').innerHTML = ACTS.map(([t,d,ic])=>
+  `<div class="act" data-glow><div class="act-ico">${svg(I[ic])}</div><h3>${t}</h3><p>${d}</p></div>`).join('');
+
+// ---------- capability cards (reference .tcard hover) ----------
+const CAPS = [
+  ['ORCHESTRATION','LangGraph','flow','#A855F7','linear-gradient(90deg,#A855F7,#C084FC)',['5 Agents','State Machine']],
+  ['RETRIEVAL','Vector Search','search','#F59E0B','linear-gradient(90deg,#F59E0B,#FBBF24)',['$vectorSearch','autoEmbed']],
+  ['GRAPH','Dependency Graph','graph','#FF6B3D','linear-gradient(90deg,#FF6B3D,#FF8C5A)',['$graphLookup','Blast Radius']],
+  ['COMPLIANCE','Vector RAG','check','#3B82F6','linear-gradient(90deg,#22D3EE,#3B82F6)',['ESG','Sanctions']],
+  ['DEPLOYMENT','Bedrock AgentCore','bolt','#22C55E','linear-gradient(90deg,#22C55E,#14B8A6)',['ARM64','ECR']],
+  ['OBSERVABILITY','Telemetry','obs','#A855F7','linear-gradient(90deg,#A855F7,#FF6B3D)',['LangSmith','CloudWatch']],
+];
+document.getElementById('caps').innerHTML = CAPS.map(([cat,h,ic,acc,cap,chips])=>
+  `<div class="tcard" data-spot style="--cicon:${acc};--cap:${cap}">
+     <div class="tcard-head"><div class="tcard-ico">${svg(I[ic])}</div>
+       <div><span class="tcard-cat">${cat}</span><span class="tcard-h">${h}</span></div></div>
+     <div class="chips">${chips.map(c=>`<span class="chip">${c}</span>`).join('')}</div>
+   </div>`).join('');
+// per-card cursor-follow spotlight (sets --mx/--my)
+document.querySelectorAll('[data-spot]').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ---------- on-hover count-up ----------
+function countUp(el){
+  const target = parseFloat(el.dataset.target)||0;
+  if(reduce){ el.textContent = target; return; }
+  const dur = 600, t0 = performance.now();
+  function tick(now){
+    const p = Math.min((now-t0)/dur, 1);
+    const e = 1-Math.pow(1-p,3);          // easeOutCubic — fast then settle
+    el.textContent = Math.round(target*e);
+    if(p<1) requestAnimationFrame(tick); else el.textContent = target;
+  }
+  requestAnimationFrame(tick);
+}
+document.querySelectorAll('.stat').forEach(s=>{
+  const num = s.querySelector('.num');
+  s.addEventListener('mouseenter',()=>countUp(num));
+});
+// initial settle so numbers aren't 0 at load
+document.querySelectorAll('.num').forEach(n=>{ if(reduce) n.textContent=n.dataset.target; else countUp(n); });
+
+// ---------- WebGL hover-highlight layer ----------
+(function(){
+  const cv = document.getElementById('glcanvas');
+  const gl = cv.getContext('webgl');
+  if(!gl || reduce){ cv.style.display='none'; return; }
+  const vs = `attribute vec2 p; void main(){ gl_Position = vec4(p,0.,1.); }`;
+  const fs = `precision highp float;
+    uniform vec2 u_res; uniform float u_t; uniform vec2 u_mouse;
+    uniform vec4 u_rect;      // x,y,w,h in px (target element); w<0 = none
+    uniform float u_inten;
+    float rrect(vec2 p, vec2 c, vec2 h, float r){
+      vec2 d = abs(p-c)-h+r; return length(max(d,0.))-r;
+    }
+    void main(){
+      vec2 f = gl_FragCoord.xy; vec2 uv = f/u_res;
+      vec3 col = vec3(0.0);
+      // cursor glow
+      float dm = length(f-u_mouse);
+      float g = exp(-dm*dm/ (140.0*140.0));
+      col += mix(vec3(0.13,0.77,0.37), vec3(0.08,0.72,0.65), uv.x) * g * 0.5;
+      // target bloom (rounded rect)
+      if(u_rect.z>0.0){
+        vec2 c = u_rect.xy + u_rect.zw*0.5;
+        float d = rrect(f, c, u_rect.zw*0.5+8.0, 16.0);
+        float edge = exp(-d*d/(26.0*26.0));            // soft ring
+        float fill = smoothstep(2.0,-18.0,d)*0.10;     // faint fill
+        float pulse = 0.75+0.25*sin(u_t*3.0);
+        col += (vec3(0.13,0.83,0.45)*edge*pulse + vec3(0.08,0.72,0.65)*fill) * u_inten;
+      }
+      gl_FragColor = vec4(col, 0.0)+vec4(col,clamp(max(g*0.6,0.0),0.,1.));
+    }`;
+  function sh(t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o;}
+  const prog=gl.createProgram();gl.attachShader(prog,sh(gl.VERTEX_SHADER,vs));gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(prog);gl.useProgram(prog);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(prog,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);
+  const U={res:gl.getUniformLocation(prog,'u_res'),t:gl.getUniformLocation(prog,'u_t'),mouse:gl.getUniformLocation(prog,'u_mouse'),rect:gl.getUniformLocation(prog,'u_rect'),inten:gl.getUniformLocation(prog,'u_inten')};
+  let dpr=Math.min(devicePixelRatio||1,2);
+  function resize(){cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;gl.viewport(0,0,cv.width,cv.height);}
+  resize();addEventListener('resize',resize);
+  const mouse={x:innerWidth/2,y:innerHeight/2};
+  addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+  // target tracking
+  let target=null, inten=0;
+  document.querySelectorAll('[data-glow]').forEach(el=>{
+    el.addEventListener('mouseenter',()=>target=el);
+    el.addEventListener('mouseleave',()=>{ if(target===el) target=null; });
+  });
+  function frame(now){
+    const t=now/1000;
+    gl.uniform2f(U.res,cv.width,cv.height);
+    gl.uniform1f(U.t,t);
+    gl.uniform2f(U.mouse,mouse.x*dpr,(innerHeight-mouse.y)*dpr);
+    inten += ((target?1:0)-inten)*0.12;
+    if(target){
+      const r=target.getBoundingClientRect();
+      gl.uniform4f(U.rect,r.left*dpr,(innerHeight-r.bottom)*dpr,r.width*dpr,r.height*dpr);
+    } else { gl.uniform4f(U.rect,0,0,0,0); }
+    gl.uniform1f(U.inten,inten);
+    gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
