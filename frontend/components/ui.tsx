@@ -1,5 +1,14 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, PointerEvent, useEffect, useRef, useState } from "react";
+
+/** Feeds the cursor-follow spotlight: sets --mx/--my on the hovered element.
+ *  Pair with the `.spotlight` class (see globals.css). */
+export function spotlightMove(e: PointerEvent<HTMLElement>) {
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
+  el.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+  el.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+}
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`card p-5 ${className}`}>{children}</div>;
@@ -23,13 +32,48 @@ export function Stat({ label, value, hint, tone = "fg" }: {
     fg: "text-fg", accent: "text-accent", warn: "text-warn",
     danger: "text-danger", info: "text-info",
   }[tone];
+  const [runId, setRunId] = useState(0);
+  const isNum = typeof value === "number";
   return (
-    <div className="card p-4">
+    <div
+      className="card spotlight p-4 transition-transform duration-300 hover:-translate-y-1"
+      onPointerMove={spotlightMove}
+      onPointerEnter={() => isNum && setRunId((v) => v + 1)}
+    >
       <div className="label">{label}</div>
-      <div className={`text-2xl font-bold mt-1 ${toneClass}`}>{value}</div>
+      <div className={`text-2xl font-bold mt-1 ${toneClass}`}>
+        {isNum ? <CountUp value={value as number} runId={runId} /> : value}
+      </div>
       {hint && <div className="text-xs text-mutedfg mt-1">{hint}</div>}
     </div>
   );
+}
+
+/** Counts from 0 up to `value` whenever `runId` changes (i.e. on hover).
+ *  Before the first hover (runId 0) it just shows the live value. */
+function CountUp({ value, runId }: { value: number; runId: number }) {
+  const [display, setDisplay] = useState(value);
+  const raf = useRef<number | null>(null);
+  useEffect(() => {
+    if (raf.current) cancelAnimationFrame(raf.current);
+    if (runId === 0) { setDisplay(value); return; }
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || typeof performance === "undefined") { setDisplay(value); return; }
+    const dur = 650;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+      setDisplay(Math.round(value * eased));
+      if (p < 1) raf.current = requestAnimationFrame(tick);
+      else setDisplay(value);
+    };
+    raf.current = requestAnimationFrame(tick);
+    return () => { if (raf.current) cancelAnimationFrame(raf.current); };
+  }, [runId, value]);
+  return <>{display}</>;
 }
 
 const severityTone: Record<string, string> = {

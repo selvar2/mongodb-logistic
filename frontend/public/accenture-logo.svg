@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 34" width="150" height="34" role="img" aria-label="Accenture">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" width="200" height="40" role="img" aria-label="Accenture">
   <!-- greater-than mark above the 't' -->
-  <path d="M96 2 l10 4 -10 4" fill="none" stroke="#A100FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- wordmark -->
-  <text x="2" y="26" font-family="Inter, Helvetica, Arial, sans-serif" font-size="23" font-weight="400" letter-spacing="-0.5" fill="#E6EDF6">accenture</text>
+  <path d="M101 1 l12 5 -12 5" fill="none" stroke="#A100FF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- wordmark: bigger glyphs but SAME baseline y=27 as MongoDB -->
+  <text x="2" y="27" font-family="Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" letter-spacing="-0.5" fill="#E6EDF6">accenture</text>
 </svg>

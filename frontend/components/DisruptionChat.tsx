@@ -6,7 +6,7 @@ import type { StepEvent, WorkflowState } from "@/lib/types";
 import { AgentGraph, type AgentStatus } from "@/components/AgentGraph";
 import { Timeline } from "@/components/Timeline";
 import { ConfidenceGauge } from "@/components/ConfidenceGauge";
-import { Card, SectionTitle, SeverityChip, ActionChip } from "@/components/ui";
+import { Card, SectionTitle, SeverityChip, ActionChip, spotlightMove } from "@/components/ui";
 
 // Natural-language disruption scenarios. Each string is the exact alert_text
 // sent to POST /workflow/start — the Supervisor LLM parses it directly, the
@@ -260,7 +260,7 @@ export function DisruptionChat() {
       />
 
       {/* Chat interface — conversation (left) + scenario keywords (right) */}
-      <div className="rounded-2xl border border-border/60 bg-surface2/30 p-5">
+      <div className="spotlight rounded-2xl border border-border/60 bg-surface2/30 p-5" onPointerMove={spotlightMove}>
         <div className="grid lg:grid-cols-2 gap-5">
           {/* Left: conversation + composer */}
           <div className="flex flex-col">
@@ -298,13 +298,14 @@ export function DisruptionChat() {
                 onClick={() => runAlert(input)}
                 disabled={busy || !input.trim()}
                 aria-label="Send"
-                className="shrink-0 h-[48px] w-[48px] grid place-items-center rounded-xl bg-accent text-bg hover:bg-accent/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="group shrink-0 h-[48px] w-[48px] grid place-items-center rounded-xl bg-accent text-bg transition-all duration-300 hover:bg-accent/90 hover:scale-110 hover:shadow-[0_8px_24px_-6px_rgba(34,197,94,0.7)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {busy ? (
                   <span className="block h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
                 ) : (
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                    className="transition-transform duration-300 group-hover:-translate-y-0.5">
                     <path d="M12 19V5M5 12l7-7 7 7" />
                   </svg>
                 )}
@@ -340,16 +341,16 @@ export function DisruptionChat() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 space-y-6"
           >
-            <div className="rounded-xl border border-border/60 p-5">
+            <div className="spotlight rounded-xl border border-border/60 p-5" onPointerMove={spotlightMove}>
               <div className="flex items-center justify-between mb-4">
-                <div className="label">Agent Graph</div>
+                <div className="label">Agent Workflow</div>
                 <StatusLegend />
               </div>
               <AgentGraph statuses={statuses} />
             </div>
 
             {/* Response time — measured automated run vs a manual analyst baseline */}
-            <div className="rounded-xl border border-border/60 p-4">
+            <div className="spotlight rounded-xl border border-border/60 p-4" onPointerMove={spotlightMove}>
               <div className="flex items-center justify-between mb-3">
                 <div className="label">Response Time</div>
                 {finishedAt
@@ -375,7 +376,7 @@ export function DisruptionChat() {
             {/* Mitigation Brief (left) + Live Timeline (right), side by side */}
             <div className="grid lg:grid-cols-2 gap-4 items-start">
               {/* Left: Mitigation Brief */}
-              <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
+              <div className="spotlight rounded-xl border border-accent/30 bg-accent/5 p-4" onPointerMove={spotlightMove}>
                 <div className="label mb-3">Mitigation Brief</div>
                 {done && final ? (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -482,9 +483,9 @@ export function DisruptionChat() {
                 )}
               </div>
 
-              {/* Right: Live Timeline */}
-              <div className="rounded-xl border border-border/60 p-4">
-                <div className="label mb-3">Live Timeline</div>
+              {/* Right: Execution Log */}
+              <div className="spotlight rounded-xl border border-border/60 p-4" onPointerMove={spotlightMove}>
+                <div className="label mb-3">Execution Log</div>
                 {steps.length === 0 ? (
                   <div className="text-mutedfg text-sm">Waiting for agent steps…</div>
                 ) : (
@@ -525,16 +526,17 @@ function StatusLegend() {
 function ScenarioChip({ text, onRun, busy, tone }: {
   text: string; onRun: (t: string) => void; busy: boolean; tone: "warn" | "accent";
 }) {
-  const hover = tone === "warn"
-    ? "hover:border-warn/60 hover:bg-warn/5"
-    : "hover:border-accent/60 hover:bg-accent/5";
+  const hover = tone === "warn" ? "hover:bg-warn/5" : "hover:bg-accent/5";
+  const arrow = tone === "warn" ? "text-warn" : "text-accent";
   return (
     <button
       onClick={() => onRun(text)}
+      onPointerMove={spotlightMove}
       disabled={busy}
-      className={`w-full text-left rounded-xl border border-border/70 bg-surface/50 px-4 py-3 text-sm leading-relaxed text-fg/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${hover}`}
+      className={`spotlight group w-full flex items-start gap-2 text-left rounded-xl border border-border/70 bg-surface/50 px-4 py-3 text-sm leading-relaxed text-fg/90 transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed ${hover}`}
     >
-      {text}
+      <span className={`mt-0.5 inline-block ${arrow} opacity-0 -translate-x-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0`}>▸</span>
+      <span className="flex-1">{text}</span>
     </button>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandMark } from "@/components/BrandMark";
+import { spotlightMove } from "@/components/ui";
 
 const LINKS = [
   { href: "/", label: "Dashboard", icon: "▣" },
@@ -29,10 +31,13 @@ const VISIBLE_LINKS = LINKS.filter((l) => !HIDDEN.has(l.href));
 export function Nav() {
   const path = usePathname();
   return (
-    <aside className="w-[240px] shrink-0 h-screen sticky top-0 border-r border-border/70 bg-surface/60 backdrop-blur flex flex-col">
+    <aside
+      onPointerMove={spotlightMove}
+      className="glow-area w-[240px] shrink-0 h-screen sticky top-0 border-r border-border/70 bg-surface/60 backdrop-blur flex flex-col"
+    >
       <div className="px-5 py-5 border-b border-border/70">
-        <div className="flex items-center gap-2">
-          <span className="text-accent text-2xl">🛡️</span>
+        <div className="flex items-center gap-3">
+          <BrandMark size={38} />
           <div>
             <div className="font-bold text-fg leading-tight">ResilioChain</div>
             <div className="text-[10px] uppercase tracking-widest text-mutedfg">Supply-Chain AI</div>
@@ -46,13 +51,14 @@ export function Nav() {
             <Link
               key={l.href}
               href={l.href}
-              className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
+              onPointerMove={spotlightMove}
+              className={`spotlight group flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg text-sm transition-all duration-300 hover:-translate-y-px ${
                 active
-                  ? "text-accent bg-accent/10 border-r-2 border-accent font-semibold"
+                  ? "text-accent bg-accent/10 font-semibold"
                   : "text-mutedfg hover:text-fg hover:bg-muted/50"
               }`}
             >
-              <span className="w-4 text-center opacity-80">{l.icon}</span>
+              <span className="w-4 text-center opacity-80 transition-transform duration-300 group-hover:scale-125">{l.icon}</span>
               {l.label}
             </Link>
           );

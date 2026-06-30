@@ -44,6 +44,41 @@ body {
   }
 }
 
+/* ───────── Cursor-follow spotlight + animated border (ref: DIVS overview) ─────────
+   Add `.spotlight` to any rounded card/button. A pointermove handler sets
+   --mx/--my (see spotlightMove in components/ui.tsx); on hover an accent glow
+   tracks the cursor and a gradient border fades in. */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  pointer-events: none; z-index: 0; opacity: 0; transition: opacity .4s ease;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
+              rgba(34, 197, 94, 0.20), rgba(20, 184, 166, 0.08) 38%, transparent 62%);
+}
+.spotlight::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  pointer-events: none; z-index: 0; opacity: 0; transition: opacity .4s ease;
+  background: linear-gradient(135deg, #22C55E, #14B8A6, #38BDF8);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.spotlight:hover::before,
+.spotlight:hover::after { opacity: 1; }
+.spotlight > * { position: relative; z-index: 1; }
+
+/* Glow-only variant — cursor-follow glow with no gradient border. Good for
+   large surfaces (e.g. the sidebar) where a full border would be too much. */
+.glow-area { position: relative; }
+.glow-area::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  pointer-events: none; z-index: 0; opacity: 0; transition: opacity .5s ease;
+  background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 50%),
+              rgba(34, 197, 94, 0.16), rgba(20, 184, 166, 0.06) 40%, transparent 64%);
+}
+.glow-area:hover::before { opacity: 1; }
+.glow-area > * { position: relative; z-index: 1; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  .spotlight::before, .spotlight::after, .glow-area::before { display: none; }
 }

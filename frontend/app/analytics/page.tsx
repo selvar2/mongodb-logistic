@@ -6,7 +6,7 @@ import {
   XAxis, YAxis, Tooltip, Legend, CartesianGrid,
 } from "recharts";
 import { api } from "@/lib/api";
-import { Card, SectionTitle } from "@/components/ui";
+import { SectionTitle, spotlightMove } from "@/components/ui";
 import { CopyButton } from "@/components/CopyButton";
 
 const PAL = ["#22C55E", "#14B8A6", "#3B82F6", "#F59E0B", "#A855F7", "#EF4444", "#06B6D4", "#84CC16"];
@@ -21,10 +21,16 @@ function esgLabel(b: any) { return b === 0 ? "At-Risk (<60)" : b === 60 ? "OK (6
 function ChartCard({ title, kicker, ds, children }: any) {
   const [open, setOpen] = useState(false);
   return (
-    <Card>
+    <div
+      className="card spotlight p-5 transition-transform duration-300 hover:-translate-y-1"
+      onPointerMove={spotlightMove}
+    >
       <div className="flex items-start justify-between">
         <SectionTitle kicker={kicker} title={title} />
-        <button className="btn-ghost text-xs px-2.5 py-1" onClick={() => setOpen(o => !o)}>
+        <button
+          className="btn-ghost text-xs px-2.5 py-1 transition-all duration-300 hover:scale-105 hover:border-accent/60 hover:text-accent"
+          onClick={() => setOpen(o => !o)}
+        >
           {open ? "Hide" : "Pipeline"}
         </button>
       </div>
@@ -39,7 +45,7 @@ function ChartCard({ title, kicker, ds, children }: any) {
           </pre>
         </div>
       )}
-    </Card>
+    </div>
   );
 }
 

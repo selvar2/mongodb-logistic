@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
+import { GlowMain } from "@/components/GlowMain";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -16,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans">
         <div className="flex min-h-screen">
           <Nav />
-          <main className="flex-1 min-w-0 px-8 py-6">{children}</main>
+          <GlowMain>{children}</GlowMain>
         </div>
       </body>
     </html>
