@@ -29,8 +29,7 @@ export default function Dashboard() {
     <div className="max-w-6xl">
       <div className="relative flex items-center justify-center mb-8 min-h-[56px]">
         <div className="text-center">
-          <div className="label">Operational Console</div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Supply-Chain Resilience Dashboard</h1>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight">ResilioChain</h1>
         </div>
         <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
