@@ -27,10 +27,17 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-6xl">
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="relative flex items-center justify-center mb-8 min-h-[56px]">
+        <div className="text-center">
           <div className="label">Operational Console</div>
-          <h1 className="text-3xl font-bold">Supply-Chain Resilience Dashboard</h1>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Supply-Chain Resilience Dashboard</h1>
+        </div>
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-5">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/mongodb-logo.svg" alt="MongoDB" className="h-7 w-auto opacity-90" />
+          <span className="h-7 w-px bg-border/70" aria-hidden />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/accenture-logo.svg" alt="Accenture" className="h-6 w-auto opacity-90" />
         </div>
       </div>
 
