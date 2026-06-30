@@ -222,19 +222,19 @@ export function DisruptionChat() {
             key="workflow"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-5 space-y-4"
+            className="mt-6 space-y-6"
           >
             <div className="text-xs text-mutedfg font-mono">thread {threadId}</div>
 
-            <div className="rounded-xl border border-border/60 p-4">
-              <div className="flex items-center justify-between mb-3">
+            <div className="rounded-xl border border-border/60 p-5">
+              <div className="flex items-center justify-between mb-4">
                 <div className="label">Agent Graph</div>
                 <StatusLegend />
               </div>
               <AgentGraph statuses={statuses} />
             </div>
 
-            <div className="rounded-xl border border-border/60 p-4">
+            <div className="rounded-xl border border-border/60 p-5">
               <div className="label mb-3">Live Timeline</div>
               {steps.length === 0 ? (
                 <div className="text-mutedfg text-sm">Waiting for agent steps…</div>
@@ -286,7 +286,7 @@ export function DisruptionChat() {
 function StatusLegend() {
   const items = [
     { c: "#475569", t: "Not started" },
-    { c: "#3B82F6", t: "In progress", blink: true },
+    { c: "#38BDF8", t: "In progress", blink: true },
     { c: "#22C55E", t: "Complete" },
   ];
   return (

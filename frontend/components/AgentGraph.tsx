@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export type AgentStatus = "idle" | "active" | "done" | "fail";
 
 type Node = { id: string; label: string; tool: string; desc: string; x: number };
-const W = 178, H = 80, Y = 86, STEP = 198, X0 = 14;
+const W = 168, H = 80, Y = 76, STEP = 202, X0 = 16;
 const NODES: Node[] = [
   { id: "supervisor", label: "Supervisor", tool: "classify · route",
     desc: "Classifies severity & routes the squad; makes the final HITL decision.", x: X0 + 0 * STEP },
@@ -26,7 +26,7 @@ const EDGES: [string, string][] = [
 
 const C = {
   idle: "#475569",   // grey — not yet started
-  active: "#3B82F6", // blue, blinking — in progress
+  active: "#38BDF8", // bright sky blue, blinking — in progress
   done: "#22C55E",   // green — complete
   fail: "#EF4444",   // red — compliance fail
 };
@@ -59,13 +59,6 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
     const mx = (x1 + x2) / 2;
     return `M ${x1},${y} C ${mx},${y} ${mx},${y} ${x2},${y}`;
   };
-  const retryPath = () => {
-    const a = pos["compliance"], b = pos["sourcing"];
-    const x1 = a.x + W / 2, x2 = b.x + W / 2, y0 = Y + H;
-    return `M ${x1},${y0} C ${x1},${y0 + 56} ${x2},${y0 + 56} ${x2},${y0}`;
-  };
-  const complianceFail = statuses["compliance"] === "fail";
-
   return (
     <div className="relative w-full overflow-hidden rounded-xl">
       {/* ambient backdrop */}
@@ -75,7 +68,7 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
             "radial-gradient(600px 200px at 30% 0%, rgba(34,197,94,.07), transparent 60%)," +
             "radial-gradient(500px 200px at 90% 100%, rgba(20,184,166,.06), transparent 60%)",
         }} />
-      <svg viewBox="0 0 1000 230" className="relative w-full" style={{ maxHeight: 460 }}>
+      <svg viewBox="0 0 1000 196" className="relative w-full" style={{ maxHeight: 420 }}>
         <defs>
           <linearGradient id="ag-node" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#141C30" /><stop offset="1" stopColor="#0A1020" />
@@ -104,30 +97,9 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
                 stroke={on ? "url(#ag-edge)" : "#28324A"}
                 strokeWidth={hot ? 3 : 2} opacity={on ? 1 : hot ? 0.8 : 0.5}
                 markerEnd="url(#ag-arrow)" />
-              {on && !reduce && (
-                <circle r="3.4" fill="#9DF6C9">
-                  <animateMotion dur="1.5s" repeatCount="indefinite" rotate="auto">
-                    <mpath href={`#ag-edge-${i}`} />
-                  </animateMotion>
-                </circle>
-              )}
             </g>
           );
         })}
-
-        {/* retry arc */}
-        <path id="ag-retry" d={retryPath()} fill="none" stroke="#F59E0B"
-          strokeWidth="1.6" strokeDasharray="5 5"
-          opacity={complianceFail ? 1 : 0.3} markerEnd="url(#ag-arrow)" />
-        {complianceFail && !reduce && (
-          <circle r="3" fill="#FBBF24">
-            <animateMotion dur="1.2s" repeatCount="indefinite"><mpath href="#ag-retry" /></animateMotion>
-          </circle>
-        )}
-        <text x={(pos["compliance"].x + pos["sourcing"].x) / 2 + W / 2} y={Y + H + 50}
-          textAnchor="middle" fill="#F59E0B" fontSize="10" fontFamily="var(--font-sans)">
-          retry ≤3 (ESG fail)
-        </text>
 
         {/* nodes */}
         {NODES.map((n) => {
@@ -141,10 +113,10 @@ export function AgentGraph({ statuses }: { statuses: Record<string, AgentStatus>
               transition={{ type: "spring", stiffness: 300, damping: 20 }}>
               {/* glow ring */}
               <motion.rect x={n.x - 1.5} y={Y - 1.5} width={W + 3} height={H + 3} rx={13}
-                fill="none" stroke={col} strokeWidth={s === "idle" ? 1 : 2}
+                fill="none" stroke={col} strokeWidth={s === "idle" ? 1 : active ? 2.75 : 2}
                 filter={s === "idle" ? undefined : "url(#ag-glow)"}
-                animate={active && !reduce ? { opacity: [0.4, 1, 0.4] } : { opacity: s === "idle" ? 0.5 : 0.9 }}
-                transition={{ duration: 1.6, repeat: active && !reduce ? Infinity : 0 }} />
+                animate={active && !reduce ? { opacity: [0.7, 1, 0.7] } : { opacity: s === "idle" ? 0.5 : 0.9 }}
+                transition={{ duration: 1.3, repeat: active && !reduce ? Infinity : 0 }} />
               {/* body */}
               <rect x={n.x} y={Y} width={W} height={H} rx={12} fill="url(#ag-node)"
                 stroke="rgba(255,255,255,0.08)" />
