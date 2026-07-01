@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResilioChain — The Technology, Explained Simply</title>
+<style>
+  :root{
+    --bg:#f6f8fc; --card:#ffffff; --ink:#1f2a44; --soft:#5a6884;
+    --line:#e4e9f2; --brand:#2563eb; --brand-soft:#eaf1ff;
+    --green:#16a34a; --green-soft:#e7f7ee; --red:#dc2626; --red-soft:#fdeaea;
+    --amber:#d97706; --amber-soft:#fdf2e0; --shadow:0 6px 24px rgba(31,42,68,.07);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:32px 22px 80px}
+  header.hero{
+    text-align:center; padding:48px 24px; border-radius:22px;
+    background:linear-gradient(135deg,#eaf1ff 0%,#f3f7ff 60%,#ffffff 100%);
+    border:1px solid var(--line); box-shadow:var(--shadow); margin-bottom:30px;
+  }
+  header.hero .badge{font-size:46px}
+  header.hero h1{margin:.2em 0 .1em; font-size:2.1rem; letter-spacing:-.5px}
+  header.hero p{margin:0 auto; max-width:620px; color:var(--soft); font-size:1.08rem}
+  h2{font-size:1.5rem; margin:20px 0 12px; letter-spacing:-.3px}
+  h3{font-size:1.05rem; margin:18px 0 4px; color:var(--soft); text-transform:uppercase;
+     letter-spacing:.04em; font-size:.82rem; font-weight:700}
+  p{margin:.6em 0}
+  a{color:var(--brand); text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{background:#eef2f8; padding:1px 6px; border-radius:6px; font-size:.9em;
+       font-family:"SF Mono",Menlo,Consolas,monospace; color:#334155}
+  .pull{
+    border-left:5px solid var(--brand); background:var(--brand-soft);
+    padding:16px 20px; border-radius:0 12px 12px 0; margin:20px 0; font-size:1.04rem;
+  }
+  /* summary table */
+  .tablecard{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    box-shadow:var(--shadow); overflow:hidden; margin:18px 0}
+  table{border-collapse:collapse; width:100%; font-size:.95rem}
+  th,td{text-align:left; padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{background:#f0f4fb; font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:var(--soft)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+  /* tech cards */
+  .tech{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:22px 24px; box-shadow:var(--shadow); margin:20px 0;
+  }
+  .tech .top{display:flex; gap:14px; align-items:center; margin-bottom:6px}
+  .tech .ico{font-size:30px; line-height:1}
+  .tech .top h2{margin:0}
+  .tech .tagline{color:var(--soft); margin:0 0 6px; font-size:1.02rem}
+  .payoff{
+    border-left:5px solid var(--green); background:var(--green-soft);
+    padding:12px 16px; border-radius:0 10px 10px 0; margin:14px 0; font-size:.98rem;
+  }
+  .example{
+    border-left:5px solid var(--amber); background:var(--amber-soft);
+    padding:12px 16px; border-radius:0 10px 10px 0; margin:14px 0; font-size:.98rem;
+  }
+  .files{background:#f8fafd; border:1px solid var(--line); border-radius:12px;
+    padding:12px 16px; margin:14px 0}
+  .files ul{margin:6px 0 0; padding-left:20px}
+  .files li{margin:6px 0; font-size:.94rem}
+  ul.why{margin:6px 0; padding-left:20px}
+  ul.why li{margin:5px 0}
+  /* flow diagram */
+  .flowcard{background:var(--card); border:1px solid var(--line); border-radius:16px;
+    box-shadow:var(--shadow); padding:20px 24px; margin:18px 0; overflow-x:auto}
+  pre.flow{margin:0; font-family:"SF Mono",Menlo,Consolas,monospace; font-size:.82rem;
+    line-height:1.5; color:#334155; white-space:pre}
+  .final{
+    border-left:5px solid var(--brand); background:var(--brand-soft);
+    padding:18px 22px; border-radius:0 14px 14px 0; margin:24px 0; font-size:1.05rem;
+  }
+  footer{text-align:center; color:var(--soft); font-size:.86rem; margin-top:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="badge">🧰</div>
+    <h1>The Technology Behind ResilioChain</h1>
+    <p>Why we chose each framework, what it does for the business, and where it lives in our
+       code — written so anyone can follow, no coding required.</p>
+  </header>
+
+  <div class="pull">
+    <b>ResilioChain</b> watches for supply‑chain shocks — a typhoon, a port closure,
+    sanctions — and in seconds finds a <b>safe, allowed, reliable backup supplier</b>.
+    To do that well it uses a handful of specialist tools, each explained below with a
+    real business example.
+  </div>
+
+  <h2>The 30‑second summary</h2>
+  <div class="tablecard">
+    <table>
+      <thead>
+        <tr><th>The technology</th><th>In one line</th><th>The business payoff</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><b>LangGraph</b></td><td>The "team manager" that runs our 5 AI helpers in the right order</td><td>Reliable, repeatable decisions — never a chaotic free‑for‑all</td></tr>
+        <tr><td><b>AWS Bedrock (Claude)</b></td><td>The "brain" that reads and reasons about messy real‑world text</td><td>Understands a disruption alert like a human analyst would</td></tr>
+        <tr><td><b>Bedrock AgentCore Runtime</b></td><td>The secure "engine room" that hosts it all on AWS</td><td>Enterprise‑grade hosting, security, and scale</td></tr>
+        <tr><td><b>MongoDB <code>$graphLookup</code></b></td><td>Traces the "ripple effect" of a disruption</td><td>Instantly sees <i>every</i> order a single supplier can sink</td></tr>
+        <tr><td><b>MongoDB <code>$vectorSearch</code></b></td><td>Finds suppliers by <i>meaning</i>, not exact keywords</td><td>Discovers backups a keyword search would miss</td></tr>
+        <tr><td><b>Atlas autoEmbed</b></td><td>Lets the database handle the AI "translation" automatically</td><td>Less code to maintain, fewer things to break</td></tr>
+        <tr><td><b>Voyage AI</b></td><td>The specialist that turns text into searchable "meaning"</td><td>High‑quality matches, best‑in‑class search relevance</td></tr>
+        <tr><td><b>GraphRAG</b></td><td>Answers plain‑English questions about the disruption</td><td>Ask "what does Typhoon Yagi affect?" and get a grounded answer</td></tr>
+        <tr><td><b>MCP server + fallback</b></td><td>An industry‑standard, plug‑in way to expose our tools</td><td>Future‑proof, interoperable, and never breaks in a demo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 1. LangGraph -->
+  <div class="tech">
+    <div class="top"><div class="ico">🧠</div><h2>1. LangGraph — the team manager</h2></div>
+    <p class="tagline">The manager that runs our five AI helpers in a disciplined relay race.</p>
+    <h3>What it is</h3>
+    <p>Our app isn't one big robot — it's a <b>team of five AI helpers</b> (Supervisor, Impact
+       Assessor, Sourcing, Compliance, Planner), each with one job. LangGraph decides who works
+       next, passes the problem down the line, and knows when to loop back or stop.</p>
+    <h3>Why we chose it</h3>
+    <p>Left to talk freely, AI agents wander, repeat themselves, or get stuck. LangGraph turns
+       the process into a <b>clear flowchart with rules</b>: "after Sourcing finds candidates,
+       always send them to Compliance; if Compliance rejects everyone, try again — but no more
+       than 3 times."</p>
+    <div class="payoff"><b>Business payoff:</b> Reliability (same process every time),
+       auditability (who decided what, when), and safety rails that stop endless loops or
+       runaway spend.</div>
+    <div class="example"><b>Example:</b> Typhoon Yagi alert arrives → Supervisor ("how bad?") →
+       Impact Assessor ("23 orders, 48,200 units at risk") → Sourcing ("3 backups") →
+       Compliance ("reject the unethical one") → if a backup fails ethics, LangGraph
+       <b>automatically loops back</b> to Sourcing, up to 3 tries → then the Planner writes the
+       brief.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul><li><code>backend/app/agents/graph.py</code> — the flowchart itself: the five helpers
+        wired with "if this, go there" rules (<code>build_graph()</code>), the retry loop, and
+        the stop conditions.</li></ul>
+    </div>
+  </div>
+
+  <!-- 2. Bedrock Claude -->
+  <div class="tech">
+    <div class="top"><div class="ico">🤖</div><h2>2. AWS Bedrock (Claude) — the reasoning brain</h2></div>
+    <p class="tagline">The AI that actually reads and understands the disruption.</p>
+    <h3>What it is</h3>
+    <p>Bedrock is Amazon's secure service for running top‑tier AI. We use it to run <b>Claude</b>
+       (from Anthropic) — the model that <i>reads and understands</i> language. When an alert
+       says "Typhoon Yagi has closed the Port of Tanjung Pelepas for 72 hours," Claude grasps
+       that it's severe, which supplier is hit, and what it means.</p>
+    <h3>Why we chose it</h3>
+    <ul class="why">
+      <li><b>Enterprise trust</b> — runs inside AWS; our data stays in our cloud.</li>
+      <li><b>No vendor lock‑in</b> — a thin adapter means we can swap the AI vendor without rewriting the app.</li>
+      <li><b>Keeps working even offline</b> — if the AI is unreachable, a built‑in deterministic stand‑in keeps a live demo from crashing.</li>
+    </ul>
+    <div class="payoff"><b>Business payoff:</b> Human‑level understanding of messy text — at
+       machine speed and scale, with enterprise security and a graceful safety net.</div>
+    <div class="example"><b>Example:</b> We use a <b>stronger Claude model</b> for the hardest
+       thinking (Supervisor + Planner) and a <b>faster, cheaper model</b> for routine helpers —
+       balancing quality and cost, like staffing a team with seniors and juniors.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/llm/bedrock.py</code> — the single doorway to the AI; the vendor is swappable and the offline fallback lives here.</li>
+        <li><code>backend/app/config.py</code> — where we assign the stronger vs. faster model per helper.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 3. AgentCore -->
+  <div class="tech">
+    <div class="top"><div class="ico">🏭</div><h2>3. Bedrock AgentCore Runtime — the engine room</h2></div>
+    <p class="tagline">Amazon's managed, secure hosting purpose‑built for AI agents.</p>
+    <h3>What it is</h3>
+    <p>AgentCore Runtime is the secure, professionally‑run "building" where our AI team lives and
+       takes requests — instead of us renting a bare server and wiring the plumbing ourselves.</p>
+    <h3>Why we chose it</h3>
+    <ul class="why">
+      <li><b>Security done right</b> — uses an AWS execution role, so we don't scatter secret keys around.</li>
+      <li><b>Scales on demand</b> — one alert or a thousand, no re‑architecting.</li>
+      <li><b>Purpose‑built for agents</b> — designed for exactly this multi‑step AI workflow.</li>
+    </ul>
+    <div class="payoff"><b>Business payoff:</b> The difference between a hackathon prototype and
+       something an IT department would actually approve for production.</div>
+    <div class="example"><b>Example:</b> An external system calls it with
+       <code>{"alert_text": "Typhoon Yagi has closed the port…"}</code> and gets back the full
+       decision — winner supplier, confidence score, cost impact — as a clean summary.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/agentcore_app.py</code> — the official "front door"; wraps our LangGraph workflow so AWS can host and invoke it.</li>
+        <li><code>backend/requirements-agentcore.txt</code> — the ingredients list for that hosted engine.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4. graphLookup -->
+  <div class="tech">
+    <div class="top"><div class="ico">💥</div><h2>4. MongoDB <code>$graphLookup</code> — tracing the ripple effect</h2></div>
+    <p class="tagline">Follows the chain of connections to reveal everything a disruption hits.</p>
+    <h3>What it is</h3>
+    <p>A MongoDB feature that <b>follows chains of connections</b> inside your data. One broken
+       link ripples outward: a down supplier → the orders that depend on it → the products those
+       orders feed. <code>$graphLookup</code> walks that chain in a single step.</p>
+    <h3>Why we chose it</h3>
+    <p>The "ripple effect" is the whole point of supply‑chain risk. Doing it by hand is slow and
+       error‑prone. MongoDB does the traversal <i>inside the database</i>, where the data already
+       lives — fast and complete.</p>
+    <div class="payoff"><b>Business payoff:</b> The moment a supplier goes down, you instantly
+       see <b>every order at risk and the exact total you must re‑source</b> — nothing missed.</div>
+    <div class="example"><b>Example:</b> SUP‑001 is down. <code>$graphLookup</code> traces every
+       active order that <i>depends on</i> it and <b>sums the shortfall to exactly 48,200
+       units</b> — the number the rest of the workflow must cover.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/mcp_tools/blast_radius_query.py</code> — the "blast radius" tool, running <code>$graphLookup</code> over orders → suppliers.</li>
+        <li><code>backend/app/graphrag.py</code> — a second, multi‑hop <code>$graphLookup</code> used by the plain‑English Q&amp;A feature.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5. vectorSearch -->
+  <div class="tech">
+    <div class="top"><div class="ico">🔎</div><h2>5. MongoDB <code>$vectorSearch</code> — finding suppliers by meaning</h2></div>
+    <p class="tagline">Matches on <i>meaning</i>, not exact words — so the right backups surface.</p>
+    <h3>What it is</h3>
+    <p>A normal search matches exact words. <code>$vectorSearch</code> matches <b>meaning</b>. It
+       knows a supplier described as "automotive microcontroller assembly" is a strong match for
+       "car‑grade MCU components" — even though the words differ.</p>
+    <h3>Why we chose it</h3>
+    <p>Real supplier catalogs never use identical wording, so a keyword search would miss good
+       backups. Meaning‑based search finds the <i>right</i> candidates — and MongoDB runs it
+       right alongside our business data.</p>
+    <div class="payoff"><b>Business payoff:</b> Better backups found faster, with a safety rule
+       baked in — we <b>filter by real capacity at the database level</b>, so a supplier that
+       can't cover the volume is never even suggested. That rule is enforced by code, not the AI.</div>
+    <div class="example"><b>Example:</b> With the shortfall known (48,200 units), Sourcing asks:
+       "find suppliers similar to what we need — but ONLY ones that can make at least 48,200
+       units/month, NOT the down supplier, and NOT in the disrupted region." It returns the top
+       3, each with a similarity score.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/mcp_tools/supplier_vector_search.py</code> — meaning‑based supplier search with a hard capacity filter and region/supplier exclusions.</li>
+        <li><code>backend/app/mcp_tools/compliance_rag_query.py</code> — the same technique to pull relevant compliance‑policy passages.</li>
+        <li><code>backend/app/mcp_tools/_vs.py</code> — shared helper that runs the search and patiently retries on free‑tier rate limits.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 6. autoEmbed -->
+  <div class="tech">
+    <div class="top"><div class="ico">⚙️</div><h2>6. Atlas autoEmbed — let the database do the AI translation</h2></div>
+    <p class="tagline">MongoDB automatically turns text into searchable "meaning" for us.</p>
+    <h3>What it is</h3>
+    <p>To search by meaning, text must first be turned into numbers that capture its meaning (an
+       "embedding"). <b>autoEmbed</b> means MongoDB Atlas does that translation
+       <b>automatically</b> — both when we store a supplier and when we search — so we never run
+       it ourselves.</p>
+    <h3>Why we chose it</h3>
+    <p>The alternative ("explicit" mode) means <i>we</i> generate every embedding, store it, and
+       keep it in sync — more code, more ways to break. With autoEmbed the database owns it.
+       (We kept manual mode available as a backup, controlled by one setting.)</p>
+    <div class="payoff"><b>Business payoff:</b> Less custom code, fewer moving parts, and no risk
+       of search "translations" going stale — the platform keeps them current.</div>
+    <div class="example"><b>Example:</b> We just save a supplier's description text; Atlas +
+       Voyage turn it into searchable meaning behind the scenes, and translate each search query
+       the same way so both sides speak the same language.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/db/indexes.py</code> — vector indexes defined as <code>type: "autoEmbed"</code>, telling Atlas to manage the embeddings with Voyage AI.</li>
+        <li><code>backend/app/config.py</code> — the single switch (<code>EMBEDDING_MODE = autoembed | explicit</code>).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 7. Voyage -->
+  <div class="tech">
+    <div class="top"><div class="ico">🧬</div><h2>7. Voyage AI — turning words into "meaning"</h2></div>
+    <p class="tagline">The best‑in‑class specialist behind the "search by meaning" magic.</p>
+    <h3>What it is</h3>
+    <p>Voyage AI is a top‑rated <b>embedding provider</b> — the specialist that performs the
+       "text → meaning‑numbers" translation that powers <code>$vectorSearch</code>. MongoDB
+       partners with Voyage and uses it under the hood for autoEmbed.</p>
+    <h3>Why we chose it</h3>
+    <p>Your search is only as good as these "meaning" translations. Voyage's models rank highly
+       for retrieval accuracy, and Atlas integrates them natively — top‑tier relevance without
+       gluing on a separate service.</p>
+    <div class="payoff"><b>Business payoff:</b> More accurate supplier and policy matches — the
+       search genuinely understands the domain, so the backups it surfaces are the right ones.</div>
+    <div class="example"><b>Example:</b> Voyage is what lets "automotive‑grade MCU and sensor
+       components" find "car electronics controller manufacturing" as a match.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/db/indexes.py</code> — Voyage (<code>voyage-4</code>) named as the model Atlas uses for autoEmbed.</li>
+        <li><code>backend/app/mcp_tools/_embed.py</code> — the direct Voyage client, used only in the optional manual mode.</li>
+        <li><code>backend/app/config.py</code> — Voyage API key and model settings.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 8. GraphRAG -->
+  <div class="tech">
+    <div class="top"><div class="ico">💬</div><h2>8. GraphRAG — ask the disruption a question in plain English</h2></div>
+    <p class="tagline">Builds a map of who‑relates‑to‑whom, then answers only from that map.</p>
+    <h3>What it is</h3>
+    <p>GraphRAG <b>reads unstructured disruption text, builds a little map</b> (a "knowledge
+       graph") of who relates to whom, <b>then answers questions using only that map</b>. RAG
+       means the AI answers strictly from facts we retrieved — so it can't make things up.</p>
+    <h3>Why we chose it</h3>
+    <p>Leaders don't want to read raw data — they want to <i>ask</i>: "What does Typhoon Yagi
+       affect, and how?" GraphRAG turns messy text into a connected map and gives a grounded,
+       cited answer with traceable reasoning.</p>
+    <div class="payoff"><b>Business payoff:</b> A plain‑English Q&amp;A layer over the disruption,
+       backed by the actual relationships in the data — no hallucinations.</div>
+    <div class="example"><b>Example:</b> Ask "What is impacted by Typhoon Yagi?" — GraphRAG finds
+       the starting points (Yagi, Tanjung Pelepas, SUP‑001) and <b>hops across the map</b> (Yagi
+       <i>affects</i> Malaysia, SUP‑001 <i>located_in</i> Malaysia, orders <i>depend_on</i>
+       SUP‑001), then answers in sentences citing those links.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/graphrag.py</code> — the full canonical GraphRAG: <code>extract_graph()</code> builds the map, <code>query_graph()</code> does the multi‑hop traversal, <code>answer()</code> writes the grounded reply.</li>
+        <li><code>backend/app/api/graphrag.py</code> — exposes it as an API the dashboard can call.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 9. MCP -->
+  <div class="tech">
+    <div class="top"><div class="ico">🔌</div><h2>9. Real MCP server (FastMCP) + Python fallback</h2></div>
+    <p class="tagline">A universal, standards‑based toolbox that never dies mid‑demo.</p>
+    <h3>What it is</h3>
+    <p><b>MCP (Model Context Protocol)</b> is the emerging <b>industry standard</b> for how AI
+       agents plug into tools — like USB for devices. We expose our five MongoDB tools as a
+       proper MCP server using <b>FastMCP</b>, and we built a <b>fallback</b>: if the server
+       isn't running, the app quietly uses the same tools directly in‑process.</p>
+    <h3>Why we chose it</h3>
+    <ul class="why">
+      <li><b>Interoperability &amp; future‑proofing</b> — our tools speak the MCP standard, so any MCP‑compatible AI could use them.</li>
+      <li><b>Same logic, two ways in</b> — the MongoDB code is written once and shared, so the answer is identical over the network or in‑process.</li>
+      <li><b>Never dies mid‑demo</b> — automatic fallback means a down server or network hiccup can't break the workflow.</li>
+    </ul>
+    <div class="payoff"><b>Business payoff:</b> A standards‑based, interoperable, and
+       <b>bulletproof</b> integration layer — enterprise‑ready today, ready to plug into the
+       wider AI ecosystem tomorrow.</div>
+    <div class="example"><b>Example:</b> In a live demo, Sourcing calls
+       <code>supplier_vector_search</code>. If the MCP server is up, the request goes over the
+       standard protocol; if not, the app <b>instantly and invisibly</b> runs the same MongoDB
+       search in‑process. Either way the audience sees the right answer — no error, no drama.</div>
+    <div class="files"><b>Where in the code:</b>
+      <ul>
+        <li><code>backend/app/mcp_server.py</code> — the real MCP server (FastMCP), exposing tools and resources.</li>
+        <li><code>backend/app/mcp_client.py</code> — the smart client that tries MCP first and <b>automatically falls back</b> on any failure.</li>
+        <li><code>backend/app/mcp_tools/*</code> — the single shared implementation both paths use.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>How it all fits together</h2>
+  <div class="flowcard">
+<pre class="flow">        A disruption alert arrives ("Typhoon Yagi closed the port…")
+                              │
+              ┌───────────────▼────────────────┐
+              │   Bedrock AgentCore Runtime     │  ← secure AWS hosting (engine room)
+              │                                 │
+              │   LangGraph runs the 5 helpers  │  ← the team manager
+              │        in a disciplined relay   │
+              └───────────────┬────────────────┘
+                              │
+        each helper thinks with ── AWS Bedrock (Claude)  ← the reasoning brain
+                              │
+        and uses MongoDB tools (over MCP, with fallback):
+                              │
+   ┌───────────────┬──────────┴───────────┬────────────────────┐
+   ▼               ▼                       ▼                    ▼
+$graphLookup   $vectorSearch          Vector RAG            GraphRAG
+"ripple        "find backups          "check the            "answer plain-
+ effect"        by meaning"            compliance rules"      English questions"
+   │               │                                              │
+   └── all powered by meaning-search from Voyage AI + Atlas autoEmbed ──┘
+                              │
+                              ▼
+   A ranked mitigation brief + confidence score for a human to approve</pre>
+  </div>
+
+  <h2>The takeaway for leadership</h2>
+  <div class="final">
+    ResilioChain pairs the <b>best reasoning AI (Claude on AWS Bedrock)</b> with the <b>best
+    operational database for this job (MongoDB Atlas)</b>. <b>LangGraph</b> keeps the AI team
+    disciplined and auditable; <b>AgentCore</b> hosts it securely at enterprise scale. MongoDB
+    does the heavy lifting where the data lives — tracing the <b>ripple effect</b>
+    (<code>$graphLookup</code>) and finding backups <b>by meaning</b> (<code>$vectorSearch</code>,
+    powered by <b>Voyage AI</b> and <b>autoEmbed</b>). <b>GraphRAG</b> lets anyone ask the
+    disruption questions in plain English, and our <b>MCP + fallback</b> design makes the whole
+    thing interoperable and impossible to break in a demo. Every choice trades a hackathon
+    shortcut for something an enterprise would actually ship. 🛡️
+  </div>
+
+  <footer>ResilioChain — MongoDB Agentic AI Hackathon · Technology explained for everyone</footer>
+
+</div>
+</body>
+</html>
